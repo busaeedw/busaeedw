@@ -136,27 +136,27 @@ export class DatabaseStorage implements IStorage {
     limit?: number;
     offset?: number;
   }): Promise<Event[]> {
-    let query = db.select().from(events).where(eq(events.status, "published"));
+    const conditions = [eq(events.status, "published")];
 
     if (filters?.category) {
-      query = query.where(eq(events.category, filters.category));
+      conditions.push(eq(events.category, filters.category));
     }
     if (filters?.city) {
-      query = query.where(eq(events.city, filters.city));
+      conditions.push(eq(events.city, filters.city));
     }
     if (filters?.search) {
-      query = query.where(
+      conditions.push(
         or(
           ilike(events.title, `%${filters.search}%`),
           ilike(events.description, `%${filters.search}%`)
-        )
+        )!
       );
     }
     if (filters?.organizerId) {
-      query = query.where(eq(events.organizerId, filters.organizerId));
+      conditions.push(eq(events.organizerId, filters.organizerId));
     }
 
-    query = query.orderBy(desc(events.startDate));
+    let query = db.select().from(events).where(and(...conditions)).orderBy(desc(events.startDate));
 
     if (filters?.limit) {
       query = query.limit(filters.limit);
@@ -235,8 +235,6 @@ export class DatabaseStorage implements IStorage {
     limit?: number;
     offset?: number;
   }): Promise<ServiceProvider[]> {
-    let query = db.select().from(serviceProviders);
-
     const conditions = [];
     if (filters?.category) {
       conditions.push(eq(serviceProviders.category, filters.category));
@@ -245,6 +243,8 @@ export class DatabaseStorage implements IStorage {
       conditions.push(eq(serviceProviders.verified, filters.verified));
     }
 
+    let query = db.select().from(serviceProviders);
+    
     if (conditions.length > 0) {
       query = query.where(and(...conditions));
     }
@@ -290,7 +290,7 @@ export class DatabaseStorage implements IStorage {
         await db
           .update(serviceProviders)
           .set({
-            rating: avgRating[0].avg,
+            rating: String(avgRating[0].avg),
             reviewCount: Number(avgRating[0].count),
           })
           .where(eq(serviceProviders.id, review.targetId));
@@ -335,7 +335,7 @@ export class DatabaseStorage implements IStorage {
       .where(or(eq(messages.senderId, userId), eq(messages.receiverId, userId)))
       .orderBy(desc(messages.createdAt));
 
-    const conversationMap = new Map();
+    const conversationMap = new Map<string, Message>();
     
     for (const message of userMessages) {
       const otherUserId = message.senderId === userId ? message.receiverId : message.senderId;

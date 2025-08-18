@@ -24,6 +24,9 @@ const eventFormSchema = insertEventSchema.extend({
   startDate: z.string().min(1, 'Start date is required'),
   endDate: z.string().min(1, 'End date is required'),
   price: z.string().min(1, 'Price is required'),
+  maxAttendees: z.string().optional(),
+}).omit({
+  organizerId: true,
 });
 
 type EventFormData = z.infer<typeof eventFormSchema>;
@@ -53,7 +56,7 @@ export default function EventCreate() {
   // Check if user can create events
   useEffect(() => {
     if (!isLoading && isAuthenticated && user) {
-      if (user.role !== 'organizer' && user.role !== 'admin') {
+      if ((user as any).role !== 'organizer' && (user as any).role !== 'admin') {
         toast({
           title: "Access Denied",
           description: "Only organizers can create events.",
@@ -77,7 +80,7 @@ export default function EventCreate() {
       venue: '',
       price: '0',
       currency: 'SAR',
-      maxAttendees: '',
+      maxAttendees: undefined,
       imageUrl: '',
       status: 'draft',
       tags: [],
@@ -91,7 +94,7 @@ export default function EventCreate() {
         startDate: new Date(data.startDate).toISOString(),
         endDate: new Date(data.endDate).toISOString(),
         price: parseFloat(data.price),
-        maxAttendees: data.maxAttendees ? parseInt(data.maxAttendees) : undefined,
+        maxAttendees: data.maxAttendees ? parseInt(data.maxAttendees) : null,
       };
       const response = await apiRequest('POST', '/api/events', eventData);
       return response.json();
@@ -328,7 +331,7 @@ export default function EventCreate() {
                       <FormItem>
                         <FormLabel>Venue</FormLabel>
                         <FormControl>
-                          <Input placeholder="Venue name" {...field} />
+                          <Input placeholder="Venue name" {...field} value={field.value || ''} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -402,7 +405,7 @@ export default function EventCreate() {
                     <FormItem>
                       <FormLabel>Event Image URL</FormLabel>
                       <FormControl>
-                        <Input placeholder="https://example.com/image.jpg" {...field} />
+                        <Input placeholder="https://example.com/image.jpg" {...field} value={field.value || ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

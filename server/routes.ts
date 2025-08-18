@@ -150,6 +150,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const registration = await storage.registerForEvent({
         eventId,
         attendeeId: userId,
+        ticketCode: `${eventId}-${userId}-${Date.now()}`,
         status: "registered",
       });
 
