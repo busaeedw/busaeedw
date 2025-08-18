@@ -1,0 +1,416 @@
+import {
+  users,
+  events,
+  eventRegistrations,
+  serviceProviders,
+  reviews,
+  messages,
+  serviceBookings,
+  type User,
+  type UpsertUser,
+  type Event,
+  type InsertEvent,
+  type EventRegistration,
+  type InsertEventRegistration,
+  type ServiceProvider,
+  type InsertServiceProvider,
+  type Review,
+  type InsertReview,
+  type Message,
+  type InsertMessage,
+  type ServiceBooking,
+  type InsertServiceBooking,
+} from "@shared/schema";
+import { db } from "./db";
+import { eq, desc, and, or, ilike, sql } from "drizzle-orm";
+import { randomUUID } from "crypto";
+
+export interface IStorage {
+  // User operations (mandatory for Replit Auth)
+  getUser(id: string): Promise<User | undefined>;
+  upsertUser(user: UpsertUser): Promise<User>;
+  updateUserRole(id: string, role: string): Promise<User>;
+  
+  // Event operations
+  createEvent(event: InsertEvent): Promise<Event>;
+  getEvent(id: string): Promise<Event | undefined>;
+  getEvents(filters?: {
+    category?: string;
+    city?: string;
+    search?: string;
+    organizerId?: string;
+    limit?: number;
+    offset?: number;
+  }): Promise<Event[]>;
+  updateEvent(id: string, updates: Partial<InsertEvent>): Promise<Event>;
+  deleteEvent(id: string): Promise<void>;
+  
+  // Event registration operations
+  registerForEvent(registration: InsertEventRegistration): Promise<EventRegistration>;
+  getEventRegistrations(eventId: string): Promise<EventRegistration[]>;
+  getUserRegistrations(userId: string): Promise<EventRegistration[]>;
+  cancelRegistration(eventId: string, userId: string): Promise<void>;
+  
+  // Service provider operations
+  createServiceProvider(provider: InsertServiceProvider): Promise<ServiceProvider>;
+  getServiceProvider(id: string): Promise<ServiceProvider | undefined>;
+  getServiceProviders(filters?: {
+    category?: string;
+    city?: string;
+    verified?: boolean;
+    limit?: number;
+    offset?: number;
+  }): Promise<ServiceProvider[]>;
+  updateServiceProvider(id: string, updates: Partial<InsertServiceProvider>): Promise<ServiceProvider>;
+  
+  // Review operations
+  createReview(review: InsertReview): Promise<Review>;
+  getReviews(targetType: string, targetId: string): Promise<Review[]>;
+  
+  // Message operations
+  sendMessage(message: InsertMessage): Promise<Message>;
+  getMessages(userId1: string, userId2: string): Promise<Message[]>;
+  getUserConversations(userId: string): Promise<{ user: User; lastMessage: Message }[]>;
+  markMessageAsRead(messageId: string): Promise<void>;
+  
+  // Service booking operations
+  createServiceBooking(booking: InsertServiceBooking): Promise<ServiceBooking>;
+  getServiceBookings(filters?: {
+    eventId?: string;
+    serviceProviderId?: string;
+    organizerId?: string;
+  }): Promise<ServiceBooking[]>;
+  updateServiceBookingStatus(id: string, status: string): Promise<ServiceBooking>;
+  
+  // Analytics
+  getEventStats(): Promise<{ totalEvents: number; totalAttendees: number; totalProviders: number }>;
+}
+
+export class DatabaseStorage implements IStorage {
+  // User operations
+  async getUser(id: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user;
+  }
+
+  async upsertUser(userData: UpsertUser): Promise<User> {
+    const [user] = await db
+      .insert(users)
+      .values(userData)
+      .onConflictDoUpdate({
+        target: users.id,
+        set: {
+          ...userData,
+          updatedAt: new Date(),
+        },
+      })
+      .returning();
+    return user;
+  }
+
+  async updateUserRole(id: string, role: string): Promise<User> {
+    const [user] = await db
+      .update(users)
+      .set({ role, updatedAt: new Date() })
+      .where(eq(users.id, id))
+      .returning();
+    return user;
+  }
+
+  // Event operations
+  async createEvent(event: InsertEvent): Promise<Event> {
+    const [createdEvent] = await db.insert(events).values(event).returning();
+    return createdEvent;
+  }
+
+  async getEvent(id: string): Promise<Event | undefined> {
+    const [event] = await db.select().from(events).where(eq(events.id, id));
+    return event;
+  }
+
+  async getEvents(filters?: {
+    category?: string;
+    city?: string;
+    search?: string;
+    organizerId?: string;
+    limit?: number;
+    offset?: number;
+  }): Promise<Event[]> {
+    let query = db.select().from(events).where(eq(events.status, "published"));
+
+    if (filters?.category) {
+      query = query.where(eq(events.category, filters.category));
+    }
+    if (filters?.city) {
+      query = query.where(eq(events.city, filters.city));
+    }
+    if (filters?.search) {
+      query = query.where(
+        or(
+          ilike(events.title, `%${filters.search}%`),
+          ilike(events.description, `%${filters.search}%`)
+        )
+      );
+    }
+    if (filters?.organizerId) {
+      query = query.where(eq(events.organizerId, filters.organizerId));
+    }
+
+    query = query.orderBy(desc(events.startDate));
+
+    if (filters?.limit) {
+      query = query.limit(filters.limit);
+    }
+    if (filters?.offset) {
+      query = query.offset(filters.offset);
+    }
+
+    return await query;
+  }
+
+  async updateEvent(id: string, updates: Partial<InsertEvent>): Promise<Event> {
+    const [event] = await db
+      .update(events)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(events.id, id))
+      .returning();
+    return event;
+  }
+
+  async deleteEvent(id: string): Promise<void> {
+    await db.delete(events).where(eq(events.id, id));
+  }
+
+  // Event registration operations
+  async registerForEvent(registration: InsertEventRegistration): Promise<EventRegistration> {
+    const ticketCode = randomUUID().substring(0, 8).toUpperCase();
+    const [reg] = await db
+      .insert(eventRegistrations)
+      .values({ ...registration, ticketCode })
+      .returning();
+    return reg;
+  }
+
+  async getEventRegistrations(eventId: string): Promise<EventRegistration[]> {
+    return await db
+      .select()
+      .from(eventRegistrations)
+      .where(eq(eventRegistrations.eventId, eventId));
+  }
+
+  async getUserRegistrations(userId: string): Promise<EventRegistration[]> {
+    return await db
+      .select()
+      .from(eventRegistrations)
+      .where(eq(eventRegistrations.attendeeId, userId));
+  }
+
+  async cancelRegistration(eventId: string, userId: string): Promise<void> {
+    await db
+      .update(eventRegistrations)
+      .set({ status: "cancelled" })
+      .where(
+        and(
+          eq(eventRegistrations.eventId, eventId),
+          eq(eventRegistrations.attendeeId, userId)
+        )
+      );
+  }
+
+  // Service provider operations
+  async createServiceProvider(provider: InsertServiceProvider): Promise<ServiceProvider> {
+    const [serviceProvider] = await db.insert(serviceProviders).values(provider).returning();
+    return serviceProvider;
+  }
+
+  async getServiceProvider(id: string): Promise<ServiceProvider | undefined> {
+    const [provider] = await db.select().from(serviceProviders).where(eq(serviceProviders.id, id));
+    return provider;
+  }
+
+  async getServiceProviders(filters?: {
+    category?: string;
+    city?: string;
+    verified?: boolean;
+    limit?: number;
+    offset?: number;
+  }): Promise<ServiceProvider[]> {
+    let query = db.select().from(serviceProviders);
+
+    const conditions = [];
+    if (filters?.category) {
+      conditions.push(eq(serviceProviders.category, filters.category));
+    }
+    if (filters?.verified !== undefined) {
+      conditions.push(eq(serviceProviders.verified, filters.verified));
+    }
+
+    if (conditions.length > 0) {
+      query = query.where(and(...conditions));
+    }
+
+    query = query.orderBy(desc(serviceProviders.rating));
+
+    if (filters?.limit) {
+      query = query.limit(filters.limit);
+    }
+    if (filters?.offset) {
+      query = query.offset(filters.offset);
+    }
+
+    return await query;
+  }
+
+  async updateServiceProvider(id: string, updates: Partial<InsertServiceProvider>): Promise<ServiceProvider> {
+    const [provider] = await db
+      .update(serviceProviders)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(serviceProviders.id, id))
+      .returning();
+    return provider;
+  }
+
+  // Review operations
+  async createReview(review: InsertReview): Promise<Review> {
+    const [createdReview] = await db.insert(reviews).values(review).returning();
+    
+    // Update rating for service providers
+    if (review.targetType === "service_provider") {
+      const avgRating = await db
+        .select({ avg: sql`AVG(${reviews.rating})`, count: sql`COUNT(*)` })
+        .from(reviews)
+        .where(
+          and(
+            eq(reviews.targetType, "service_provider"),
+            eq(reviews.targetId, review.targetId)
+          )
+        );
+
+      if (avgRating[0]) {
+        await db
+          .update(serviceProviders)
+          .set({
+            rating: avgRating[0].avg,
+            reviewCount: Number(avgRating[0].count),
+          })
+          .where(eq(serviceProviders.id, review.targetId));
+      }
+    }
+
+    return createdReview;
+  }
+
+  async getReviews(targetType: string, targetId: string): Promise<Review[]> {
+    return await db
+      .select()
+      .from(reviews)
+      .where(and(eq(reviews.targetType, targetType), eq(reviews.targetId, targetId)))
+      .orderBy(desc(reviews.createdAt));
+  }
+
+  // Message operations
+  async sendMessage(message: InsertMessage): Promise<Message> {
+    const [sentMessage] = await db.insert(messages).values(message).returning();
+    return sentMessage;
+  }
+
+  async getMessages(userId1: string, userId2: string): Promise<Message[]> {
+    return await db
+      .select()
+      .from(messages)
+      .where(
+        or(
+          and(eq(messages.senderId, userId1), eq(messages.receiverId, userId2)),
+          and(eq(messages.senderId, userId2), eq(messages.receiverId, userId1))
+        )
+      )
+      .orderBy(messages.createdAt);
+  }
+
+  async getUserConversations(userId: string): Promise<{ user: User; lastMessage: Message }[]> {
+    // This is a simplified implementation - in production you'd want a more efficient query
+    const userMessages = await db
+      .select()
+      .from(messages)
+      .where(or(eq(messages.senderId, userId), eq(messages.receiverId, userId)))
+      .orderBy(desc(messages.createdAt));
+
+    const conversationMap = new Map();
+    
+    for (const message of userMessages) {
+      const otherUserId = message.senderId === userId ? message.receiverId : message.senderId;
+      if (!conversationMap.has(otherUserId)) {
+        conversationMap.set(otherUserId, message);
+      }
+    }
+
+    const conversations = [];
+    for (const [otherUserId, lastMessage] of conversationMap) {
+      const user = await this.getUser(otherUserId);
+      if (user) {
+        conversations.push({ user, lastMessage });
+      }
+    }
+
+    return conversations;
+  }
+
+  async markMessageAsRead(messageId: string): Promise<void> {
+    await db.update(messages).set({ read: true }).where(eq(messages.id, messageId));
+  }
+
+  // Service booking operations
+  async createServiceBooking(booking: InsertServiceBooking): Promise<ServiceBooking> {
+    const [createdBooking] = await db.insert(serviceBookings).values(booking).returning();
+    return createdBooking;
+  }
+
+  async getServiceBookings(filters?: {
+    eventId?: string;
+    serviceProviderId?: string;
+    organizerId?: string;
+  }): Promise<ServiceBooking[]> {
+    let query = db.select().from(serviceBookings);
+
+    const conditions = [];
+    if (filters?.eventId) {
+      conditions.push(eq(serviceBookings.eventId, filters.eventId));
+    }
+    if (filters?.serviceProviderId) {
+      conditions.push(eq(serviceBookings.serviceProviderId, filters.serviceProviderId));
+    }
+    if (filters?.organizerId) {
+      conditions.push(eq(serviceBookings.organizerId, filters.organizerId));
+    }
+
+    if (conditions.length > 0) {
+      query = query.where(and(...conditions));
+    }
+
+    return await query.orderBy(desc(serviceBookings.createdAt));
+  }
+
+  async updateServiceBookingStatus(id: string, status: string): Promise<ServiceBooking> {
+    const [booking] = await db
+      .update(serviceBookings)
+      .set({ status, updatedAt: new Date() })
+      .where(eq(serviceBookings.id, id))
+      .returning();
+    return booking;
+  }
+
+  // Analytics
+  async getEventStats(): Promise<{ totalEvents: number; totalAttendees: number; totalProviders: number }> {
+    const [eventCount] = await db.select({ count: sql`COUNT(*)` }).from(events);
+    const [attendeeCount] = await db.select({ count: sql`COUNT(*)` }).from(eventRegistrations);
+    const [providerCount] = await db.select({ count: sql`COUNT(*)` }).from(serviceProviders);
+
+    return {
+      totalEvents: Number(eventCount.count),
+      totalAttendees: Number(attendeeCount.count),
+      totalProviders: Number(providerCount.count),
+    };
+  }
+}
+
+export const storage = new DatabaseStorage();

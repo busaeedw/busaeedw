@@ -1,0 +1,327 @@
+import { useEffect } from 'react';
+import { useAuth } from '@/hooks/useAuth';
+import { useLanguage } from '@/hooks/useLanguage';
+import { useToast } from '@/hooks/use-toast';
+import { Header } from '@/components/Header';
+import { Footer } from '@/components/Footer';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { LoadingSpinner, LoadingSkeleton } from '@/components/ui/loading';
+import { useQuery } from '@tanstack/react-query';
+import { useLocation } from 'wouter';
+import { 
+  Users, 
+  CalendarCheck, 
+  Building, 
+  TrendingUp,
+  Eye,
+  MoreHorizontal,
+  CheckCircle,
+  XCircle
+} from 'lucide-react';
+import { isUnauthorizedError } from '@/lib/authUtils';
+
+export default function AdminDashboard() {
+  const { user, isAuthenticated, isLoading } = useAuth();
+  const { t } = useLanguage();
+  const { toast } = useToast();
+  const [, setLocation] = useLocation();
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      toast({
+        title: "Unauthorized",
+        description: "You are logged out. Logging in again...",
+        variant: "destructive",
+      });
+      setTimeout(() => {
+        window.location.href = "/api/login";
+      }, 500);
+      return;
+    }
+  }, [isAuthenticated, isLoading, toast]);
+
+  // Check if user is admin
+  useEffect(() => {
+    if (!isLoading && isAuthenticated && user) {
+      if (user.role !== 'admin') {
+        toast({
+          title: "Access Denied",
+          description: "Admin access required.",
+          variant: "destructive",
+        });
+        setLocation('/dashboard');
+      }
+    }
+  }, [user, isAuthenticated, isLoading, toast, setLocation]);
+
+  const { data: stats, isLoading: statsLoading, error: statsError } = useQuery({
+    queryKey: ['/api/stats'],
+    enabled: isAuthenticated && user?.role === 'admin',
+    retry: false,
+  });
+
+  const { data: allEvents, isLoading: eventsLoading, error: eventsError } = useQuery({
+    queryKey: ['/api/events?limit=10'],
+    enabled: isAuthenticated && user?.role === 'admin',
+    retry: false,
+  });
+
+  const { data: serviceProviders, isLoading: providersLoading, error: providersError } = useQuery({
+    queryKey: ['/api/service-providers?limit=10'],
+    enabled: isAuthenticated && user?.role === 'admin',
+    retry: false,
+  });
+
+  // Handle unauthorized errors
+  useEffect(() => {
+    const errors = [statsError, eventsError, providersError].filter(Boolean);
+    errors.forEach(error => {
+      if (error && isUnauthorizedError(error)) {
+        toast({
+          title: "Unauthorized",
+          description: "You are logged out. Logging in again...",
+          variant: "destructive",
+        });
+        setTimeout(() => {
+          window.location.href = "/api/login";
+        }, 500);
+      }
+    });
+  }, [statsError, eventsError, providersError, toast]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Header />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <LoadingSpinner className="mx-auto" size="lg" />
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated || user?.role !== 'admin') {
+    return null; // Will redirect
+  }
+
+  const getStatusColor = (status: string) => {
+    const colors = {
+      published: 'bg-green-100 text-green-700',
+      draft: 'bg-yellow-100 text-yellow-700',
+      cancelled: 'bg-red-100 text-red-700',
+    };
+    return colors[status] || 'bg-gray-100 text-gray-700';
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <Header />
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Admin Dashboard</h1>
+          <p className="text-gray-600">Manage platform activities and oversight</p>
+        </div>
+
+        {/* Stats Overview */}
+        <div className="grid md:grid-cols-4 gap-6 mb-8">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Total Events</CardTitle>
+              <CalendarCheck className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              {statsLoading ? (
+                <LoadingSkeleton lines={1} />
+              ) : (
+                <>
+                  <div className="text-2xl font-bold">{stats?.totalEvents || 0}</div>
+                  <p className="text-xs text-muted-foreground">Platform wide</p>
+                </>
+              )}
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Total Users</CardTitle>
+              <Users className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              {statsLoading ? (
+                <LoadingSkeleton lines={1} />
+              ) : (
+                <>
+                  <div className="text-2xl font-bold">{stats?.totalAttendees || 0}</div>
+                  <p className="text-xs text-muted-foreground">Registered users</p>
+                </>
+              )}
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Service Providers</CardTitle>
+              <Building className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              {statsLoading ? (
+                <LoadingSkeleton lines={1} />
+              ) : (
+                <>
+                  <div className="text-2xl font-bold">{stats?.totalProviders || 0}</div>
+                  <p className="text-xs text-muted-foreground">Active providers</p>
+                </>
+              )}
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Growth</CardTitle>
+              <TrendingUp className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">+12%</div>
+              <p className="text-xs text-muted-foreground">This month</p>
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="grid lg:grid-cols-2 gap-8">
+          {/* Recent Events */}
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle>Recent Events</CardTitle>
+              <Button variant="outline" size="sm">
+                View All
+              </Button>
+            </CardHeader>
+            <CardContent>
+              {eventsLoading ? (
+                <LoadingSkeleton lines={5} />
+              ) : allEvents && allEvents.length > 0 ? (
+                <div className="space-y-4">
+                  {allEvents.slice(0, 5).map((event: any) => (
+                    <div key={event.id} className="flex items-center justify-between p-4 border rounded-lg">
+                      <div className="flex-1">
+                        <h3 className="font-medium">{event.title}</h3>
+                        <p className="text-sm text-muted-foreground">
+                          {new Date(event.startDate).toLocaleDateString()} • {event.city}
+                        </p>
+                        <div className="flex items-center space-x-2 mt-2">
+                          <Badge className={getStatusColor(event.status)}>
+                            {event.status}
+                          </Badge>
+                          <Badge variant="outline">{event.category}</Badge>
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Button size="sm" variant="outline">
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        <Button size="sm" variant="outline">
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-gray-500 text-center py-8">No events found</p>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Service Providers */}
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle>Service Providers</CardTitle>
+              <Button variant="outline" size="sm">
+                Manage All
+              </Button>
+            </CardHeader>
+            <CardContent>
+              {providersLoading ? (
+                <LoadingSkeleton lines={5} />
+              ) : serviceProviders && serviceProviders.length > 0 ? (
+                <div className="space-y-4">
+                  {serviceProviders.slice(0, 5).map((provider: any) => (
+                    <div key={provider.id} className="flex items-center justify-between p-4 border rounded-lg">
+                      <div className="flex-1">
+                        <h3 className="font-medium">{provider.businessName}</h3>
+                        <p className="text-sm text-muted-foreground capitalize">
+                          {provider.category}
+                        </p>
+                        <div className="flex items-center space-x-2 mt-2">
+                          <Badge variant={provider.verified ? 'default' : 'secondary'}>
+                            {provider.verified ? (
+                              <>
+                                <CheckCircle className="h-3 w-3 mr-1" />
+                                Verified
+                              </>
+                            ) : (
+                              <>
+                                <XCircle className="h-3 w-3 mr-1" />
+                                Pending
+                              </>
+                            )}
+                          </Badge>
+                          <span className="text-sm text-muted-foreground">
+                            {provider.rating || 0}★ ({provider.reviewCount || 0})
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Button size="sm" variant="outline">
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        <Button size="sm" variant="outline">
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-gray-500 text-center py-8">No service providers found</p>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Quick Actions */}
+        <div className="mt-8">
+          <Card>
+            <CardHeader>
+              <CardTitle>Quick Actions</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid md:grid-cols-4 gap-4">
+                <Button variant="outline" className="h-20 flex flex-col">
+                  <Users className="h-6 w-6 mb-2" />
+                  <span>Manage Users</span>
+                </Button>
+                <Button variant="outline" className="h-20 flex flex-col">
+                  <CalendarCheck className="h-6 w-6 mb-2" />
+                  <span>Review Events</span>
+                </Button>
+                <Button variant="outline" className="h-20 flex flex-col">
+                  <Building className="h-6 w-6 mb-2" />
+                  <span>Verify Providers</span>
+                </Button>
+                <Button variant="outline" className="h-20 flex flex-col">
+                  <TrendingUp className="h-6 w-6 mb-2" />
+                  <span>View Analytics</span>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </main>
+      <Footer />
+    </div>
+  );
+}
