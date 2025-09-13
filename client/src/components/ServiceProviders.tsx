@@ -7,9 +7,11 @@ import { Utensils, Camera, Music, Settings, Star } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { LoadingSkeleton } from '@/components/ui/loading';
 import { Link } from 'wouter';
+import { useAuth } from '@/hooks/useAuth';
 
 export function ServiceProviders() {
   const { t } = useLanguage();
+  const { isAuthenticated } = useAuth();
 
   const { data: providers, isLoading } = useQuery({
     queryKey: ['/api/service-providers?limit=3&verified=true'],
@@ -156,12 +158,16 @@ export function ServiceProviders() {
                         </span>
                         <Button
                           size="sm"
-                          asChild
                           className="bg-saudi-green hover:bg-saudi-green/90"
+                          onClick={() => {
+                            if (isAuthenticated) {
+                              window.location.href = `/service-providers/${provider.id}`;
+                            } else {
+                              window.location.href = '/api/login';
+                            }
+                          }}
                         >
-                          <Link href={`/service-providers/${provider.id}`}>
-                            {t('services.cta.profile')}
-                          </Link>
+                          {t('services.cta.profile')}
                         </Button>
                       </div>
                     </div>
@@ -178,13 +184,17 @@ export function ServiceProviders() {
 
         <div className="text-center mt-12">
           <Button
-            asChild
             className="bg-saudi-green hover:bg-saudi-green/90"
+            onClick={() => {
+              if (isAuthenticated) {
+                window.location.href = '/service-providers';
+              } else {
+                window.location.href = '/api/login';
+              }
+            }}
           >
-            <Link href="/service-providers">
-              {t('services.cta.browse')}
-              <span className="ml-2">→</span>
-            </Link>
+            {t('services.cta.browse')}
+            <span className="ml-2">→</span>
           </Button>
         </div>
       </div>

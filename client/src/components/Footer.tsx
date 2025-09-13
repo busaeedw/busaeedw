@@ -7,7 +7,7 @@ export function Footer() {
 
   const footerLinks = {
     organizers: [
-      { href: '/create-event', label: language === 'ar' ? 'إنشاء فعالية' : 'Create Event' },
+      { href: '/events/create', label: language === 'ar' ? 'إنشاء فعالية' : 'Create Event' },
       { href: '/manage-tickets', label: language === 'ar' ? 'إدارة التذاكر' : 'Manage Tickets' },
       { href: '/analytics', label: language === 'ar' ? 'التحليلات' : 'Analytics' },
       { href: '/pricing', label: language === 'ar' ? 'التسعير' : 'Pricing' },

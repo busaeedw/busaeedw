@@ -7,9 +7,11 @@ import { Calendar, MapPin } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { LoadingSkeleton } from '@/components/ui/loading';
 import { Link } from 'wouter';
+import { useAuth } from '@/hooks/useAuth';
 
 export function FeaturedEvents() {
   const { t } = useLanguage();
+  const { isAuthenticated } = useAuth();
 
   const { data: events, isLoading } = useQuery({
     queryKey: ['/api/events?limit=6'],
@@ -135,12 +137,16 @@ export function FeaturedEvents() {
                       </div>
                     </div>
                     <Button
-                      asChild
                       className="bg-saudi-green hover:bg-saudi-green/90"
+                      onClick={() => {
+                        if (isAuthenticated) {
+                          window.location.href = `/events/${event.id}`;
+                        } else {
+                          window.location.href = '/api/login';
+                        }
+                      }}
                     >
-                      <Link href={`/events/${event.id}`}>
-                        {t('events.cta.view')}
-                      </Link>
+                      {t('events.cta.view')}
                     </Button>
                   </div>
                 </CardContent>
@@ -156,13 +162,17 @@ export function FeaturedEvents() {
         <div className="text-center mt-12">
           <Button
             variant="outline"
-            asChild
             className="border-2 border-saudi-green text-saudi-green hover:bg-saudi-green hover:text-white transition-all"
+            onClick={() => {
+              if (isAuthenticated) {
+                window.location.href = '/events';
+              } else {
+                window.location.href = '/api/login';
+              }
+            }}
           >
-            <Link href="/events">
-              {t('events.cta.viewall')}
-              <span className="ml-2">→</span>
-            </Link>
+            {t('events.cta.viewall')}
+            <span className="ml-2">→</span>
           </Button>
         </div>
       </div>

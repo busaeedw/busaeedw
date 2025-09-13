@@ -1,9 +1,12 @@
 import { useLanguage } from '@/hooks/useLanguage';
 import { Button } from '@/components/ui/button';
 import { Calendar, Search } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
+import { Link } from 'wouter';
 
 export function Hero() {
   const { t } = useLanguage();
+  const { isAuthenticated } = useAuth();
 
   return (
     <section className="relative bg-gradient-to-r from-saudi-green via-primary-600 to-primary-500 hero-pattern">
@@ -22,6 +25,13 @@ export function Hero() {
               <Button
                 size="lg"
                 className="bg-gold-500 text-gray-900 hover:bg-gold-400 transition-all transform hover:scale-105 shadow-lg text-lg px-8 py-4"
+                onClick={() => {
+                  if (isAuthenticated) {
+                    window.location.href = '/events/create';
+                  } else {
+                    window.location.href = '/api/login';
+                  }
+                }}
               >
                 <Calendar className="mr-2 h-5 w-5" />
                 {t('hero.cta.create')}
@@ -30,6 +40,13 @@ export function Hero() {
                 variant="outline"
                 size="lg"
                 className="border-2 border-white text-white hover:bg-white hover:text-primary-600 transition-all text-lg px-8 py-4"
+                onClick={() => {
+                  if (isAuthenticated) {
+                    window.location.href = '/events';
+                  } else {
+                    window.location.href = '/api/login';
+                  }
+                }}
               >
                 <Search className="mr-2 h-5 w-5" />
                 {t('hero.cta.find')}
