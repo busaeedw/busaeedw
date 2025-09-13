@@ -327,15 +327,59 @@ export default function EventCreate() {
                   <FormField
                     control={form.control}
                     name="venue"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Venue</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Venue name" {...field} value={field.value || ''} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
+                    render={({ field }) => {
+                      const selectedCity = form.watch("city");
+                      const riyadhVenues = [
+                        "Riyadh International Convention & Exhibition Center",
+                        "Al Faisaliah Hotel - Prince Sultan's Grand Hall",
+                        "Four Seasons Hotel Riyadh - Kingdom Ballroom", 
+                        "Nayyara Banqueting & Conference Centre",
+                        "Hilton Riyadh Hotel & Residences",
+                        "Raffles Hotel Riyadh - Rafal Ballroom",
+                        "Mövenpick Hotel Riyadh - Grand Ballroom",
+                        "JW Marriott Hotel Riyadh",
+                        "Radisson Blu Hotel & Convention Center",
+                        "King Fahd Culture Centre"
+                      ];
+
+                      if (selectedCity === "riyadh") {
+                        return (
+                          <FormItem>
+                            <FormLabel>Venue</FormLabel>
+                            <Select onValueChange={field.onChange} value={field.value || ""}>
+                              <FormControl>
+                                <SelectTrigger data-testid="select-venue">
+                                  <SelectValue placeholder="Select a venue in Riyadh" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                {riyadhVenues.map((venue) => (
+                                  <SelectItem key={venue} value={venue}>
+                                    {venue}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        );
+                      }
+
+                      return (
+                        <FormItem>
+                          <FormLabel>Venue</FormLabel>
+                          <FormControl>
+                            <Input 
+                              placeholder="Venue name" 
+                              {...field} 
+                              value={field.value || ''} 
+                              data-testid="input-venue"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      );
+                    }}
                   />
                 </div>
               </CardContent>

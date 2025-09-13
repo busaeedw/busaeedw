@@ -57,12 +57,25 @@ function updateUserSession(
 async function upsertUser(
   claims: any,
 ) {
+  // Determine role based on user ID pattern (for testing purposes)
+  let role = "attendee"; // default role
+  const userId = claims["sub"];
+  
+  if (userId.includes("organizer")) {
+    role = "organizer";
+  } else if (userId.includes("admin")) {
+    role = "admin";
+  } else if (userId.includes("service_provider")) {
+    role = "service_provider";
+  }
+
   await storage.upsertUser({
     id: claims["sub"],
     email: claims["email"],
     firstName: claims["first_name"],
     lastName: claims["last_name"],
     profileImageUrl: claims["profile_image_url"],
+    role: role,
   });
 }
 

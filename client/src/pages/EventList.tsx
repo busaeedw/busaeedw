@@ -29,7 +29,7 @@ export default function EventList() {
   });
 
   const categories = [
-    { value: '', label: t('events.filter.all') },
+    { value: 'all', label: t('events.filter.all') },
     { value: 'business', label: t('events.filter.business') },
     { value: 'cultural', label: t('events.filter.cultural') },
     { value: 'technology', label: t('events.filter.technology') },
@@ -37,7 +37,7 @@ export default function EventList() {
   ];
 
   const cities = [
-    { value: '', label: 'All Cities' },
+    { value: 'all', label: 'All Cities' },
     { value: 'riyadh', label: 'Riyadh' },
     { value: 'jeddah', label: 'Jeddah' },
     { value: 'dammam', label: 'Dammam' },
