@@ -121,15 +121,15 @@ export default function AdminDashboard() {
       <Header />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Admin Dashboard</h1>
-          <p className="text-gray-600">Manage platform activities and oversight</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('admin.dashboard.title')}</h1>
+          <p className="text-gray-600">{t('admin.dashboard.subtitle')}</p>
         </div>
 
         {/* Stats Overview */}
         <div className="grid md:grid-cols-4 gap-6 mb-8">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Events</CardTitle>
+              <CardTitle className="text-sm font-medium">{t('admin.stats.total.events')}</CardTitle>
               <CalendarCheck className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -138,7 +138,7 @@ export default function AdminDashboard() {
               ) : (
                 <>
                   <div className="text-2xl font-bold">{stats?.totalEvents || 0}</div>
-                  <p className="text-xs text-muted-foreground">Platform wide</p>
+                  <p className="text-xs text-muted-foreground">{t('admin.stats.platform.wide')}</p>
                 </>
               )}
             </CardContent>
@@ -146,7 +146,7 @@ export default function AdminDashboard() {
           
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Users</CardTitle>
+              <CardTitle className="text-sm font-medium">{t('admin.stats.total.users')}</CardTitle>
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -155,7 +155,7 @@ export default function AdminDashboard() {
               ) : (
                 <>
                   <div className="text-2xl font-bold">{stats?.totalAttendees || 0}</div>
-                  <p className="text-xs text-muted-foreground">Registered users</p>
+                  <p className="text-xs text-muted-foreground">{t('admin.stats.registered.users')}</p>
                 </>
               )}
             </CardContent>
@@ -163,7 +163,7 @@ export default function AdminDashboard() {
           
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Service Providers</CardTitle>
+              <CardTitle className="text-sm font-medium">{t('admin.stats.service.providers')}</CardTitle>
               <Building className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -172,7 +172,7 @@ export default function AdminDashboard() {
               ) : (
                 <>
                   <div className="text-2xl font-bold">{stats?.totalProviders || 0}</div>
-                  <p className="text-xs text-muted-foreground">Active providers</p>
+                  <p className="text-xs text-muted-foreground">{t('admin.stats.active.providers')}</p>
                 </>
               )}
             </CardContent>
@@ -180,12 +180,12 @@ export default function AdminDashboard() {
           
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Growth</CardTitle>
+              <CardTitle className="text-sm font-medium">{t('admin.stats.growth')}</CardTitle>
               <TrendingUp className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">+12%</div>
-              <p className="text-xs text-muted-foreground">This month</p>
+              <p className="text-xs text-muted-foreground">{t('admin.stats.this.month')}</p>
             </CardContent>
           </Card>
         </div>
@@ -194,9 +194,9 @@ export default function AdminDashboard() {
           {/* Recent Events */}
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle>Recent Events</CardTitle>
+              <CardTitle>{t('admin.recent.events')}</CardTitle>
               <Button variant="outline" size="sm">
-                View All
+                {t('admin.recent.manage.all')}
               </Button>
             </CardHeader>
             <CardContent>
@@ -230,7 +230,7 @@ export default function AdminDashboard() {
                   ))}
                 </div>
               ) : (
-                <p className="text-gray-500 text-center py-8">No events found</p>
+                <p className="text-gray-500 text-center py-8">{t('events.notfound.title')}</p>
               )}
             </CardContent>
           </Card>
@@ -238,9 +238,9 @@ export default function AdminDashboard() {
           {/* Service Providers */}
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle>Service Providers</CardTitle>
+              <CardTitle>{t('admin.stats.service.providers')}</CardTitle>
               <Button variant="outline" size="sm">
-                Manage All
+                {t('admin.recent.manage.all')}
               </Button>
             </CardHeader>
             <CardContent>
@@ -296,25 +296,25 @@ export default function AdminDashboard() {
         <div className="mt-8">
           <Card>
             <CardHeader>
-              <CardTitle>Quick Actions</CardTitle>
+              <CardTitle>{t('admin.quick.actions')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid md:grid-cols-4 gap-4">
                 <Button variant="outline" className="h-20 flex flex-col">
                   <Users className="h-6 w-6 mb-2" />
-                  <span>Manage Users</span>
+                  <span>{t('admin.quick.manage.users')}</span>
                 </Button>
                 <Button variant="outline" className="h-20 flex flex-col">
                   <CalendarCheck className="h-6 w-6 mb-2" />
-                  <span>Review Events</span>
+                  <span>{t('admin.quick.review.events')}</span>
                 </Button>
                 <Button variant="outline" className="h-20 flex flex-col">
                   <Building className="h-6 w-6 mb-2" />
-                  <span>Verify Providers</span>
+                  <span>{t('admin.quick.verify.providers')}</span>
                 </Button>
                 <Button variant="outline" className="h-20 flex flex-col">
                   <TrendingUp className="h-6 w-6 mb-2" />
-                  <span>View Analytics</span>
+                  <span>{t('admin.quick.view.analytics')}</span>
                 </Button>
               </div>
             </CardContent>
