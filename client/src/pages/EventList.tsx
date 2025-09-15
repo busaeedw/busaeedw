@@ -152,7 +152,7 @@ export default function EventList() {
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between mb-3">
                       <Badge className={getCategoryColor(event.category)}>
-                        {event.category}
+                        {t(`events.filter.${event.category}`) || event.category}
                       </Badge>
                       <span className="text-gold-500 font-semibold">
                         {event.price === '0.00' || event.price === 0
@@ -172,7 +172,7 @@ export default function EventList() {
                         {new Date(event.startDate).toLocaleDateString()}
                       </span>
                       <MapPin className="h-4 w-4 mr-2" />
-                      <span>{event.city}, Saudi Arabia</span>
+                      <span>{event.city}, {t('common.country.sa')}</span>
                     </div>
                     <div className="flex items-center justify-between">
                       <div className="flex -space-x-2">

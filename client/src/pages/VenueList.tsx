@@ -160,7 +160,7 @@ export default function VenueList() {
             
             <Select value={selectedCity} onValueChange={setSelectedCity}>
               <SelectTrigger data-testid="select-city-filter">
-                <SelectValue placeholder="Select City" />
+                <SelectValue placeholder={t('common.select.city')} />
               </SelectTrigger>
               <SelectContent>
                 {cities.map((city) => (
@@ -213,7 +213,7 @@ export default function VenueList() {
                   <div className="relative">
                     <img
                       src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&h=400&fit=crop"
-                      alt={venue.venue || 'Venue image'}
+                      alt={venue.venue || t('common.venue.image')}
                       className="w-full h-48 object-cover"
                     />
                     <div className="absolute top-4 right-4">
@@ -224,11 +224,11 @@ export default function VenueList() {
                   </div>
                   <CardContent className="p-6">
                     <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                      {venue.venue || 'Unknown Venue'}
+                      {venue.venue || t('common.unknown.venue')}
                     </h3>
                     <div className="flex items-center text-sm text-gray-500 mb-4">
                       <MapPin className="h-4 w-4 mr-2" />
-                      <span>{venue.location || 'Unknown Location'}, {venue.city || 'Unknown City'}</span>
+                      <span>{venue.location || t('common.unknown.location')}, {t(`venues.city.${venue.city?.toLowerCase()}`) || venue.city || t('common.unknown.city')}</span>
                     </div>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center text-sm text-gray-600">

@@ -32,8 +32,8 @@ export default function AdminDashboard() {
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
       toast({
-        title: "Unauthorized",
-        description: "You are logged out. Logging in again...",
+        title: t('common.unauthorized'),
+        description: t('common.unauthorized.desc'),
         variant: "destructive",
       });
       setTimeout(() => {
@@ -48,8 +48,8 @@ export default function AdminDashboard() {
     if (!isLoading && isAuthenticated && user) {
       if (user.role !== 'admin') {
         toast({
-          title: "Access Denied",
-          description: "Admin access required.",
+          title: t('common.access.denied'),
+          description: t('common.admin.required'),
           variant: "destructive",
         });
         setLocation('/dashboard');

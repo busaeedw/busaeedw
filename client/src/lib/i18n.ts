@@ -161,6 +161,16 @@ const translations = {
     'common.category': 'Category',
     'common.status': 'Status',
     'common.actions': 'Actions',
+    'common.country.sa': 'Saudi Arabia',
+    'common.select.city': 'Select City',
+    'common.venue.image': 'Venue image',
+    'common.unauthorized': 'Unauthorized',
+    'common.unauthorized.desc': 'You are logged out. Logging in again...',
+    'common.access.denied': 'Access Denied',
+    'common.admin.required': 'Admin access required.',
+    'common.unknown.venue': 'Unknown Venue',
+    'common.unknown.location': 'Unknown Location',
+    'common.unknown.city': 'Unknown City',
   },
   ar: {
     // Header
@@ -324,6 +334,16 @@ const translations = {
     'common.category': 'الفئة',
     'common.status': 'الحالة',
     'common.actions': 'الإجراءات',
+    'common.country.sa': 'المملكة العربية السعودية',
+    'common.select.city': 'اختر المدينة',
+    'common.venue.image': 'صورة المكان',
+    'common.unauthorized': 'غير مخول',
+    'common.unauthorized.desc': 'لقد تم تسجيل خروجك. جاري تسجيل الدخول مرة أخرى...',
+    'common.access.denied': 'تم رفض الوصول',
+    'common.admin.required': 'مطلوب دخول المدير.',
+    'common.unknown.venue': 'مكان غير معروف',
+    'common.unknown.location': 'موقع غير معروف',
+    'common.unknown.city': 'مدينة غير معروفة',
   },
 };
 
