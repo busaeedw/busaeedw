@@ -46,12 +46,12 @@ export default function EventList() {
   ];
 
   const cities = [
-    { value: 'all', label: 'All Cities' },
-    { value: 'riyadh', label: 'Riyadh' },
-    { value: 'jeddah', label: 'Jeddah' },
-    { value: 'dammam', label: 'Dammam' },
-    { value: 'mecca', label: 'Mecca' },
-    { value: 'medina', label: 'Medina' },
+    { value: 'all', label: t('venues.city.all') },
+    { value: 'riyadh', label: t('venues.city.riyadh') },
+    { value: 'jeddah', label: t('venues.city.jeddah') },
+    { value: 'dammam', label: t('venues.city.dammam') },
+    { value: 'mecca', label: t('venues.city.mecca') },
+    { value: 'medina', label: t('venues.city.medina') },
   ];
 
   const getCategoryColor = (category: string) => {
@@ -203,12 +203,12 @@ export default function EventList() {
             ) : (
               <div className="col-span-full text-center py-12">
                 <Calendar className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No events found</h3>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">{t('events.notfound.title')}</h3>
                 <p className="text-gray-500 mb-6">
-                  Try adjusting your search criteria or browse all events.
+                  {t('events.notfound.subtitle')}
                 </p>
                 <Button asChild>
-                  <Link href="/events/create">Create Event</Link>
+                  <Link href="/events/create">{t('events.cta.create')}</Link>
                 </Button>
               </div>
             )}
@@ -219,7 +219,7 @@ export default function EventList() {
         {eventsList && eventsList.length > 0 && (
           <div className="text-center mt-12">
             <Button variant="outline">
-              Load More Events
+              {t('events.cta.loadmore')}
             </Button>
           </div>
         )}

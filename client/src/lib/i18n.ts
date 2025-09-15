@@ -61,7 +61,11 @@ const translations = {
     'events.cta.register': 'Register',
     'events.cta.buy': 'Buy Tickets',
     'events.cta.viewall': 'View All Events',
+    'events.cta.create': 'Create Event',
+    'events.cta.loadmore': 'Load More Events',
     'events.free': 'Free',
+    'events.notfound.title': 'No events found',
+    'events.notfound.subtitle': 'Try adjusting your search criteria or browse all events.',
     
     // Services
     'services.title': 'Trusted Service Providers',
@@ -220,7 +224,11 @@ const translations = {
     'events.cta.register': 'التسجيل',
     'events.cta.buy': 'شراء تذاكر',
     'events.cta.viewall': 'عرض جميع الفعاليات',
+    'events.cta.create': 'إنشاء فعالية',
+    'events.cta.loadmore': 'تحميل المزيد من الفعاليات',
     'events.free': 'مجاني',
+    'events.notfound.title': 'لم يتم العثور على فعاليات',
+    'events.notfound.subtitle': 'حاول تعديل معايير البحث أو تصفح جميع الفعاليات.',
     
     // Services
     'services.title': 'مقدمو الخدمات الموثوقون',
