@@ -403,24 +403,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Temporary endpoint for initial seeding (remove after use)
-  app.post('/api/init-seed-organizers', async (req, res) => {
-    try {
-      // Check if organizers already exist
-      const existingProviders = await storage.getServiceProviders();
-      if (existingProviders.length > 0) {
-        return res.json({ message: "Organizers already seeded", count: existingProviders.length });
-      }
-
-      const { seedRiyadhOrganizers } = await import('./seedOrganizers');
-      await seedRiyadhOrganizers();
-      
-      res.json({ message: "Successfully seeded 10 Riyadh event organizers" });
-    } catch (error) {
-      console.error("Error seeding organizers:", error);
-      res.status(500).json({ message: "Failed to seed organizers", error: error.message });
-    }
-  });
 
   const httpServer = createServer(app);
   return httpServer;
