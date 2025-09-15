@@ -2,6 +2,7 @@ const translations = {
   en: {
     // Header
     'nav.events': 'Events',
+    'nav.venues': 'Venues',
     'nav.services': 'Services',
     'nav.about': 'About',
     'nav.contact': 'Contact',
@@ -122,6 +123,7 @@ const translations = {
   ar: {
     // Header
     'nav.events': 'الفعاليات',
+    'nav.venues': 'الأماكن',
     'nav.services': 'الخدمات',
     'nav.about': 'من نحن',
     'nav.contact': 'اتصل بنا',
