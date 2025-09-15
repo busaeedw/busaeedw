@@ -2,6 +2,8 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
+import { db } from "./db";
+import { sql } from "drizzle-orm";
 import { 
   insertEventSchema,
   insertServiceProviderSchema,
@@ -380,6 +382,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching statistics:", error);
       res.status(500).json({ message: "Failed to fetch statistics" });
+    }
+  });
+
+  // Venues endpoint
+  app.get('/api/venues', async (req, res) => {
+    try {
+      const { search, city, limit } = req.query;
+      
+      // Simple approach: Get distinct venues from events table using raw SQL
+      const result = await db.execute(sql`
+        SELECT DISTINCT venue, city, location, 
+               COUNT(*) as event_count
+        FROM events 
+        WHERE status = 'published' 
+        AND venue IS NOT NULL 
+        AND venue != ''
+        GROUP BY venue, city, location
+        ORDER BY venue
+      `);
+      
+      res.json(result.rows);
+    } catch (error) {
+      console.error("Error fetching venues:", error);
+      res.status(500).json({ message: "Failed to fetch venues", error: error.message });
     }
   });
 
