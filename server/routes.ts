@@ -223,11 +223,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/service-providers', async (req, res) => {
     try {
       const { category, verified, limit, offset } = req.query;
+      const categoryStr = typeof category === 'string' && category.trim() !== '' ? category : undefined;
+      const verifiedStr = typeof verified === 'string' && (verified === 'true' || verified === 'false') ? verified : undefined;
       const providers = await storage.getServiceProviders({
-        category: category as string,
-        verified: verified === 'true',
-        limit: limit ? parseInt(limit as string) : undefined,
-        offset: offset ? parseInt(offset as string) : undefined,
+        category: categoryStr,
+        verified: verifiedStr ? verifiedStr === 'true' : undefined,
+        limit: typeof limit === 'string' && limit.trim() !== '' ? parseInt(limit) : undefined,
+        offset: typeof offset === 'string' && offset.trim() !== '' ? parseInt(offset) : undefined,
       });
       res.json(providers);
     } catch (error) {
