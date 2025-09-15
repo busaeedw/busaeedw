@@ -403,18 +403,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Temporary endpoint for seeding service providers (remove after use)
-  app.post('/api/init-seed-service-providers', async (req, res) => {
-    try {
-      const { seedRiyadhServiceProviders } = await import('./seedServiceProviders');
-      await seedRiyadhServiceProviders();
-      
-      res.json({ message: "Successfully seeded 10 Riyadh event service providers" });
-    } catch (error) {
-      console.error("Error seeding service providers:", error);
-      res.status(500).json({ message: "Failed to seed service providers", error: error.message });
-    }
-  });
 
   const httpServer = createServer(app);
   return httpServer;
