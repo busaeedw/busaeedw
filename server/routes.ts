@@ -381,6 +381,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Admin endpoint to seed Riyadh organizers (one-time use)
+  app.post('/api/admin/seed-organizers', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      
+      if (!user || user.role !== "admin") {
+        return res.status(403).json({ message: "Admin access required" });
+      }
+
+      const { seedRiyadhOrganizers } = await import('./seedOrganizers');
+      await seedRiyadhOrganizers();
+      
+      res.json({ message: "Successfully seeded 10 Riyadh event organizers" });
+    } catch (error) {
+      console.error("Error seeding organizers:", error);
+      res.status(500).json({ message: "Failed to seed organizers" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
