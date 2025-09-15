@@ -19,7 +19,11 @@ export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navItems = [
-    { href: '/events', label: t('nav.events') },
+    { 
+      href: isAuthenticated ? '/events' : '/#events', 
+      label: t('nav.events'),
+      isInternal: !isAuthenticated
+    },
     { href: '/services', label: t('nav.services') },
     { href: '/about', label: t('nav.about') },
     { href: '/contact', label: t('nav.contact') },
@@ -47,19 +51,36 @@ export function Header() {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex space-x-8">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`px-3 py-2 text-sm font-medium transition-colors ${
-                  location === item.href
-                    ? 'text-saudi-green border-b-2 border-saudi-green'
-                    : 'text-gray-700 hover:text-saudi-green'
-                }`}
-              >
-                {item.label}
-              </Link>
-            ))}
+            {navItems.map((item) => {
+              if (item.isInternal) {
+                return (
+                  <a
+                    key={item.href}
+                    href={item.href}
+                    className={`px-3 py-2 text-sm font-medium transition-colors ${
+                      location === item.href
+                        ? 'text-saudi-green border-b-2 border-saudi-green'
+                        : 'text-gray-700 hover:text-saudi-green'
+                    }`}
+                  >
+                    {item.label}
+                  </a>
+                );
+              }
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`px-3 py-2 text-sm font-medium transition-colors ${
+                    location === item.href
+                      ? 'text-saudi-green border-b-2 border-saudi-green'
+                      : 'text-gray-700 hover:text-saudi-green'
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
           </nav>
 
           {/* Language Toggle */}
@@ -125,16 +146,30 @@ export function Header() {
             </SheetTrigger>
             <SheetContent side={isRTL ? "left" : "right"}>
               <nav className="flex flex-col space-y-4">
-                {navItems.map((item) => (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="text-lg font-medium text-gray-900 hover:text-saudi-green"
-                  >
-                    {item.label}
-                  </Link>
-                ))}
+                {navItems.map((item) => {
+                  if (item.isInternal) {
+                    return (
+                      <a
+                        key={item.href}
+                        href={item.href}
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="text-lg font-medium text-gray-900 hover:text-saudi-green"
+                      >
+                        {item.label}
+                      </a>
+                    );
+                  }
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="text-lg font-medium text-gray-900 hover:text-saudi-green"
+                    >
+                      {item.label}
+                    </Link>
+                  );
+                })}
                 {!isLoading && (
                   <>
                     {isAuthenticated && user ? (

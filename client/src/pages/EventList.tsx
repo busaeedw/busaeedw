@@ -19,14 +19,23 @@ export default function EventList() {
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedCity, setSelectedCity] = useState('');
 
+  // Build query parameters
+  const buildQueryString = () => {
+    const params = new URLSearchParams();
+    if (searchQuery) params.append('search', searchQuery);
+    if (selectedCategory && selectedCategory !== 'all') params.append('category', selectedCategory);
+    if (selectedCity && selectedCity !== 'all') params.append('city', selectedCity);
+    params.append('limit', '20');
+    const queryString = params.toString();
+    return queryString ? `?${queryString}` : '';
+  };
+
   const { data: events, isLoading } = useQuery({
-    queryKey: ['/api/events', { 
-      search: searchQuery || undefined,
-      category: selectedCategory || undefined,
-      city: selectedCity || undefined,
-      limit: 20 
-    }],
+    queryKey: [`/api/events${buildQueryString()}`],
   });
+
+  // Type the events data properly
+  const eventsList = events as any[] || [];
 
   const categories = [
     { value: 'all', label: t('events.filter.all') },
@@ -46,7 +55,7 @@ export default function EventList() {
   ];
 
   const getCategoryColor = (category: string) => {
-    const colors = {
+    const colors: Record<string, string> = {
       technology: 'bg-primary-100 text-primary-700',
       cultural: 'bg-gold-100 text-gold-700',
       business: 'bg-blue-100 text-blue-700',
@@ -127,8 +136,8 @@ export default function EventList() {
           </div>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {events && events.length > 0 ? (
-              events.map((event: any) => (
+            {eventsList && eventsList.length > 0 ? (
+              eventsList.map((event: any) => (
                 <Card
                   key={event.id}
                   className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all transform hover:-translate-y-1"
@@ -207,7 +216,7 @@ export default function EventList() {
         )}
 
         {/* Load More */}
-        {events && events.length > 0 && (
+        {eventsList && eventsList.length > 0 && (
           <div className="text-center mt-12">
             <Button variant="outline">
               Load More Events
