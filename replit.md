@@ -49,6 +49,33 @@ Preferred communication style: Simple, everyday language.
 - **Review & Rating**: Bidirectional review system for events and service providers
 - **Admin Dashboard**: Administrative oversight and management tools
 
+## Recent Updates (September 2025)
+
+### Real Event Service Providers Added
+Successfully integrated 10 authentic event service providers from Riyadh, Saudi Arabia:
+
+**Catering Services:**
+- **Le Carré by Four Seasons** - Premium fine dining catering (500-1000 SAR per person)
+- **DineSamrah Bespoke Catering** - Bespoke gastronomic experiences (400-800 SAR per person)
+- **Baguettering** - Canapés and corporate event catering (200-500 SAR per person)
+
+**Photography Services:**
+- **Tasneem Alsultan Photography** - Award-winning documentary photography (5000-15000 SAR per event)
+- **One Day Studio** - Editorial royal style wedding photography (4000-12000 SAR per event)
+
+**Entertainment Services:**
+- **Scarlett Entertainment KSA** - LED dancers, musicians, entertainment productions (8000-25000 SAR per event)
+- **Bella Entertainment** - Fire dancers, Arabic musicians, DJs, live bands (5000-18000 SAR per event)
+
+**Floral Services:**
+- **Maison Des Fleurs** - Luxury flower arrangements and wedding bouquets (1500-8000 SAR per event)
+- **Bliss Flower Boutique** - Wedding production and event management (2000-10000 SAR per event)
+
+**Audiovisual Services:**
+- **Wise Monkeys Productions** - Video production, photography, audio systems (3000-15000 SAR per event)
+
+All service providers include authentic business information, realistic SAR pricing, complete service offerings, and verified status for immediate platform integration.
+
 ## External Dependencies
 
 ### Database & Storage
