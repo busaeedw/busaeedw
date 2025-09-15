@@ -403,6 +403,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Temporary endpoint for seeding sample events (remove after use)
+  app.post('/api/init-seed-events', async (req, res) => {
+    try {
+      const { seedSampleEvents } = await import('./seedEvents');
+      const result = await seedSampleEvents();
+      
+      res.json({ message: "Successfully seeded 15 sample events with registrations", eventsCreated: result.eventsCreated });
+    } catch (error: any) {
+      console.error("Error seeding events:", error);
+      res.status(500).json({ message: "Failed to seed events", error: error?.message || "Unknown error" });
+    }
+  });
 
   const httpServer = createServer(app);
   return httpServer;
