@@ -14,6 +14,7 @@ import EventDetails from "@/pages/EventDetails";
 import ServiceProviderProfile from "@/pages/ServiceProviderProfile";
 import Messages from "@/pages/Messages";
 import AdminDashboard from "@/pages/AdminDashboard";
+import VenueList from "@/pages/VenueList";
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -31,6 +32,7 @@ function Router() {
           <Route path="/events/:id" component={EventDetails} />
           <Route path="/service-providers/:id" component={ServiceProviderProfile} />
           <Route path="/service-providers" component={EventList} />
+          <Route path="/venues" component={VenueList} />
           <Route path="/messages" component={Messages} />
           <Route path="/admin" component={AdminDashboard} />
         </>
