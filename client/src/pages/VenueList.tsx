@@ -9,7 +9,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { LoadingSkeleton } from '@/components/ui/loading';
 import { useQuery } from '@tanstack/react-query';
 import { useLanguage } from '@/hooks/useLanguage';
-import { Search, Filter, MapPin, Calendar, Users } from 'lucide-react';
+import { Search, Filter, MapPin, Users, AlertTriangle, Loader2 } from 'lucide-react';
+import { type VenueAggregate, venueAggregateSchema } from '@shared/schema';
+import { z } from 'zod';
 
 export default function VenueList() {
   const { t } = useLanguage();
@@ -26,12 +28,29 @@ export default function VenueList() {
     return queryString ? `?${queryString}` : '';
   };
 
-  const { data: venues, isLoading } = useQuery({
+  const { data: venues, isLoading, error } = useQuery({
     queryKey: [`/api/venues${buildQueryString()}`],
   });
 
-  // Type the venues data properly
-  const venuesList = venues as any[] || [];
+  // Safely validate and type the venues data
+  const validateVenues = (data: unknown): VenueAggregate[] => {
+    if (!data || !Array.isArray(data)) {
+      console.warn('Venues API returned invalid data format:', data);
+      return [];
+    }
+    
+    return data.filter((item): item is VenueAggregate => {
+      try {
+        venueAggregateSchema.parse(item);
+        return true;
+      } catch (e) {
+        console.warn('Invalid venue data item:', item, e);
+        return false;
+      }
+    });
+  };
+
+  const venuesList = validateVenues(venues);
 
   const cities = [
     { value: 'all', label: 'All Cities' },
@@ -106,8 +125,12 @@ export default function VenueList() {
     }
   ];
 
-  // Use mock data if API is not working
-  const displayVenues = venuesList.length > 0 ? venuesList : mockVenues;
+  // Use mock data if API is not working or returns no results
+  const hasApiData = venuesList.length > 0;
+  const displayVenues = hasApiData ? venuesList : mockVenues;
+  
+  // Show API error if there's an error but we're using mock data
+  const showApiError = error && !hasApiData;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -155,6 +178,17 @@ export default function VenueList() {
           </div>
         </div>
 
+        {/* API Error Warning */}
+        {showApiError && (
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6 flex items-center gap-3">
+            <AlertTriangle className="h-5 w-5 text-yellow-600 flex-shrink-0" />
+            <div>
+              <p className="text-yellow-800 font-medium">Unable to load venue data from server</p>
+              <p className="text-yellow-700 text-sm">Showing sample venues instead. Please try again later.</p>
+            </div>
+          </div>
+        )}
+
         {/* Venues Grid */}
         {isLoading ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -170,7 +204,7 @@ export default function VenueList() {
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {displayVenues && displayVenues.length > 0 ? (
-              displayVenues.map((venue: any, index: number) => (
+              displayVenues.map((venue: VenueAggregate, index: number) => (
                 <Card
                   key={`${venue.venue}-${index}`}
                   className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all transform hover:-translate-y-1"
@@ -179,27 +213,27 @@ export default function VenueList() {
                   <div className="relative">
                     <img
                       src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&h=400&fit=crop"
-                      alt={venue.venue}
+                      alt={venue.venue || 'Venue image'}
                       className="w-full h-48 object-cover"
                     />
                     <div className="absolute top-4 right-4">
                       <Badge className="bg-saudi-green text-white">
-                        {venue.event_count} Events
+                        {venue.event_count || 0} Events
                       </Badge>
                     </div>
                   </div>
                   <CardContent className="p-6">
                     <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                      {venue.venue}
+                      {venue.venue || 'Unknown Venue'}
                     </h3>
                     <div className="flex items-center text-sm text-gray-500 mb-4">
                       <MapPin className="h-4 w-4 mr-2" />
-                      <span>{venue.location}, {venue.city}</span>
+                      <span>{venue.location || 'Unknown Location'}, {venue.city || 'Unknown City'}</span>
                     </div>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center text-sm text-gray-600">
                         <Users className="h-4 w-4 mr-2" />
-                        <span>{venue.event_count} upcoming events</span>
+                        <span>{venue.event_count || 0} upcoming events</span>
                       </div>
                       <Button 
                         size="sm" 

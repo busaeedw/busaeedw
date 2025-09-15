@@ -243,6 +243,14 @@ export const insertServiceBookingSchema = createInsertSchema(serviceBookings).om
   updatedAt: true,
 });
 
+// Venue aggregate schema for venues endpoint
+export const venueAggregateSchema = z.object({
+  venue: z.string(),
+  city: z.string(),
+  location: z.string(),
+  event_count: z.number().or(z.string().transform(Number)), // Handle both number and string from DB
+});
+
 // Types
 export type UpsertUser = typeof users.$inferInsert;
 export type User = typeof users.$inferSelect;
@@ -258,3 +266,4 @@ export type Message = typeof messages.$inferSelect;
 export type InsertMessage = z.infer<typeof insertMessageSchema>;
 export type ServiceBooking = typeof serviceBookings.$inferSelect;
 export type InsertServiceBooking = z.infer<typeof insertServiceBookingSchema>;
+export type VenueAggregate = z.infer<typeof venueAggregateSchema>;

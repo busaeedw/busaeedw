@@ -2,8 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
-import { db } from "./db";
-import { sql } from "drizzle-orm";
+import { pool } from "./db";
 import { 
   insertEventSchema,
   insertServiceProviderSchema,
@@ -385,24 +384,51 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Venues endpoint
+  // Venues endpoint  
   app.get('/api/venues', async (req, res) => {
+    console.log("venues handler: pool.query"); // Debug log to verify handler
     try {
-      const { search, city, limit } = req.query;
+      const { search, city, limit = "50" } = req.query;
+      const limitNum = Math.min(parseInt(limit as string) || 50, 100);
       
-      // Simple approach: Get distinct venues from events table using raw SQL
-      const result = await db.execute(sql`
+      // Build WHERE clause with safe string interpolation
+      let whereClause = `status = 'published' AND venue IS NOT NULL AND venue != ''`;
+      const params: string[] = [];
+      
+      if (search && typeof search === 'string' && search.trim() !== '') {
+        params.push(`%${search.trim()}%`);
+        params.push(`%${search.trim()}%`);
+        whereClause += ` AND (venue ILIKE $${params.length - 1} OR location ILIKE $${params.length})`;
+      }
+      
+      if (city && typeof city === 'string' && city.trim() !== '' && city !== 'all') {
+        params.push(`%${city.trim()}%`);
+        whereClause += ` AND city ILIKE $${params.length}`;
+      }
+      
+      // Use pool.query directly with raw SQL
+      const query = `
         SELECT DISTINCT venue, city, location, 
                COUNT(*) as event_count
         FROM events 
-        WHERE status = 'published' 
-        AND venue IS NOT NULL 
-        AND venue != ''
+        WHERE ${whereClause}
         GROUP BY venue, city, location
-        ORDER BY venue
-      `);
+        ORDER BY event_count DESC, venue ASC
+        LIMIT $${params.length + 1}
+      `;
       
-      res.json(result.rows);
+      params.push(limitNum.toString());
+      const result = await pool.query(query, params);
+      
+      // Transform the result to ensure consistent format
+      const venues = result.rows.map((row: any) => ({
+        venue: row.venue,
+        city: row.city,
+        location: row.location,
+        event_count: parseInt(row.event_count) || 0
+      }));
+      
+      res.json(venues);
     } catch (error) {
       console.error("Error fetching venues:", error);
       res.status(500).json({ message: "Failed to fetch venues", error: error.message });
