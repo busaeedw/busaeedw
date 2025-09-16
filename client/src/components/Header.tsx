@@ -140,7 +140,7 @@ export function Header() {
                     <DropdownMenuTrigger asChild>
                       <Button variant="outline" className="flex items-center space-x-2">
                         <User className="h-4 w-4" />
-                        <span>{user.firstName || user.email}</span>
+                        <span>{(user as any).firstName || (user as any).email}</span>
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-56">

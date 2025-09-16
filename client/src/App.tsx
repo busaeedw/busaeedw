@@ -15,6 +15,10 @@ import ServiceProviderProfile from "@/pages/ServiceProviderProfile";
 import Messages from "@/pages/Messages";
 import AdminDashboard from "@/pages/AdminDashboard";
 import VenueList from "@/pages/VenueList";
+import BrowseVenues from "@/pages/browse/BrowseVenues";
+import BrowseOrganizers from "@/pages/browse/BrowseOrganizers";
+import BrowseProviders from "@/pages/browse/BrowseProviders";
+import BrowseUsers from "@/pages/browse/BrowseUsers";
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -27,6 +31,12 @@ function Router() {
       <Route path="/service-providers/:id" component={ServiceProviderProfile} />
       <Route path="/service-providers" component={EventList} />
       <Route path="/venues" component={VenueList} />
+      
+      {/* Browse routes */}
+      <Route path="/browse/venues" component={BrowseVenues} />
+      <Route path="/browse/organizers" component={BrowseOrganizers} />
+      <Route path="/browse/providers" component={BrowseProviders} />
+      <Route path="/browse/users" component={BrowseUsers} />
       
       {/* Authenticated routes */}
       {isLoading || !isAuthenticated ? (

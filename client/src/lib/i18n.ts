@@ -358,5 +358,5 @@ const translations = {
 };
 
 export function getTranslation(language: 'en' | 'ar', key: string): string {
-  return translations[language][key] || key;
+  return (translations[language] as any)[key] || key;
 }
