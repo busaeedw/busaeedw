@@ -4,7 +4,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useLanguage } from '@/hooks/useLanguage';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, Globe, User, LogOut } from 'lucide-react';
+import { Menu, Globe, User, LogOut, ChevronDown } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -82,6 +82,40 @@ export function Header() {
                 </Link>
               );
             })}
+            
+            {/* Browse Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger className={`px-3 py-2 text-sm font-medium transition-colors flex items-center ${
+                location.startsWith('/browse')
+                  ? 'text-saudi-green border-b-2 border-saudi-green'
+                  : 'text-gray-700 hover:text-saudi-green'
+              }`}>
+                {t('nav.browse')}
+                <ChevronDown className="h-4 w-4 ml-1" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-48">
+                <DropdownMenuItem asChild>
+                  <Link href="/browse/venues" data-testid="browse-venues">
+                    {t('nav.browse.venues')}
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/browse/organizers" data-testid="browse-organizers">
+                    {t('nav.browse.organizers')}
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/browse/providers" data-testid="browse-providers">
+                    {t('nav.browse.providers')}
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/browse/users" data-testid="browse-users">
+                    {t('nav.browse.users')}
+                  </Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </nav>
 
           {/* Language Toggle */}

@@ -172,7 +172,7 @@ export default function EventList() {
                         {new Date(event.startDate).toLocaleDateString()}
                       </span>
                       <MapPin className="h-4 w-4 mr-2" />
-                      <span>{event.city}, {t('common.country.sa')}</span>
+                      <span>{t(`venues.city.${event.city?.toLowerCase()}`) || event.city}, {t('common.country.sa')}</span>
                     </div>
                     <div className="flex items-center justify-between">
                       <div className="flex -space-x-2">
