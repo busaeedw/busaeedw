@@ -220,6 +220,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get all users (for browse functionality)
+  app.get('/api/users', async (req, res) => {
+    try {
+      const { role, city, search, limit, offset } = req.query;
+      const result = await pool.query(`
+        SELECT id, email, first_name as "firstName", last_name as "lastName", 
+               profile_image_url as "profileImageUrl", role, bio, phone, city, 
+               created_at as "createdAt", updated_at as "updatedAt"
+        FROM users 
+        WHERE 1=1
+        ${role ? `AND role = '${role}'` : ''}
+        ${city ? `AND city = '${city}'` : ''}
+        ${search ? `AND (first_name ILIKE '%${search}%' OR last_name ILIKE '%${search}%' OR email ILIKE '%${search}%')` : ''}
+        ORDER BY created_at DESC
+        ${limit ? `LIMIT ${limit}` : ''}
+        ${offset ? `OFFSET ${offset}` : ''}
+      `);
+      
+      res.json(result.rows);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      res.status(500).json({ message: "Failed to fetch users" });
+    }
+  });
+
   // Service provider routes
   app.get('/api/service-providers', async (req, res) => {
     try {
@@ -431,7 +456,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(venues);
     } catch (error) {
       console.error("Error fetching venues:", error);
-      res.status(500).json({ message: "Failed to fetch venues", error: error.message });
+      res.status(500).json({ message: "Failed to fetch venues", error: (error as Error).message });
     }
   });
 
