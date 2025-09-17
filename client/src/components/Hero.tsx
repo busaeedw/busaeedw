@@ -1,12 +1,15 @@
+import { useState } from 'react';
 import { useLanguage } from '@/hooks/useLanguage';
 import { Button } from '@/components/ui/button';
 import { Calendar, Search } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { Link } from 'wouter';
+import { LoginModal } from '@/components/LoginModal';
 
 export function Hero() {
   const { t } = useLanguage();
   const { isAuthenticated } = useAuth();
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
   return (
     <section className="relative bg-gradient-to-r from-saudi-green via-primary-600 to-primary-500 hero-pattern">
@@ -29,9 +32,10 @@ export function Hero() {
                   if (isAuthenticated) {
                     window.location.href = '/events/create';
                   } else {
-                    window.location.href = '/api/login';
+                    setIsLoginModalOpen(true);
                   }
                 }}
+                data-testid="hero-create-button"
               >
                 <Calendar className="mr-2 h-5 w-5" />
                 {t('hero.cta.create')}
@@ -44,9 +48,10 @@ export function Hero() {
                   if (isAuthenticated) {
                     window.location.href = '/events';
                   } else {
-                    window.location.href = '/api/login';
+                    setIsLoginModalOpen(true);
                   }
                 }}
+                data-testid="hero-find-button"
               >
                 <Search className="mr-2 h-5 w-5" />
                 {t('hero.cta.find')}
@@ -63,6 +68,12 @@ export function Hero() {
           </div>
         </div>
       </div>
+      
+      <LoginModal
+        isOpen={isLoginModalOpen}
+        onClose={() => setIsLoginModalOpen(false)}
+        onLoginSuccess={() => setIsLoginModalOpen(false)}
+      />
     </section>
   );
 }
