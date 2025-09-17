@@ -26,8 +26,6 @@ export function Header() {
     },
     { href: '/venues', label: t('nav.venues') },
     { href: '/services', label: t('nav.services') },
-    { href: '/about', label: t('nav.about') },
-    { href: '/contact', label: t('nav.contact') },
   ];
 
   const handleLanguageToggle = () => {
