@@ -9,26 +9,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { LoadingSkeleton } from '@/components/ui/loading';
 import { Calendar, Search, Filter, MapPin, Users, Clock } from 'lucide-react';
 import { useState } from 'react';
+import { Link } from 'wouter';
+import { type Event } from '@shared/schema';
 
-interface Event {
-  id: string;
-  title: string;
-  description: string;
-  category: string;
-  date: string;
-  time: string;
-  venue: string;
-  city: string;
-  location: string;
-  capacity: number;
-  registrations: number;
-  organizerId: string;
-  organizer?: {
-    firstName: string;
-    lastName: string;
-    email: string;
-  };
-}
 
 export default function BrowseEvents() {
   const { t } = useLanguage();
@@ -78,28 +61,50 @@ export default function BrowseEvents() {
     return colors[category] || 'bg-gray-100 text-gray-700';
   };
 
-  const formatDate = (dateStr: string) => {
+  const formatDate = (dateStr: string | Date) => {
     try {
       const date = new Date(dateStr);
+      if (isNaN(date.getTime())) {
+        return 'Date TBD';
+      }
       return date.toLocaleDateString('en-US', { 
         month: 'short', 
         day: 'numeric', 
         year: 'numeric' 
       });
     } catch {
-      return dateStr;
+      return 'Date TBD';
     }
   };
 
-  // Filter events locally based on search query
+  const formatTime = (dateStr: string | Date) => {
+    try {
+      const date = new Date(dateStr);
+      if (isNaN(date.getTime())) {
+        return 'Time TBD';
+      }
+      return date.toLocaleTimeString([], { 
+        hour: '2-digit', 
+        minute: '2-digit' 
+      });
+    } catch {
+      return 'Time TBD';
+    }
+  };
+
+  // Filter events locally based on search query, category, and city
   const filteredEvents = events.filter(event => {
     const matchesSearch = !searchQuery || 
       event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       event.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      event.venue.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      event.city.toLowerCase().includes(searchQuery.toLowerCase());
+      (event.venue && event.venue.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      event.city.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      event.location.toLowerCase().includes(searchQuery.toLowerCase());
     
-    return matchesSearch;
+    const matchesCategory = selectedCategory === 'all' || event.category === selectedCategory;
+    const matchesCity = selectedCity === 'all' || event.city.toLowerCase() === selectedCity.toLowerCase();
+    
+    return matchesSearch && matchesCategory && matchesCity;
   });
 
   return (
@@ -218,19 +223,19 @@ export default function BrowseEvents() {
                       <div className="flex items-center text-sm text-gray-600">
                         <Calendar className="h-4 w-4 mr-2" />
                         <span data-testid={`event-date-${event.id}`}>
-                          {formatDate(event.date)} at {event.time}
+                          {formatDate(event.startDate)} at {formatTime(event.startDate)}
                         </span>
                       </div>
                       <div className="flex items-center text-sm text-gray-600">
                         <MapPin className="h-4 w-4 mr-2" />
                         <span className="line-clamp-1" data-testid={`event-venue-${event.id}`}>
-                          {event.venue}, {event.city}
+                          {event.venue ? `${event.venue}, ${event.city}` : `${event.location}, ${event.city}`}
                         </span>
                       </div>
                       <div className="flex items-center text-sm text-gray-600">
                         <Users className="h-4 w-4 mr-2" />
                         <span data-testid={`event-capacity-${event.id}`}>
-                          {event.registrations || 0} / {event.capacity} attendees
+                          {event.maxAttendees ? `Up to ${event.maxAttendees} attendees` : 'Unlimited capacity'}
                         </span>
                       </div>
                     </div>
@@ -240,9 +245,11 @@ export default function BrowseEvents() {
                       className="w-full" 
                       variant="outline"
                       data-testid={`view-event-${event.id}`}
-                      onClick={() => window.location.href = `/events/${event.id}`}
+                      asChild
                     >
-                      {t('events.button.viewDetails')}
+                      <Link href={`/events/${event.id}`}>
+                        {t('events.button.viewDetails')}
+                      </Link>
                     </Button>
                   </div>
                 </Card>
