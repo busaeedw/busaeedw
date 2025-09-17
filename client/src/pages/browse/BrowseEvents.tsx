@@ -14,7 +14,7 @@ import { type Event } from '@shared/schema';
 
 
 export default function BrowseEvents() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedCity, setSelectedCity] = useState('all');
@@ -114,7 +114,7 @@ export default function BrowseEvents() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2" data-testid="page-title-events">
-            {t('nav.browse.events')}
+            {language === 'ar' ? 'الفعاليات' : 'Events'}
           </h1>
           <p className="text-gray-600">
             {t('events.subtitle')}

@@ -94,7 +94,7 @@ export function Header() {
               <DropdownMenuContent align="start" className="w-48">
                 <DropdownMenuItem asChild>
                   <Link href="/browse/events" data-testid="browse-events">
-                    {t('nav.browse.events')}
+                    {language === 'ar' ? 'الفعاليات' : 'Events'}
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
