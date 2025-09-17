@@ -28,6 +28,7 @@ function Router() {
     <Switch>
       {/* Public routes available to all users */}
       <Route path="/events" component={EventList} />
+      <Route path="/events/create" component={EventCreate} />
       <Route path="/events/:id" component={EventDetails} />
       <Route path="/service-providers/:id" component={ServiceProviderProfile} />
       <Route path="/service-providers" component={EventList} />
@@ -47,7 +48,6 @@ function Router() {
         <>
           <Route path="/" component={Dashboard} />
           <Route path="/dashboard" component={Dashboard} />
-          <Route path="/events/create" component={EventCreate} />
           <Route path="/messages" component={Messages} />
           <Route path="/admin" component={AdminDashboard} />
         </>

@@ -14,16 +14,58 @@ import { z } from "zod";
 import { hashPassword, comparePasswords } from "./auth-utils";
 import { randomUUID } from "crypto";
 
+// Unified authentication middleware that supports both session and OIDC
+const unifiedAuth = async (req: any, res: any, next: any) => {
+  let userId: string | undefined;
+
+  // Check for session-based authentication first
+  if (req.session?.userId) {
+    userId = req.session.userId;
+  }
+  // Fall back to OIDC authentication
+  else if (req.user?.claims?.sub) {
+    userId = req.user.claims.sub;
+  }
+
+  if (!userId) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  // Set normalized user ID for use in routes
+  req.authUserId = userId;
+  next();
+};
+
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware
   await setupAuth(app);
 
-  // Auth routes
-  app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
+  // Auth routes - supports both OIDC and session-based auth
+  app.get('/api/auth/user', async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      let userId: string | undefined;
+
+      // Check for session-based authentication first
+      if (req.session?.userId) {
+        userId = req.session.userId;
+      }
+      // Fall back to OIDC authentication
+      else if (req.user?.claims?.sub) {
+        userId = req.user.claims.sub;
+      }
+
+      if (!userId) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+
       const user = await storage.getUser(userId);
-      res.json(user);
+      if (!user) {
+        return res.status(401).json({ message: "User not found" });
+      }
+
+      // Return user without password
+      const { password: _, ...userWithoutPassword } = user;
+      res.json(userWithoutPassword);
     } catch (error) {
       console.error("Error fetching user:", error);
       res.status(500).json({ message: "Failed to fetch user" });
@@ -31,9 +73,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Update user role
-  app.patch('/api/auth/user/role', isAuthenticated, async (req: any, res) => {
+  app.patch('/api/auth/user/role', unifiedAuth, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.authUserId;
       const { role } = req.body;
       
       if (!["admin", "organizer", "attendee", "service_provider"].includes(role)) {
@@ -159,9 +201,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/events', isAuthenticated, async (req: any, res) => {
+  app.post('/api/events', unifiedAuth, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.authUserId;
       const user = await storage.getUser(userId);
       
       if (!user || (user.role !== "organizer" && user.role !== "admin")) {
@@ -180,9 +222,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.patch('/api/events/:id', isAuthenticated, async (req: any, res) => {
+  app.patch('/api/events/:id', unifiedAuth, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.authUserId;
       const user = await storage.getUser(userId);
       const event = await storage.getEvent(req.params.id);
 
@@ -202,9 +244,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete('/api/events/:id', isAuthenticated, async (req: any, res) => {
+  app.delete('/api/events/:id', unifiedAuth, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.authUserId;
       const user = await storage.getUser(userId);
       const event = await storage.getEvent(req.params.id);
 
@@ -225,9 +267,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Event registration routes
-  app.post('/api/events/:id/register', isAuthenticated, async (req: any, res) => {
+  app.post('/api/events/:id/register', unifiedAuth, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.authUserId;
       const eventId = req.params.id;
 
       const registration = await storage.registerForEvent({

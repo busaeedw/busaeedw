@@ -100,18 +100,58 @@ export class DatabaseStorage implements IStorage {
   }
 
   async upsertUser(userData: UpsertUser): Promise<User> {
-    const [user] = await db
-      .insert(users)
-      .values(userData)
-      .onConflictDoUpdate({
-        target: users.id,
-        set: {
-          ...userData,
-          updatedAt: new Date(),
-        },
-      })
-      .returning();
-    return user;
+    try {
+      const [user] = await db
+        .insert(users)
+        .values(userData)
+        .onConflictDoUpdate({
+          target: users.id,
+          set: {
+            ...userData,
+            updatedAt: new Date(),
+          },
+        })
+        .returning();
+      return user;
+    } catch (error: any) {
+      // Handle email uniqueness constraint violation
+      if (error.code === '23505' && error.constraint === 'users_email_unique') {
+        // If there's an email conflict, return existing user without modifying it
+        // This prevents overwriting IDs or passwords
+        const existingUser = await this.getUserByEmail(userData.email!);
+        if (existingUser) {
+          // Only update safe non-identifier fields for OIDC users
+          if (!userData.password) {
+            const safeUpdates: Partial<UpsertUser> = {
+              firstName: userData.firstName,
+              lastName: userData.lastName,
+              profileImageUrl: userData.profileImageUrl,
+              bio: userData.bio,
+              phone: userData.phone,
+              city: userData.city,
+              updatedAt: new Date(),
+            };
+            
+            // Remove undefined values
+            Object.keys(safeUpdates).forEach(key => {
+              if (safeUpdates[key as keyof typeof safeUpdates] === undefined) {
+                delete safeUpdates[key as keyof typeof safeUpdates];
+              }
+            });
+            
+            const [updatedUser] = await db
+              .update(users)
+              .set(safeUpdates)
+              .where(eq(users.email, userData.email!))
+              .returning();
+            return updatedUser;
+          }
+          // For password-based registration, don't allow overwriting existing users
+          throw new Error('User with this email already exists');
+        }
+      }
+      throw error;
+    }
   }
 
   async updateUserRole(id: string, role: string): Promise<User> {
