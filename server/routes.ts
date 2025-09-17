@@ -72,14 +72,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Update user role
+  // Update user role (Admin only)
   app.patch('/api/auth/user/role', unifiedAuth, async (req: any, res) => {
     try {
-      const userId = req.authUserId;
-      const { role } = req.body;
+      const currentUserId = req.authUserId;
+      const { userId, role } = req.body;
+      
+      // Get current user to check admin status
+      const currentUser = await storage.getUser(currentUserId);
+      if (!currentUser || currentUser.role !== 'admin') {
+        return res.status(403).json({ message: "Only admins can change user roles" });
+      }
       
       if (!["admin", "organizer", "attendee", "service_provider"].includes(role)) {
         return res.status(400).json({ message: "Invalid role" });
+      }
+
+      // Prevent setting admin role unless current user is admin (already checked above)
+      if (role === 'admin' && currentUser.role !== 'admin') {
+        return res.status(403).json({ message: "Only admins can assign admin role" });
       }
 
       const user = await storage.updateUserRole(userId, role);
@@ -286,9 +297,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete('/api/events/:id/register', isAuthenticated, async (req: any, res) => {
+  app.delete('/api/events/:id/register', unifiedAuth, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.authUserId;
       const eventId = req.params.id;
 
       await storage.cancelRegistration(eventId, userId);
@@ -299,9 +310,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get('/api/events/:id/registrations', isAuthenticated, async (req: any, res) => {
+  app.get('/api/events/:id/registrations', unifiedAuth, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.authUserId;
       const user = await storage.getUser(userId);
       const event = await storage.getEvent(req.params.id);
 
@@ -322,9 +333,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // User's events and registrations
-  app.get('/api/user/events', isAuthenticated, async (req: any, res) => {
+  app.get('/api/user/events', unifiedAuth, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.authUserId;
       const events = await storage.getEvents({ organizerId: userId });
       res.json(events);
     } catch (error) {
@@ -333,9 +344,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get('/api/user/registrations', isAuthenticated, async (req: any, res) => {
+  app.get('/api/user/registrations', unifiedAuth, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.authUserId;
       const registrations = await storage.getUserRegistrations(userId);
       res.json(registrations);
     } catch (error) {
@@ -348,20 +359,51 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/users', async (req, res) => {
     try {
       const { role, city, search, limit, offset } = req.query;
-      const result = await pool.query(`
+      
+      // Build parameterized query safely
+      let baseQuery = `
         SELECT id, email, first_name as "firstName", last_name as "lastName", 
                profile_image_url as "profileImageUrl", role, bio, phone, city, 
                created_at as "createdAt", updated_at as "updatedAt"
         FROM users 
         WHERE 1=1
-        ${role ? `AND role = '${role}'` : ''}
-        ${city ? `AND city = '${city}'` : ''}
-        ${search ? `AND (first_name ILIKE '%${search}%' OR last_name ILIKE '%${search}%' OR email ILIKE '%${search}%')` : ''}
-        ORDER BY created_at DESC
-        ${limit ? `LIMIT ${limit}` : ''}
-        ${offset ? `OFFSET ${offset}` : ''}
-      `);
+      `;
       
+      const params: any[] = [];
+      let paramIndex = 1;
+      
+      if (role && typeof role === 'string') {
+        baseQuery += ` AND role = $${paramIndex}`;
+        params.push(role);
+        paramIndex++;
+      }
+      
+      if (city && typeof city === 'string') {
+        baseQuery += ` AND city = $${paramIndex}`;
+        params.push(city);
+        paramIndex++;
+      }
+      
+      if (search && typeof search === 'string') {
+        baseQuery += ` AND (first_name ILIKE $${paramIndex} OR last_name ILIKE $${paramIndex} OR email ILIKE $${paramIndex})`;
+        params.push(`%${search}%`);
+        paramIndex++;
+      }
+      
+      baseQuery += ` ORDER BY created_at DESC`;
+      
+      if (limit && typeof limit === 'string' && !isNaN(parseInt(limit))) {
+        baseQuery += ` LIMIT $${paramIndex}`;
+        params.push(parseInt(limit));
+        paramIndex++;
+      }
+      
+      if (offset && typeof offset === 'string' && !isNaN(parseInt(offset))) {
+        baseQuery += ` OFFSET $${paramIndex}`;
+        params.push(parseInt(offset));
+      }
+      
+      const result = await pool.query(baseQuery, params);
       res.json(result.rows);
     } catch (error) {
       console.error("Error fetching users:", error);
@@ -401,9 +443,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/service-providers', isAuthenticated, async (req: any, res) => {
+  app.post('/api/service-providers', unifiedAuth, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.authUserId;
       const user = await storage.getUser(userId);
 
       if (!user || (user.role !== "service_provider" && user.role !== "admin")) {
@@ -434,9 +476,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/reviews', isAuthenticated, async (req: any, res) => {
+  app.post('/api/reviews', unifiedAuth, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.authUserId;
       const reviewData = insertReviewSchema.parse({ ...req.body, reviewerId: userId });
       const review = await storage.createReview(reviewData);
       res.status(201).json(review);
@@ -450,9 +492,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Message routes
-  app.get('/api/messages/:userId', isAuthenticated, async (req: any, res) => {
+  app.get('/api/messages/:userId', unifiedAuth, async (req: any, res) => {
     try {
-      const currentUserId = req.user.claims.sub;
+      const currentUserId = req.authUserId;
       const otherUserId = req.params.userId;
       const messages = await storage.getMessages(currentUserId, otherUserId);
       res.json(messages);
@@ -462,9 +504,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get('/api/conversations', isAuthenticated, async (req: any, res) => {
+  app.get('/api/conversations', unifiedAuth, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.authUserId;
       const conversations = await storage.getUserConversations(userId);
       res.json(conversations);
     } catch (error) {
@@ -473,9 +515,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/messages', isAuthenticated, async (req: any, res) => {
+  app.post('/api/messages', unifiedAuth, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.authUserId;
       const messageData = insertMessageSchema.parse({ ...req.body, senderId: userId });
       const message = await storage.sendMessage(messageData);
       res.status(201).json(message);
@@ -489,9 +531,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Service booking routes
-  app.post('/api/service-bookings', isAuthenticated, async (req: any, res) => {
+  app.post('/api/service-bookings', unifiedAuth, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.authUserId;
       const bookingData = insertServiceBookingSchema.parse({ ...req.body, organizerId: userId });
       const booking = await storage.createServiceBooking(bookingData);
       res.status(201).json(booking);
@@ -504,9 +546,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get('/api/service-bookings', isAuthenticated, async (req: any, res) => {
+  app.get('/api/service-bookings', unifiedAuth, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.authUserId;
       const { eventId, serviceProviderId } = req.query;
       
       const bookings = await storage.getServiceBookings({
@@ -585,13 +627,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Admin endpoint to seed Riyadh organizers (one-time use)
-  app.post('/api/admin/seed-organizers', isAuthenticated, async (req: any, res) => {
+  app.post('/api/admin/seed-organizers', unifiedAuth, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.authUserId;
       const user = await storage.getUser(userId);
       
-      if (!user || user.role !== "admin") {
-        return res.status(403).json({ message: "Admin access required" });
+      // Require admin role for admin operations
+      if (!user || user.role !== 'admin') {
+        return res.status(403).json({ message: "Only admins can perform seeding operations" });
       }
 
       const { seedRiyadhOrganizers } = await import('./seedOrganizers');
