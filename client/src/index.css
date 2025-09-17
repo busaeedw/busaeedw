@@ -191,4 +191,8 @@
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
   }
+  
+  .hero-gradient {
+    background: linear-gradient(to right, var(--saudi-green), hsl(120 70% 20%), var(--primary));
+  }
 }

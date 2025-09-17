@@ -12,8 +12,7 @@ export function Hero() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
   return (
-    <section className="relative bg-gradient-to-r from-saudi-green via-primary-600 to-primary-500 hero-pattern">
-      <div className="absolute inset-0 bg-black/10"></div>
+    <section className="relative hero-gradient hero-pattern">
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
         <div className="lg:grid lg:grid-cols-2 lg:gap-12 items-center">
           <div className="text-center lg:text-left">
