@@ -15,6 +15,7 @@ import ServiceProviderProfile from "@/pages/ServiceProviderProfile";
 import Messages from "@/pages/Messages";
 import AdminDashboard from "@/pages/AdminDashboard";
 import VenueList from "@/pages/VenueList";
+import BrowseEvents from "@/pages/browse/BrowseEvents";
 import BrowseVenues from "@/pages/browse/BrowseVenues";
 import BrowseOrganizers from "@/pages/browse/BrowseOrganizers";
 import BrowseProviders from "@/pages/browse/BrowseProviders";
@@ -33,6 +34,7 @@ function Router() {
       <Route path="/venues" component={VenueList} />
       
       {/* Browse routes */}
+      <Route path="/browse/events" component={BrowseEvents} />
       <Route path="/browse/venues" component={BrowseVenues} />
       <Route path="/browse/organizers" component={BrowseOrganizers} />
       <Route path="/browse/providers" component={BrowseProviders} />
