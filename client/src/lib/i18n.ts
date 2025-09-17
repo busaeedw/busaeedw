@@ -71,6 +71,13 @@ const translations = {
     'events.free': 'Free',
     'events.notfound.title': 'No events found',
     'events.notfound.subtitle': 'Try adjusting your search criteria or browse all events.',
+    'events.singular': 'event',
+    'events.plural': 'events',
+    'events.capacity.upto': 'Up to',
+    'events.capacity.attendees': 'attendees',
+    'events.capacity.unlimited': 'Unlimited capacity',
+    'common.matching': 'matching',
+    'common.at': 'at',
     
     // Services
     'services.title': 'Trusted Service Providers',
@@ -249,6 +256,13 @@ const translations = {
     'events.free': 'مجاني',
     'events.notfound.title': 'لم يتم العثور على فعاليات',
     'events.notfound.subtitle': 'حاول تعديل معايير البحث أو تصفح جميع الفعاليات.',
+    'events.singular': 'فعالية',
+    'events.plural': 'فعاليات',
+    'events.capacity.upto': 'حتى',
+    'events.capacity.attendees': 'حضور',
+    'events.capacity.unlimited': 'سعة غير محدودة',
+    'common.matching': 'يطابق',
+    'common.at': 'في',
     
     // Services
     'services.title': 'مقدمو الخدمات الموثوقون',

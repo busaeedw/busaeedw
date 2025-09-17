@@ -114,7 +114,7 @@ export default function BrowseEvents() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2" data-testid="page-title-events">
-            Events
+            {t('nav.browse.events')}
           </h1>
           <p className="text-gray-600">
             {t('events.subtitle')}
@@ -127,7 +127,7 @@ export default function BrowseEvents() {
             <div className="relative md:col-span-2">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
               <Input
-                placeholder="Search events by title, venue, or location..."
+                placeholder={t('common.search')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10"
@@ -136,7 +136,7 @@ export default function BrowseEvents() {
             </div>
             <Select value={selectedCategory} onValueChange={setSelectedCategory}>
               <SelectTrigger data-testid="category-filter-select">
-                <SelectValue placeholder="Category" />
+                <SelectValue placeholder={t('common.category')} />
               </SelectTrigger>
               <SelectContent>
                 {categories.map((category) => (
@@ -148,7 +148,7 @@ export default function BrowseEvents() {
             </Select>
             <Select value={selectedCity} onValueChange={setSelectedCity}>
               <SelectTrigger data-testid="city-filter-select">
-                <SelectValue placeholder="City" />
+                <SelectValue placeholder={t('common.select.city')} />
               </SelectTrigger>
               <SelectContent>
                 {cities.map((city) => (
@@ -178,12 +178,12 @@ export default function BrowseEvents() {
           <div className="text-center py-12">
             <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-gray-900 mb-2">
-              {searchQuery ? 'No events found' : 'No events available'}
+              {searchQuery ? t('events.notfound.title') : t('events.notfound.title')}
             </h3>
             <p className="text-gray-600">
               {searchQuery 
-                ? 'Try adjusting your search criteria to find more events.'
-                : 'There are currently no events in the database.'}
+                ? t('events.notfound.subtitle')
+                : t('events.notfound.subtitle')}
             </p>
           </div>
         ) : (
@@ -191,8 +191,8 @@ export default function BrowseEvents() {
             {/* Results Summary */}
             <div className="mb-6">
               <p className="text-gray-600" data-testid="events-count">
-                {t('common.showing')} {filteredEvents.length} {filteredEvents.length === 1 ? 'event' : 'events'}
-                {searchQuery && ` matching "${searchQuery}"`}
+                {t('common.showing')} {filteredEvents.length} {filteredEvents.length === 1 ? t('events.singular') : t('events.plural')}
+                {searchQuery && ` ${t('common.matching')} "${searchQuery}"`}
               </p>
             </div>
 
@@ -223,7 +223,7 @@ export default function BrowseEvents() {
                       <div className="flex items-center text-sm text-gray-600">
                         <Calendar className="h-4 w-4 mr-2" />
                         <span data-testid={`event-date-${event.id}`}>
-                          {formatDate(event.startDate)} at {formatTime(event.startDate)}
+                          {formatDate(event.startDate)} {t('common.at')} {formatTime(event.startDate)}
                         </span>
                       </div>
                       <div className="flex items-center text-sm text-gray-600">
@@ -235,7 +235,7 @@ export default function BrowseEvents() {
                       <div className="flex items-center text-sm text-gray-600">
                         <Users className="h-4 w-4 mr-2" />
                         <span data-testid={`event-capacity-${event.id}`}>
-                          {event.maxAttendees ? `Up to ${event.maxAttendees} attendees` : 'Unlimited capacity'}
+                          {event.maxAttendees ? `${t('events.capacity.upto')} ${event.maxAttendees} ${t('events.capacity.attendees')}` : t('events.capacity.unlimited')}
                         </span>
                       </div>
                     </div>
@@ -248,7 +248,7 @@ export default function BrowseEvents() {
                       asChild
                     >
                       <Link href={`/events/${event.id}`}>
-                        {t('events.button.viewDetails')}
+                        {t('events.cta.view')}
                       </Link>
                     </Button>
                   </div>
