@@ -6,6 +6,7 @@ import {
   reviews,
   messages,
   serviceBookings,
+  venues,
   type User,
   type UpsertUser,
   type Event,
@@ -20,6 +21,8 @@ import {
   type InsertMessage,
   type ServiceBooking,
   type InsertServiceBooking,
+  type Venue,
+  type InsertVenue,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and, or, ilike, sql } from "drizzle-orm";
@@ -82,6 +85,18 @@ export interface IStorage {
     organizerId?: string;
   }): Promise<ServiceBooking[]>;
   updateServiceBookingStatus(id: string, status: string): Promise<ServiceBooking>;
+  
+  // Venue operations
+  createVenue(venue: InsertVenue): Promise<Venue>;
+  getVenue(id: string): Promise<Venue | undefined>;
+  getVenues(filters?: {
+    city?: string;
+    search?: string;
+    limit?: number;
+    offset?: number;
+  }): Promise<Venue[]>;
+  updateVenue(id: string, updates: Partial<InsertVenue>): Promise<Venue>;
+  deleteVenue(id: string): Promise<void>;
   
   // Analytics
   getEventStats(): Promise<{ totalEvents: number; totalAttendees: number; totalProviders: number }>;
@@ -443,6 +458,75 @@ export class DatabaseStorage implements IStorage {
       .where(eq(serviceBookings.id, id))
       .returning();
     return booking;
+  }
+
+  // Venue operations
+  async createVenue(venue: InsertVenue): Promise<Venue> {
+    const [createdVenue] = await db.insert(venues).values(venue).returning();
+    return createdVenue;
+  }
+
+  async getVenue(id: string): Promise<Venue | undefined> {
+    const [venue] = await db.select().from(venues).where(eq(venues.id, id));
+    return venue;
+  }
+
+  async getVenues(filters?: {
+    city?: string;
+    search?: string;
+    limit?: number;
+    offset?: number;
+  }): Promise<Venue[]> {
+    const conditions = [];
+
+    if (filters?.city) {
+      conditions.push(eq(venues.city, filters.city));
+    }
+    if (filters?.search) {
+      conditions.push(
+        or(
+          ilike(venues.name, `%${filters.search}%`),
+          ilike(venues.location, `%${filters.search}%`)
+        )!
+      );
+    }
+
+    let query = db.select().from(venues).$dynamic();
+    
+    if (conditions.length > 0) {
+      query = query.where(and(...conditions));
+    }
+
+    query = query.orderBy(venues.name);
+
+    if (filters?.limit) {
+      query = query.limit(filters.limit);
+    }
+    if (filters?.offset) {
+      query = query.offset(filters.offset);
+    }
+
+    return await query;
+  }
+
+  async updateVenue(id: string, updates: Partial<InsertVenue>): Promise<Venue> {
+    const [venue] = await db
+      .update(venues)
+      .set(updates)
+      .where(eq(venues.id, id))
+      .returning();
+    return venue;
+  }
+
+  async deleteVenue(id: string): Promise<void> {
+    // Check if venue is referenced by any events
+    const [referencingEvent] = await db.select({ id: events.id }).from(events).where(eq(events.venueId, id)).limit(1);
+    
+    if (referencingEvent) {
+      throw new Error('Cannot delete venue: it is currently used by one or more events');
+    }
+    
+    await db.delete(venues).where(eq(venues.id, id));
   }
 
   // Analytics
