@@ -61,77 +61,6 @@ export default function VenueList() {
     { value: 'medina', label: t('venues.city.medina') },
   ];
 
-  // Mock venues data for now until API is working
-  const mockVenues = [
-    {
-      venue: "Four Seasons Hotel Riyadh - Kingdom Ballroom",
-      city: "riyadh",
-      location: "Diplomatic Quarter",
-      event_count: 3
-    },
-    {
-      venue: "Raffles Hotel Riyadh - Rafal Ballroom",
-      city: "riyadh", 
-      location: "King Fahd Road",
-      event_count: 2
-    },
-    {
-      venue: "Al Faisaliah Hotel - Prince Sultan's Grand Hall",
-      city: "riyadh",
-      location: "Diplomatic Quarter", 
-      event_count: 2
-    },
-    {
-      venue: "Hilton Riyadh Hotel & Residences",
-      city: "riyadh",
-      location: "King Abdullah Financial District",
-      event_count: 2
-    },
-    {
-      venue: "JW Marriott Hotel Riyadh",
-      city: "riyadh",
-      location: "Historic Diriyah",
-      event_count: 1
-    },
-    {
-      venue: "Riyadh International Convention & Exhibition Center",
-      city: "riyadh",
-      location: "Riyadh Front",
-      event_count: 2
-    },
-    {
-      venue: "Mövenpick Hotel Riyadh - Grand Ballroom",
-      city: "riyadh",
-      location: "King Abdullah Financial District",
-      event_count: 1
-    },
-    {
-      venue: "King Fahd Culture Centre",
-      city: "riyadh",
-      location: "King Abdullah Park", 
-      event_count: 2
-    },
-    {
-      venue: "Nayyara Banqueting & Conference Centre",
-      city: "riyadh",
-      location: "King Saud University District",
-      event_count: 1
-    },
-    {
-      venue: "Radisson Blu Hotel & Convention Center",
-      city: "riyadh",
-      location: "King Abdullah Financial District",
-      event_count: 1
-    }
-  ];
-
-  // Use mock data if API is not working or returns no results
-  const hasApiData = venuesList.length > 0;
-  const displayVenues = hasApiData ? venuesList : mockVenues;
-  
-  // Show API error if there's an error but we're using mock data
-  const showApiError = error && !hasApiData;
-
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
@@ -179,7 +108,7 @@ export default function VenueList() {
         </div>
 
         {/* API Error Warning */}
-        {showApiError && (
+        {error && (
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6 flex items-center gap-3">
             <AlertTriangle className="h-5 w-5 text-yellow-600 flex-shrink-0" />
             <div>
@@ -203,12 +132,12 @@ export default function VenueList() {
           </div>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {displayVenues && displayVenues.length > 0 ? (
-              displayVenues.map((venue: VenueAggregate, index: number) => (
+            {venuesList && venuesList.length > 0 ? (
+              venuesList.map((venue: VenueAggregate, index: number) => (
                 <Card
-                  key={`${venue.venue}-${index}`}
+                  key={venue.id}
                   className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all transform hover:-translate-y-1"
-                  data-testid={`card-venue-${index}`}
+                  data-testid={`card-venue-${venue.id}`}
                 >
                   <div className="relative">
                     <img
@@ -238,7 +167,7 @@ export default function VenueList() {
                       <Button 
                         size="sm" 
                         className="bg-saudi-green hover:bg-saudi-green/90"
-                        data-testid={`button-view-venue-${index}`}
+                        data-testid={`button-view-venue-${venue.id}`}
                       >
                         {t('venues.button.view')}
                       </Button>
@@ -259,7 +188,7 @@ export default function VenueList() {
         )}
 
         {/* Load More */}
-        {displayVenues && displayVenues.length > 0 && (
+        {venuesList && venuesList.length > 0 && (
           <div className="text-center mt-12">
             <Button variant="outline" data-testid="button-load-more">
               {t('venues.button.loadmore')}

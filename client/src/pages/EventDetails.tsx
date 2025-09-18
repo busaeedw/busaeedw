@@ -14,6 +14,7 @@ import { LoadingSpinner, LoadingSkeleton } from '@/components/ui/loading';
 import { apiRequest } from '@/lib/queryClient';
 import { Calendar, MapPin, Users, Clock, Star, MessageSquare, Share2 } from 'lucide-react';
 import { isUnauthorizedError } from '@/lib/authUtils';
+import { type Event, type VenueAggregate } from '@shared/schema';
 
 export default function EventDetails() {
   const { id } = useParams();
@@ -22,19 +23,25 @@ export default function EventDetails() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const { data: event, isLoading: eventLoading, error: eventError } = useQuery({
+  const { data: event, isLoading: eventLoading, error: eventError } = useQuery<Event>({
     queryKey: ['/api/events', id],
     enabled: !!id,
   });
 
   const { data: registrations, isLoading: registrationsLoading } = useQuery({
     queryKey: ['/api/events', id, 'registrations'],
-    enabled: !!id && isAuthenticated && (user?.role === 'organizer' || user?.role === 'admin'),
+    enabled: !!id && isAuthenticated && ((user as any)?.role === 'organizer' || (user as any)?.role === 'admin'),
   });
 
   const { data: reviews, isLoading: reviewsLoading } = useQuery({
     queryKey: ['/api/reviews/event', id],
     enabled: !!id,
+  });
+
+  // Load venue details if event has venueId
+  const { data: venue, isLoading: venueLoading } = useQuery<VenueAggregate>({
+    queryKey: [`/api/venues/${event?.venueId}`],
+    enabled: !!event?.venueId,
   });
 
   const registerMutation = useMutation({
@@ -70,7 +77,7 @@ export default function EventDetails() {
   });
 
   const getCategoryColor = (category: string) => {
-    const colors = {
+    const colors: Record<string, string> = {
       technology: 'bg-primary-100 text-primary-700',
       cultural: 'bg-gold-100 text-gold-700',
       business: 'bg-blue-100 text-blue-700',
@@ -179,22 +186,47 @@ export default function EventDetails() {
                 <CardTitle>Location & Venue</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  <div>
-                    <h4 className="font-medium text-gray-900">Address</h4>
-                    <p className="text-gray-600">{event.location}</p>
+                {venueLoading ? (
+                  <LoadingSkeleton lines={3} />
+                ) : (
+                  <div className="space-y-4">
+                    {/* Display venue information from venues table if available */}
+                    {venue ? (
+                      <>
+                        <div>
+                          <h4 className="font-medium text-gray-900">Venue</h4>
+                          <p className="text-gray-600">{venue.venue}</p>
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-gray-900">Address</h4>
+                          <p className="text-gray-600">{venue.location}</p>
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-gray-900">City</h4>
+                          <p className="text-gray-600">{venue.city}, Saudi Arabia</p>
+                        </div>
+                      </>
+                    ) : (
+                      /* Fallback to legacy venue fields for backward compatibility */
+                      <>
+                        <div>
+                          <h4 className="font-medium text-gray-900">Address</h4>
+                          <p className="text-gray-600">{event.location}</p>
+                        </div>
+                        {event.venue && (
+                          <div>
+                            <h4 className="font-medium text-gray-900">Venue</h4>
+                            <p className="text-gray-600">{event.venue}</p>
+                          </div>
+                        )}
+                        <div>
+                          <h4 className="font-medium text-gray-900">City</h4>
+                          <p className="text-gray-600">{event.city}, Saudi Arabia</p>
+                        </div>
+                      </>
+                    )}
                   </div>
-                  {event.venue && (
-                    <div>
-                      <h4 className="font-medium text-gray-900">Venue</h4>
-                      <p className="text-gray-600">{event.venue}</p>
-                    </div>
-                  )}
-                  <div>
-                    <h4 className="font-medium text-gray-900">City</h4>
-                    <p className="text-gray-600">{event.city}, Saudi Arabia</p>
-                  </div>
-                </div>
+                )}
               </CardContent>
             </Card>
 
@@ -253,7 +285,7 @@ export default function EventDetails() {
               <CardContent className="p-6">
                 <div className="text-center mb-6">
                   <div className="text-3xl font-bold text-saudi-green mb-2">
-                    {event.price === '0.00' || event.price === 0 ? (
+                    {event.price === '0.00' || Number(event.price) === 0 ? (
                       'Free'
                     ) : (
                       `${event.currency} ${event.price}`

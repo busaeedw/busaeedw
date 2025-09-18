@@ -271,6 +271,7 @@ export const insertVenueSchema = createInsertSchema(venues).omit({
 
 // Venue aggregate schema for venues endpoint
 export const venueAggregateSchema = z.object({
+  id: z.string(),
   venue: z.string(),
   city: z.string(),
   location: z.string(),

@@ -7,19 +7,13 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { MapPin, Search, Filter } from 'lucide-react';
 import { useState } from 'react';
-
-interface Venue {
-  venue: string;
-  city: string;
-  location: string;
-  event_count: number;
-}
+import { type VenueAggregate } from '@shared/schema';
 
 export default function BrowseVenues() {
   const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState('');
   
-  const { data: venues = [], isLoading } = useQuery<Venue[]>({
+  const { data: venues = [], isLoading } = useQuery<VenueAggregate[]>({
     queryKey: ['/api/venues'],
   });
 
@@ -81,23 +75,23 @@ export default function BrowseVenues() {
           </Card>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredVenues.map((venue, index) => (
-              <Card key={index} className="bg-white p-6 hover:shadow-lg transition-shadow" data-testid={`venue-card-${index}`}>
+            {filteredVenues.map((venue) => (
+              <Card key={venue.id} className="bg-white p-6 hover:shadow-lg transition-shadow" data-testid={`venue-card-${venue.id}`}>
                 <div className="mb-4">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2" data-testid={`venue-name-${index}`}>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2" data-testid={`venue-name-${venue.id}`}>
                     {venue.venue || t('common.unknown.venue')}
                   </h3>
                   <div className="flex items-center text-gray-600 mb-3">
                     <MapPin className="h-4 w-4 mr-2" />
-                    <span data-testid={`venue-location-${index}`}>
+                    <span data-testid={`venue-location-${venue.id}`}>
                       {venue.location || t('common.unknown.location')}, {t(`venues.city.${venue.city?.toLowerCase()}`) || venue.city || t('common.unknown.city')}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <Badge variant="secondary" className="bg-saudi-green/10 text-saudi-green" data-testid={`venue-events-${index}`}>
+                    <Badge variant="secondary" className="bg-saudi-green/10 text-saudi-green" data-testid={`venue-events-${venue.id}`}>
                       {venue.event_count} events
                     </Badge>
-                    <Button size="sm" className="bg-saudi-green hover:bg-saudi-green/90" data-testid={`venue-view-${index}`}>
+                    <Button size="sm" className="bg-saudi-green hover:bg-saudi-green/90" data-testid={`venue-view-${venue.id}`}>
                       View Details
                     </Button>
                   </div>
