@@ -10,18 +10,21 @@ import { useState } from 'react';
 import { type VenueAggregate } from '@shared/schema';
 
 export default function BrowseVenues() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [searchQuery, setSearchQuery] = useState('');
   
   const { data: venues = [], isLoading } = useQuery<VenueAggregate[]>({
     queryKey: ['/api/venues'],
   });
 
-  const filteredVenues = venues.filter(venue =>
-    venue.venue.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    venue.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    venue.city.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredVenues = venues.filter(venue => {
+    const venueName = language === 'ar' && venue.venue_ar ? venue.venue_ar : venue.venue;
+    return venueName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+           venue.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
+           venue.city.toLowerCase().includes(searchQuery.toLowerCase()) ||
+           (venue.venue_ar && venue.venue_ar.includes(searchQuery)) ||
+           venue.venue.toLowerCase().includes(searchQuery.toLowerCase());
+  });
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -79,7 +82,7 @@ export default function BrowseVenues() {
               <Card key={venue.id} className="bg-white p-6 hover:shadow-lg transition-shadow" data-testid={`venue-card-${venue.id}`}>
                 <div className="mb-4">
                   <h3 className="text-xl font-semibold text-gray-900 mb-2" data-testid={`venue-name-${venue.id}`}>
-                    {venue.venue || t('common.unknown.venue')}
+                    {language === 'ar' && venue.venue_ar ? venue.venue_ar : venue.venue || t('common.unknown.venue')}
                   </h3>
                   <div className="flex items-center text-gray-600 mb-3">
                     <MapPin className="h-4 w-4 mr-2" />

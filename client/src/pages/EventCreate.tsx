@@ -47,7 +47,7 @@ type Venue = {
 
 export default function EventCreate() {
   const { user, isAuthenticated, isLoading } = useAuth();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { toast } = useToast();
   const [, setLocation] = useLocation();
   const queryClient = useQueryClient();
@@ -395,7 +395,8 @@ export default function EventCreate() {
                                 // Auto-fill venue and location when venue is selected
                                 const selectedVenue = venues.find(v => v.id === value);
                                 if (selectedVenue) {
-                                  form.setValue("venue", selectedVenue.venue);
+                                  const venueName = language === 'ar' && selectedVenue.venue_ar ? selectedVenue.venue_ar : selectedVenue.venue;
+                                  form.setValue("venue", venueName);
                                   form.setValue("location", selectedVenue.location);
                                 }
                               }} 
@@ -412,7 +413,7 @@ export default function EventCreate() {
                                 </SelectItem>
                                 {cityVenues.map((venue) => (
                                   <SelectItem key={venue.id} value={venue.id}>
-                                    {venue.venue}
+                                    {language === 'ar' && venue.venue_ar ? venue.venue_ar : venue.venue}
                                   </SelectItem>
                                 ))}
                               </SelectContent>

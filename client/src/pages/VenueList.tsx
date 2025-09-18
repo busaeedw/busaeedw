@@ -14,7 +14,7 @@ import { type VenueAggregate, venueAggregateSchema } from '@shared/schema';
 import { z } from 'zod';
 
 export default function VenueList() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCity, setSelectedCity] = useState('');
 
@@ -153,7 +153,7 @@ export default function VenueList() {
                   </div>
                   <CardContent className="p-6">
                     <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                      {venue.venue || t('common.unknown.venue')}
+                      {language === 'ar' && venue.venue_ar ? venue.venue_ar : venue.venue || t('common.unknown.venue')}
                     </h3>
                     <div className="flex items-center text-sm text-gray-500 mb-4">
                       <MapPin className="h-4 w-4 mr-2" />

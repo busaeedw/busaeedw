@@ -19,7 +19,7 @@ import { type Event, type VenueAggregate } from '@shared/schema';
 export default function EventDetails() {
   const { id } = useParams();
   const { user, isAuthenticated, isLoading: authLoading } = useAuth();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -195,7 +195,7 @@ export default function EventDetails() {
                       <>
                         <div>
                           <h4 className="font-medium text-gray-900">Venue</h4>
-                          <p className="text-gray-600">{venue.venue}</p>
+                          <p className="text-gray-600">{language === 'ar' && venue.venue_ar ? venue.venue_ar : venue.venue}</p>
                         </div>
                         <div>
                           <h4 className="font-medium text-gray-900">Address</h4>

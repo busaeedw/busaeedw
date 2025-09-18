@@ -6,10 +6,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { useLanguage } from "@/hooks/useLanguage";
 import type { VenueAggregate, Event } from "@shared/schema";
 
 export default function VenueDetails() {
   const { id } = useParams<{ id: string }>();
+  const { language } = useLanguage();
 
   const { data: venue, isLoading: venueLoading, error: venueError } = useQuery<VenueAggregate>({
     queryKey: [`/api/venues/${id}`],
@@ -71,7 +73,7 @@ export default function VenueDetails() {
             <div className="flex items-start justify-between">
               <div>
                 <CardTitle className="text-3xl text-saudi-green mb-2" data-testid="text-venue-name">
-                  {venue.venue}
+                  {language === 'ar' && venue.venue_ar ? venue.venue_ar : venue.venue}
                 </CardTitle>
                 <div className="flex items-center text-gray-600 mb-4">
                   <MapPin className="h-5 w-5 mr-2" />
@@ -113,7 +115,7 @@ export default function VenueDetails() {
           <CardHeader>
             <CardTitle className="flex items-center">
               <Building2 className="h-5 w-5 mr-2" />
-              Events at {venue.venue}
+              Events at {language === 'ar' && venue.venue_ar ? venue.venue_ar : venue.venue}
             </CardTitle>
           </CardHeader>
           <CardContent>
