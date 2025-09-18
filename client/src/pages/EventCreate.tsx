@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@/hooks/useAuth';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useToast } from '@/hooks/use-toast';
@@ -27,9 +27,23 @@ const eventFormSchema = insertEventSchema.extend({
   maxAttendees: z.string().optional(),
 }).omit({
   organizerId: true,
-});
+}).refine(
+  (data) => data.venueId || (data.venue && data.location),
+  {
+    message: "Either select a venue from the database or provide venue name and location",
+    path: ["venue"],
+  }
+);
 
 type EventFormData = z.infer<typeof eventFormSchema>;
+
+type Venue = {
+  id: string;
+  venue: string;
+  city: string;
+  location: string;
+  event_count: number;
+};
 
 export default function EventCreate() {
   const { user, isAuthenticated, isLoading } = useAuth();
@@ -37,6 +51,12 @@ export default function EventCreate() {
   const { toast } = useToast();
   const [, setLocation] = useLocation();
   const queryClient = useQueryClient();
+
+  // Load venues from API
+  const { data: venues = [], isLoading: venuesLoading } = useQuery<Venue[]>({
+    queryKey: ['/api/venues'],
+    enabled: isAuthenticated, // Only load venues when authenticated
+  });
 
   // Redirect to login if not authenticated
   useEffect(() => {
@@ -78,6 +98,7 @@ export default function EventCreate() {
       location: '',
       city: '',
       venue: '',
+      venueId: '',
       price: '0',
       currency: 'SAR',
       maxAttendees: undefined,
@@ -87,6 +108,18 @@ export default function EventCreate() {
     },
   });
 
+  // Reset venue selection when city changes
+  useEffect(() => {
+    const subscription = form.watch((values, { name }) => {
+      if (name === 'city') {
+        form.setValue('venueId', '');
+        form.setValue('venue', '');
+        form.setValue('location', '');
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [form]);
+
   const createEventMutation = useMutation({
     mutationFn: async (data: EventFormData) => {
       const eventData = {
@@ -95,6 +128,7 @@ export default function EventCreate() {
         endDate: new Date(data.endDate).toISOString(),
         price: parseFloat(data.price),
         maxAttendees: data.maxAttendees ? parseInt(data.maxAttendees) : null,
+        venueId: data.venueId || null, // Use venueId if selected, otherwise null
       };
       const response = await apiRequest('POST', '/api/events', eventData);
       return response.json();
@@ -326,36 +360,59 @@ export default function EventCreate() {
 
                   <FormField
                     control={form.control}
-                    name="venue"
+                    name="venueId"
                     render={({ field }) => {
                       const selectedCity = form.watch("city");
-                      const riyadhVenues = [
-                        "Riyadh International Convention & Exhibition Center",
-                        "Al Faisaliah Hotel - Prince Sultan's Grand Hall",
-                        "Four Seasons Hotel Riyadh - Kingdom Ballroom", 
-                        "Nayyara Banqueting & Conference Centre",
-                        "Hilton Riyadh Hotel & Residences",
-                        "Raffles Hotel Riyadh - Rafal Ballroom",
-                        "Mövenpick Hotel Riyadh - Grand Ballroom",
-                        "JW Marriott Hotel Riyadh",
-                        "Radisson Blu Hotel & Convention Center",
-                        "King Fahd Culture Centre"
-                      ];
+                      const cityVenues = venues.filter(v => 
+                        v.city.toLowerCase() === selectedCity?.toLowerCase()
+                      );
 
-                      if (selectedCity === "riyadh") {
+                      // If loading venues, show loading state
+                      if (venuesLoading) {
                         return (
                           <FormItem>
                             <FormLabel>Venue</FormLabel>
-                            <Select onValueChange={field.onChange} value={field.value || ""}>
+                            <Select disabled>
                               <FormControl>
                                 <SelectTrigger data-testid="select-venue">
-                                  <SelectValue placeholder="Select a venue in Riyadh" />
+                                  <SelectValue placeholder="Loading venues..." />
+                                </SelectTrigger>
+                              </FormControl>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        );
+                      }
+
+                      // If city has venues in database, show dropdown
+                      if (selectedCity && cityVenues.length > 0) {
+                        return (
+                          <FormItem>
+                            <FormLabel>Venue</FormLabel>
+                            <Select 
+                              onValueChange={(value) => {
+                                field.onChange(value);
+                                // Auto-fill venue and location when venue is selected
+                                const selectedVenue = venues.find(v => v.id === value);
+                                if (selectedVenue) {
+                                  form.setValue("venue", selectedVenue.venue);
+                                  form.setValue("location", selectedVenue.location);
+                                }
+                              }} 
+                              value={field.value || ""}
+                            >
+                              <FormControl>
+                                <SelectTrigger data-testid="select-venue">
+                                  <SelectValue placeholder={`Select a venue in ${selectedCity}`} />
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
-                                {riyadhVenues.map((venue) => (
-                                  <SelectItem key={venue} value={venue}>
-                                    {venue}
+                                <SelectItem value="" key="custom">
+                                  Custom Venue (enter below)
+                                </SelectItem>
+                                {cityVenues.map((venue) => (
+                                  <SelectItem key={venue.id} value={venue.id}>
+                                    {venue.venue}
                                   </SelectItem>
                                 ))}
                               </SelectContent>
@@ -365,15 +422,42 @@ export default function EventCreate() {
                         );
                       }
 
+                      // For custom venues or cities without venues in database
                       return (
                         <FormItem>
-                          <FormLabel>Venue</FormLabel>
+                          <FormLabel>Venue ID</FormLabel>
                           <FormControl>
                             <Input 
-                              placeholder="Venue name" 
+                              placeholder="Will be auto-set when venue is selected" 
                               {...field} 
                               value={field.value || ''} 
-                              data-testid="input-venue"
+                              disabled
+                              data-testid="input-venue-id"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      );
+                    }}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="venue"
+                    render={({ field }) => {
+                      const selectedVenueId = form.watch("venueId");
+                      const isVenueSelected = Boolean(selectedVenueId && selectedVenueId !== "");
+
+                      return (
+                        <FormItem>
+                          <FormLabel>Venue Name</FormLabel>
+                          <FormControl>
+                            <Input 
+                              placeholder="Enter venue name" 
+                              {...field} 
+                              value={field.value || ''} 
+                              disabled={isVenueSelected}
+                              data-testid="input-venue-name"
                             />
                           </FormControl>
                           <FormMessage />
