@@ -42,10 +42,21 @@ export const users = pgTable("users", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Venues table
+export const venues = pgTable("venues", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  name: varchar("name").notNull(),
+  city: varchar("city").notNull(),
+  location: varchar("location").notNull(),
+}, (table) => [
+  index("venues_name_city_location_idx").on(table.name, table.city, table.location),
+]);
+
 // Events table
 export const events = pgTable("events", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   organizerId: varchar("organizer_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  venueId: varchar("venue_id").references(() => venues.id, { onDelete: "set null" }),
   title: varchar("title").notNull(),
   description: text("description").notNull(),
   category: varchar("category").notNull(), // business, cultural, technology, entertainment
@@ -62,7 +73,9 @@ export const events = pgTable("events", {
   tags: text("tags").array(),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
-});
+}, (table) => [
+  index("events_venue_id_idx").on(table.venueId),
+]);
 
 // Event registrations/tickets
 export const eventRegistrations = pgTable("event_registrations", {
@@ -139,10 +152,18 @@ export const usersRelations = relations(users, ({ many, one }) => ({
   serviceBookings: many(serviceBookings),
 }));
 
+export const venuesRelations = relations(venues, ({ many }) => ({
+  events: many(events),
+}));
+
 export const eventsRelations = relations(events, ({ one, many }) => ({
   organizer: one(users, {
     fields: [events.organizerId],
     references: [users.id],
+  }),
+  venue: one(venues, {
+    fields: [events.venueId],
+    references: [venues.id],
   }),
   registrations: many(eventRegistrations),
   reviews: many(reviews),
@@ -244,6 +265,10 @@ export const insertServiceBookingSchema = createInsertSchema(serviceBookings).om
   updatedAt: true,
 });
 
+export const insertVenueSchema = createInsertSchema(venues).omit({
+  id: true,
+});
+
 // Venue aggregate schema for venues endpoint
 export const venueAggregateSchema = z.object({
   venue: z.string(),
@@ -267,4 +292,6 @@ export type Message = typeof messages.$inferSelect;
 export type InsertMessage = z.infer<typeof insertMessageSchema>;
 export type ServiceBooking = typeof serviceBookings.$inferSelect;
 export type InsertServiceBooking = z.infer<typeof insertServiceBookingSchema>;
+export type Venue = typeof venues.$inferSelect;
+export type InsertVenue = z.infer<typeof insertVenueSchema>;
 export type VenueAggregate = z.infer<typeof venueAggregateSchema>;
