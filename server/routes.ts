@@ -586,7 +586,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Build query with proper parameter indexing
       let query = `
-        SELECT v.id, v.name as venue, v.city, v.location,
+        SELECT v.id, v.name as venue, v.name_ar as venue_ar, v.city, v.location,
                COUNT(e.id) as event_count
         FROM venues v
         LEFT JOIN events e ON v.id = e.venue_id AND e.status = 'published'
@@ -607,7 +607,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       query += `
-        GROUP BY v.id, v.name, v.city, v.location
+        GROUP BY v.id, v.name, v.name_ar, v.city, v.location
         ORDER BY event_count DESC, v.name ASC
         LIMIT $${paramIndex}
       `;
@@ -619,6 +619,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const venues = result.rows.map((row: any) => ({
         id: row.id,
         venue: row.venue,
+        venue_ar: row.venue_ar,
         city: row.city,
         location: row.location,
         event_count: parseInt(row.event_count) || 0
