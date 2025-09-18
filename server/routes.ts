@@ -9,6 +9,7 @@ import {
   insertReviewSchema,
   insertMessageSchema,
   insertServiceBookingSchema,
+  insertVenueSchema,
 } from "@shared/schema";
 import { z } from "zod";
 import { hashPassword, comparePasswords } from "./auth-utils";
@@ -575,44 +576,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Venues endpoint  
+  // Venues CRUD endpoints
+  
+  // Get all venues with event counts
   app.get('/api/venues', async (req, res) => {
-    console.log("venues handler: pool.query"); // Debug log to verify handler
     try {
       const { search, city, limit = "50" } = req.query;
       const limitNum = Math.min(parseInt(limit as string) || 50, 100);
       
-      // Build WHERE clause with safe string interpolation
-      let whereClause = `status = 'published' AND venue IS NOT NULL AND venue != ''`;
+      // Build query with proper parameter indexing
+      let query = `
+        SELECT v.id, v.name as venue, v.city, v.location,
+               COUNT(e.id) as event_count
+        FROM venues v
+        LEFT JOIN events e ON v.id = e.venue_id AND e.status = 'published'
+        WHERE 1=1
+      `;
+      
+      let paramIndex = 1;
       const params: string[] = [];
       
       if (search && typeof search === 'string' && search.trim() !== '') {
-        params.push(`%${search.trim()}%`);
-        params.push(`%${search.trim()}%`);
-        whereClause += ` AND (venue ILIKE $${params.length - 1} OR location ILIKE $${params.length})`;
+        query += ` AND (v.name ILIKE $${paramIndex++} OR v.location ILIKE $${paramIndex++})`;
+        params.push(`%${search.trim()}%`, `%${search.trim()}%`);
       }
       
       if (city && typeof city === 'string' && city.trim() !== '' && city !== 'all') {
+        query += ` AND v.city ILIKE $${paramIndex++}`;
         params.push(`%${city.trim()}%`);
-        whereClause += ` AND city ILIKE $${params.length}`;
       }
       
-      // Use pool.query directly with raw SQL
-      const query = `
-        SELECT DISTINCT venue, city, location, 
-               COUNT(*) as event_count
-        FROM events 
-        WHERE ${whereClause}
-        GROUP BY venue, city, location
-        ORDER BY event_count DESC, venue ASC
-        LIMIT $${params.length + 1}
+      query += `
+        GROUP BY v.id, v.name, v.city, v.location
+        ORDER BY event_count DESC, v.name ASC
+        LIMIT $${paramIndex}
       `;
-      
       params.push(limitNum.toString());
+      
       const result = await pool.query(query, params);
       
       // Transform the result to ensure consistent format
       const venues = result.rows.map((row: any) => ({
+        id: row.id,
         venue: row.venue,
         city: row.city,
         location: row.location,
@@ -623,6 +628,90 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching venues:", error);
       res.status(500).json({ message: "Failed to fetch venues", error: (error as Error).message });
+    }
+  });
+
+  // Create new venue (admin/organizer only)
+  app.post('/api/venues', unifiedAuth, async (req: any, res) => {
+    try {
+      const userId = req.authUserId;
+      const user = await storage.getUser(userId);
+      
+      // Only admins and organizers can create venues
+      if (!user || (user.role !== 'admin' && user.role !== 'organizer')) {
+        return res.status(403).json({ message: "Only admins and organizers can create venues" });
+      }
+
+      const venueData = insertVenueSchema.parse(req.body);
+      const venue = await storage.createVenue(venueData);
+      
+      res.status(201).json(venue);
+    } catch (error) {
+      console.error("Error creating venue:", error);
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid venue data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Failed to create venue" });
+    }
+  });
+
+  // Get single venue
+  app.get('/api/venues/:id', async (req, res) => {
+    try {
+      const venue = await storage.getVenue(req.params.id);
+      if (!venue) {
+        return res.status(404).json({ message: "Venue not found" });
+      }
+      res.json(venue);
+    } catch (error) {
+      console.error("Error fetching venue:", error);
+      res.status(500).json({ message: "Failed to fetch venue" });
+    }
+  });
+
+  // Update venue (admin/organizer only)
+  app.put('/api/venues/:id', unifiedAuth, async (req: any, res) => {
+    try {
+      const userId = req.authUserId;
+      const user = await storage.getUser(userId);
+      
+      // Only admins and organizers can update venues
+      if (!user || (user.role !== 'admin' && user.role !== 'organizer')) {
+        return res.status(403).json({ message: "Only admins and organizers can update venues" });
+      }
+
+      const venueData = insertVenueSchema.partial().parse(req.body);
+      const venue = await storage.updateVenue(req.params.id, venueData);
+      
+      res.json(venue);
+    } catch (error) {
+      console.error("Error updating venue:", error);
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid venue data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Failed to update venue" });
+    }
+  });
+
+  // Delete venue (admin only)
+  app.delete('/api/venues/:id', unifiedAuth, async (req: any, res) => {
+    try {
+      const userId = req.authUserId;
+      const user = await storage.getUser(userId);
+      
+      // Only admins can delete venues
+      if (!user || user.role !== 'admin') {
+        return res.status(403).json({ message: "Only admins can delete venues" });
+      }
+
+      await storage.deleteVenue(req.params.id);
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error deleting venue:", error);
+      if (error instanceof Error && error.message.includes('currently used by')) {
+        return res.status(409).json({ message: error.message });
+      }
+      res.status(500).json({ message: "Failed to delete venue" });
     }
   });
 
