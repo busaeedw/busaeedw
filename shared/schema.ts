@@ -46,6 +46,7 @@ export const users = pgTable("users", {
 export const venues = pgTable("venues", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   name: varchar("name").notNull(),
+  nameAr: varchar("name_ar"),
   city: varchar("city").notNull(),
   location: varchar("location").notNull(),
 }, (table) => [
@@ -273,6 +274,7 @@ export const insertVenueSchema = createInsertSchema(venues).omit({
 export const venueAggregateSchema = z.object({
   id: z.string(),
   venue: z.string(),
+  venue_ar: z.string().optional().nullable(),
   city: z.string(),
   location: z.string(),
   event_count: z.number().or(z.string().transform(Number)), // Handle both number and string from DB
