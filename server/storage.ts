@@ -241,7 +241,7 @@ export class DatabaseStorage implements IStorage {
       conditions.push(eq(events.organizerId, filters.organizerId));
     }
 
-    let query = db.select().from(events).where(and(...conditions)).orderBy(desc(events.startDate));
+    let query: any = db.select().from(events).where(and(...conditions)).orderBy(desc(events.startDate));
 
     if (filters?.limit) {
       query = query.limit(filters.limit);
@@ -328,7 +328,7 @@ export class DatabaseStorage implements IStorage {
       conditions.push(eq(serviceProviders.verified, filters.verified));
     }
 
-    let query = db.select().from(serviceProviders);
+    let query: any = db.select().from(serviceProviders);
     
     if (conditions.length > 0) {
       query = query.where(and(...conditions));

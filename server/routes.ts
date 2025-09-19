@@ -10,9 +10,11 @@ import {
   insertMessageSchema,
   insertServiceBookingSchema,
   insertVenueSchema,
+  registerUserSchema,
+  loginSchema,
 } from "@shared/schema";
 import { z } from "zod";
-import { hashPassword, comparePasswords } from "./auth-utils";
+import bcrypt from "bcrypt";
 import { randomUUID } from "crypto";
 
 // Unified authentication middleware that supports both session and OIDC
@@ -102,23 +104,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Email/Password Authentication Routes
+  // Username/Password Authentication Routes
   app.post('/api/auth/login', async (req, res) => {
     try {
-      const { email, password } = req.body;
+      const { username, password } = req.body;
 
-      if (!email || !password) {
-        return res.status(400).json({ message: "Email and password are required" });
+      if (!username || !password) {
+        return res.status(400).json({ message: "Username and password are required" });
       }
 
-      // Find user by email
-      const user = await storage.getUserByEmail(email);
+      // Find user by username
+      const user = await storage.getUserByUsername(username);
       if (!user || !user.password) {
         return res.status(401).json({ message: "Invalid credentials" });
       }
 
       // Verify password
-      const isPasswordValid = await comparePasswords(password, user.password);
+      const isPasswordValid = await bcrypt.compare(password, user.password);
       if (!isPasswordValid) {
         return res.status(401).json({ message: "Invalid credentials" });
       }
@@ -137,26 +139,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post('/api/auth/register', async (req, res) => {
     try {
-      const { email, password, firstName, lastName } = req.body;
+      const { email, username, fullName, password } = req.body;
 
-      if (!email || !password) {
-        return res.status(400).json({ message: "Email and password are required" });
+      if (!email || !username || !fullName || !password) {
+        return res.status(400).json({ message: "Email, username, full name, and password are required" });
       }
 
-      // Check if user already exists
-      const existingUser = await storage.getUserByEmail(email);
-      if (existingUser) {
-        return res.status(409).json({ message: "User already exists" });
+      // Check if user already exists by email
+      const existingUserByEmail = await storage.getUserByEmail(email);
+      if (existingUserByEmail) {
+        return res.status(409).json({ message: "User with this email already exists" });
       }
 
-      // Hash password and create user
-      const hashedPassword = await hashPassword(password);
+      // Check if user already exists by username
+      const existingUserByUsername = await storage.getUserByUsername(username);
+      if (existingUserByUsername) {
+        return res.status(409).json({ message: "Username already exists" });
+      }
+
+      // Create user (storage will handle password hashing)
       const newUser = await storage.upsertUser({
-        id: randomUUID(),
         email,
-        password: hashedPassword,
-        firstName: firstName || null,
-        lastName: lastName || null,
+        username,
+        fullName,
+        password,
         role: "attendee"
       });
 
