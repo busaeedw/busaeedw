@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useLocation } from 'wouter';
 import { useAuth } from '@/hooks/useAuth';
 import { useLanguage } from '@/hooks/useLanguage';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Menu, Globe, User, LogOut, ChevronDown } from 'lucide-react';
@@ -11,12 +12,45 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { apiRequest } from '@/lib/queryClient';
+import { useToast } from '@/hooks/use-toast';
 
 export function Header() {
-  const [location] = useLocation();
+  const [location, setLocation] = useLocation();
   const { user, isAuthenticated, isLoading } = useAuth();
   const { language, setLanguage, t, isRTL } = useLanguage();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  const logoutMutation = useMutation({
+    mutationFn: async () => {
+      const response = await apiRequest("/api/auth/logout", {
+        method: "POST",
+      });
+      return response;
+    },
+    onSuccess: () => {
+      toast({
+        title: "Logged out",
+        description: "You have been successfully logged out.",
+      });
+      // Invalidate the auth user query
+      queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+      setLocation("/");
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Logout failed",
+        description: error.message || "Something went wrong. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleLogout = () => {
+    logoutMutation.mutate();
+  };
 
   const navItems = [
     { 
@@ -142,7 +176,7 @@ export function Header() {
                     <DropdownMenuTrigger asChild>
                       <Button variant="outline" className="flex items-center space-x-2">
                         <User className="h-4 w-4" />
-                        <span>{(user as any).firstName || (user as any).email}</span>
+                        <span className="text-xs" data-testid="text-username">{(user as any).fullName || (user as any).firstName || (user as any).email}</span>
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-56">
@@ -152,21 +186,23 @@ export function Header() {
                       <DropdownMenuItem asChild>
                         <Link href="/profile">Profile</Link>
                       </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <a href="/api/logout" className="flex items-center">
-                          <LogOut className="h-4 w-4 mr-2" />
-                          {t('auth.signout')}
-                        </a>
+                      <DropdownMenuItem
+                        onClick={handleLogout}
+                        className="flex items-center cursor-pointer"
+                        data-testid="button-logout"
+                      >
+                        <LogOut className="h-4 w-4 mr-2" />
+                        {t('auth.signout')}
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 ) : (
                   <div className="flex items-center space-x-3">
-                    <Button variant="ghost" asChild>
-                      <a href="/api/login">{t('auth.signup')}</a>
+                    <Button variant="ghost" asChild data-testid="button-signup">
+                      <Link href="/register">{t('auth.signup')}</Link>
                     </Button>
-                    <Button asChild className="bg-saudi-green hover:bg-saudi-green/90">
-                      <a href="/api/login">{t('auth.signin')}</a>
+                    <Button asChild className="bg-saudi-green hover:bg-saudi-green/90" data-testid="button-signin">
+                      <Link href="/login">{t('auth.signin')}</Link>
                     </Button>
                   </div>
                 )}
@@ -218,20 +254,21 @@ export function Header() {
                         >
                           Dashboard
                         </Link>
-                        <a
-                          href="/api/logout"
+                        <button
+                          onClick={handleLogout}
                           className="block text-lg font-medium text-gray-900 hover:text-saudi-green"
+                          data-testid="button-mobile-logout"
                         >
                           {t('auth.signout')}
-                        </a>
+                        </button>
                       </div>
                     ) : (
                       <div className="border-t pt-4 space-y-2">
-                        <Button variant="ghost" asChild className="w-full justify-start">
-                          <a href="/api/login">{t('auth.signup')}</a>
+                        <Button variant="ghost" asChild className="w-full justify-start" data-testid="button-mobile-signup">
+                          <Link href="/register">{t('auth.signup')}</Link>
                         </Button>
-                        <Button asChild className="w-full bg-saudi-green hover:bg-saudi-green/90">
-                          <a href="/api/login">{t('auth.signin')}</a>
+                        <Button asChild className="w-full bg-saudi-green hover:bg-saudi-green/90" data-testid="button-mobile-signin">
+                          <Link href="/login">{t('auth.signin')}</Link>
                         </Button>
                       </div>
                     )}
