@@ -18,7 +18,9 @@ import {
   Plus,
   Settings,
   Eye,
-  Edit
+  Edit,
+  Home,
+  Search
 } from 'lucide-react';
 import { isUnauthorizedError } from '@/lib/authUtils';
 
@@ -183,31 +185,43 @@ export default function Dashboard() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
+            <CardTitle>{t('dashboard.quickActions')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
+            <Button asChild className="w-full justify-start" variant="outline" data-testid="button-homepage">
+              <Link href="/">
+                <Home className="h-4 w-4 mr-2" />
+                {t('dashboard.goToHomepage')}
+              </Link>
+            </Button>
+            <Button asChild className="w-full justify-start" variant="outline" data-testid="button-search-venues">
+              <Link href="/venues">
+                <Search className="h-4 w-4 mr-2" />
+                {t('dashboard.searchVenues')}
+              </Link>
+            </Button>
             <Button asChild className="w-full justify-start" variant="outline">
               <Link href="/events/create">
                 <Plus className="h-4 w-4 mr-2" />
-                Create New Event
+                {t('dashboard.createNewEvent')}
               </Link>
             </Button>
             <Button asChild className="w-full justify-start" variant="outline">
               <Link href="/events">
                 <CalendarCheck className="h-4 w-4 mr-2" />
-                Manage Events
+                {t('dashboard.manageEvents')}
               </Link>
             </Button>
             <Button asChild className="w-full justify-start" variant="outline">
               <Link href="/messages">
                 <MessageSquare className="h-4 w-4 mr-2" />
-                View Messages
+                {t('dashboard.viewMessages')}
               </Link>
             </Button>
             <Button asChild className="w-full justify-start" variant="outline">
               <Link href="/profile">
                 <Settings className="h-4 w-4 mr-2" />
-                Profile Settings
+                {t('dashboard.profileSettings')}
               </Link>
             </Button>
           </CardContent>
@@ -291,25 +305,37 @@ export default function Dashboard() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
+            <CardTitle>{t('dashboard.quickActions')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
+            <Button asChild className="w-full justify-start" variant="outline" data-testid="button-homepage">
+              <Link href="/">
+                <Home className="h-4 w-4 mr-2" />
+                {t('dashboard.goToHomepage')}
+              </Link>
+            </Button>
+            <Button asChild className="w-full justify-start" variant="outline" data-testid="button-search-venues">
+              <Link href="/venues">
+                <Search className="h-4 w-4 mr-2" />
+                {t('dashboard.searchVenues')}
+              </Link>
+            </Button>
             <Button asChild className="w-full justify-start" variant="outline">
               <Link href="/events">
                 <CalendarCheck className="h-4 w-4 mr-2" />
-                Browse Events
+                {t('dashboard.browseEvents')}
               </Link>
             </Button>
             <Button asChild className="w-full justify-start" variant="outline">
               <Link href="/messages">
                 <MessageSquare className="h-4 w-4 mr-2" />
-                View Messages
+                {t('dashboard.viewMessages')}
               </Link>
             </Button>
             <Button asChild className="w-full justify-start" variant="outline">
               <Link href="/profile">
                 <Settings className="h-4 w-4 mr-2" />
-                Profile Settings
+                {t('dashboard.profileSettings')}
               </Link>
             </Button>
           </CardContent>
@@ -324,10 +350,10 @@ export default function Dashboard() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Welcome back, {user?.firstName || user?.email}!
+            {t('dashboard.welcomeBack').replace('{{name}}', user?.firstName || user?.email || '')}
           </h1>
           <p className="text-gray-600 capitalize">
-            {user?.role} Dashboard
+            {t('dashboard.dashboard').replace('{{role}}', user?.role || '')}
           </p>
         </div>
 

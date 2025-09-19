@@ -137,6 +137,24 @@ const translations = {
     'venues.error.banner.title': 'Unable to load venue data from server',
     'venues.error.banner.subtitle': 'Showing sample venues instead. Please try again later.',
 
+    // Dashboard
+    'dashboard.quickActions': 'Quick Actions',
+    'dashboard.goToHomepage': 'Go to Homepage', 
+    'dashboard.searchVenues': 'Search Venues',
+    'dashboard.createNewEvent': 'Create New Event',
+    'dashboard.manageEvents': 'Manage Events',
+    'dashboard.viewMessages': 'View Messages',
+    'dashboard.profileSettings': 'Profile Settings',
+    'dashboard.browseEvents': 'Browse Events',
+    'dashboard.welcomeBack': 'Welcome back, {{name}}!',
+    'dashboard.dashboard': '{{role}} Dashboard',
+    'dashboard.myEvents': 'My Events',
+    'dashboard.totalEventsCreated': 'Total events created',
+    'dashboard.totalAttendees': 'Total Attendees',
+    'dashboard.acrossAllEvents': 'Across all events',
+    'dashboard.messages': 'Messages',
+    'dashboard.activeConversations': 'Active conversations',
+
     // Admin Dashboard  
     'admin.dashboard.title': 'Admin Dashboard',
     'admin.dashboard.subtitle': 'Manage platform operations and monitor activity',
@@ -321,6 +339,24 @@ const translations = {
     'venues.notfound.subtitle': 'حاول تعديل معايير البحث أو تصفح جميع الأماكن.',
     'venues.error.banner.title': 'غير قادر على تحميل بيانات الأماكن من الخادم',
     'venues.error.banner.subtitle': 'عرض أماكن تجريبية بدلاً من ذلك. يرجى المحاولة مرة أخرى لاحقاً.',
+
+    // Dashboard
+    'dashboard.quickActions': 'الإجراءات السريعة',
+    'dashboard.goToHomepage': 'الذهاب للصفحة الرئيسية', 
+    'dashboard.searchVenues': 'البحث في الأماكن',
+    'dashboard.createNewEvent': 'إنشاء فعالية جديدة',
+    'dashboard.manageEvents': 'إدارة الفعاليات',
+    'dashboard.viewMessages': 'عرض الرسائل',
+    'dashboard.profileSettings': 'إعدادات الملف الشخصي',
+    'dashboard.browseEvents': 'تصفح الفعاليات',
+    'dashboard.welcomeBack': 'مرحباً بعودتك، {{name}}!',
+    'dashboard.dashboard': 'لوحة تحكم {{role}}',
+    'dashboard.myEvents': 'فعالياتي',
+    'dashboard.totalEventsCreated': 'إجمالي الفعاليات المنشأة',
+    'dashboard.totalAttendees': 'إجمالي الحضور',
+    'dashboard.acrossAllEvents': 'عبر جميع الفعاليات',
+    'dashboard.messages': 'الرسائل',
+    'dashboard.activeConversations': 'المحادثات النشطة',
 
     // Admin Dashboard  
     'admin.dashboard.title': 'لوحة تحكم الإدارة',
