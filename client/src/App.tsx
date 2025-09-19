@@ -21,12 +21,18 @@ import BrowseVenues from "@/pages/browse/BrowseVenues";
 import BrowseOrganizers from "@/pages/browse/BrowseOrganizers";
 import BrowseProviders from "@/pages/browse/BrowseProviders";
 import BrowseUsers from "@/pages/browse/BrowseUsers";
+import Register from "@/pages/Register";
+import Login from "@/pages/Login";
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
 
   return (
     <Switch>
+      {/* Authentication routes */}
+      <Route path="/register" component={Register} />
+      <Route path="/login" component={Login} />
+      
       {/* Public routes available to all users */}
       <Route path="/events" component={EventList} />
       <Route path="/events/create" component={EventCreate} />
