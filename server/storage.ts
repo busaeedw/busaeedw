@@ -27,11 +27,13 @@ import {
 import { db } from "./db";
 import { eq, desc, and, or, ilike, sql } from "drizzle-orm";
 import { randomUUID } from "crypto";
+import bcrypt from "bcrypt";
 
 export interface IStorage {
   // User operations (mandatory for Replit Auth)
   getUser(id: string): Promise<User | undefined>;
   getUserByEmail(email: string): Promise<User | undefined>;
+  getUserByUsername(username: string): Promise<User | undefined>;
   upsertUser(user: UpsertUser): Promise<User>;
   updateUserRole(id: string, role: string): Promise<User>;
   
@@ -103,6 +105,15 @@ export interface IStorage {
 }
 
 export class DatabaseStorage implements IStorage {
+  // Password hashing helper methods
+  private async hashPassword(password: string): Promise<string> {
+    return bcrypt.hash(password, 12);
+  }
+
+  private async comparePasswords(plaintext: string, hashed: string): Promise<boolean> {
+    return bcrypt.compare(plaintext, hashed);
+  }
+
   // User operations
   async getUser(id: string): Promise<User | undefined> {
     const [user] = await db.select().from(users).where(eq(users.id, id));
@@ -114,55 +125,68 @@ export class DatabaseStorage implements IStorage {
     return user;
   }
 
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user;
+  }
+
   async upsertUser(userData: UpsertUser): Promise<User> {
     try {
+      // Hash password if provided
+      const processedData = { ...userData };
+      if (processedData.password) {
+        processedData.password = await this.hashPassword(processedData.password);
+      }
+
       const [user] = await db
         .insert(users)
-        .values(userData)
+        .values(processedData)
         .onConflictDoUpdate({
           target: users.id,
           set: {
-            ...userData,
+            ...processedData,
             updatedAt: new Date(),
           },
         })
         .returning();
       return user;
     } catch (error: any) {
-      // Handle email uniqueness constraint violation
-      if (error.code === '23505' && error.constraint === 'users_email_unique') {
-        // If there's an email conflict, return existing user without modifying it
-        // This prevents overwriting IDs or passwords
-        const existingUser = await this.getUserByEmail(userData.email!);
-        if (existingUser) {
-          // Only update safe non-identifier fields for OIDC users
-          if (!userData.password) {
-            const safeUpdates: Partial<UpsertUser> = {
-              firstName: userData.firstName,
-              lastName: userData.lastName,
-              profileImageUrl: userData.profileImageUrl,
-              bio: userData.bio,
-              phone: userData.phone,
-              city: userData.city,
-              updatedAt: new Date(),
-            };
-            
-            // Remove undefined values
-            Object.keys(safeUpdates).forEach(key => {
-              if (safeUpdates[key as keyof typeof safeUpdates] === undefined) {
-                delete safeUpdates[key as keyof typeof safeUpdates];
-              }
-            });
-            
-            const [updatedUser] = await db
-              .update(users)
-              .set(safeUpdates)
-              .where(eq(users.email, userData.email!))
-              .returning();
-            return updatedUser;
+      // Handle uniqueness constraint violations
+      if (error.code === '23505') {
+        if (error.constraint === 'users_email_unique') {
+          const existingUser = await this.getUserByEmail(userData.email!);
+          if (existingUser) {
+            // Only update safe non-identifier fields for OIDC users
+            if (!userData.password) {
+              const safeUpdates: Partial<UpsertUser> = {
+                firstName: userData.firstName,
+                lastName: userData.lastName,
+                profileImageUrl: userData.profileImageUrl,
+                bio: userData.bio,
+                phone: userData.phone,
+                city: userData.city,
+                updatedAt: new Date(),
+              };
+              
+              // Remove undefined values
+              Object.keys(safeUpdates).forEach(key => {
+                if (safeUpdates[key as keyof typeof safeUpdates] === undefined) {
+                  delete safeUpdates[key as keyof typeof safeUpdates];
+                }
+              });
+              
+              const [updatedUser] = await db
+                .update(users)
+                .set(safeUpdates)
+                .where(eq(users.email, userData.email!))
+                .returning();
+              return updatedUser;
+            }
+            // For password-based registration, don't allow overwriting existing users
+            throw new Error('User with this email already exists');
           }
-          // For password-based registration, don't allow overwriting existing users
-          throw new Error('User with this email already exists');
+        } else if (error.constraint === 'users_username_unique') {
+          throw new Error('Username already exists');
         }
       }
       throw error;
