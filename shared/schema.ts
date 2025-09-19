@@ -31,12 +31,11 @@ export const users = pgTable("users", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   email: varchar("email").unique().notNull(),
   username: varchar("username").unique(), // Optional for OIDC users
-  fullName: varchar("full_name"), // Optional for OIDC users
   password: varchar("password"), // Optional for OIDC users
-  firstName: varchar("first_name"),
-  lastName: varchar("last_name"),
+  firstName: varchar("first_name").notNull(),
+  lastName: varchar("last_name").notNull(),
   profileImageUrl: varchar("profile_image_url"),
-  role: varchar("role").notNull().default("attendee"), // admin, organizer, attendee, service_provider
+  role: varchar("role").notNull().default("attendee"), // admin, attendee, organizer, venue, services
   bio: text("bio"),
   phone: varchar("phone"),
   city: varchar("city"),
@@ -257,14 +256,14 @@ export const insertUserSchema = createInsertSchema(users).omit({
 export const registerUserSchema = createInsertSchema(users, {
   email: z.string().email("Please enter a valid email address"),
   username: z.string().regex(/^[a-zA-Z0-9._-]{3,30}$/, "Username must be 3-30 characters and contain only letters, numbers, dots, underscores, and hyphens"),
-  fullName: z.string().min(2, "Full name must be at least 2 characters").max(100, "Full name must be less than 100 characters"),
+  firstName: z.string().min(2, "First name must be at least 2 characters").max(50, "First name must be less than 50 characters"),
+  lastName: z.string().min(2, "Last name must be at least 2 characters").max(50, "Last name must be less than 50 characters"),
   password: z.string().min(8, "Password must be at least 8 characters"),
+  role: z.enum(["attendee", "organizer", "venue", "services"]).default("attendee"),
 }).omit({
   id: true,
   createdAt: true,
   updatedAt: true,
-  firstName: true,
-  lastName: true,
 });
 
 // Login schema
