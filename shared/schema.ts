@@ -49,8 +49,24 @@ export const venues = pgTable("venues", {
   nameAr: varchar("name_ar"),
   city: varchar("city").notNull(),
   location: varchar("location").notNull(),
+  description: text("description"),
+  descriptionAr: text("description_ar"),
+  venueType: varchar("venue_type"), // hotel, wedding_hall, cultural_center, mall, convention_center
+  capacity: integer("capacity"),
+  imageUrl: varchar("image_url"),
+  imageUrls: text("image_urls").array(), // Multiple photos
+  amenities: text("amenities").array(), // Features and amenities
+  contactPhone: varchar("contact_phone"),
+  contactEmail: varchar("contact_email"),
+  website: varchar("website"),
+  priceRange: varchar("price_range"),
+  rating: decimal("rating", { precision: 3, scale: 2 }).default("0"),
+  verified: boolean("verified").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
 }, (table) => [
   index("venues_name_city_location_idx").on(table.name, table.city, table.location),
+  index("venues_type_city_idx").on(table.venueType, table.city),
 ]);
 
 // Events table
