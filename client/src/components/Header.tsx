@@ -25,7 +25,6 @@ export function Header() {
       isInternal: !isAuthenticated
     },
     { href: '/venues', label: t('nav.venues') },
-    { href: '/browse/providers', label: t('nav.services') },
   ];
 
   const handleLanguageToggle = () => {
