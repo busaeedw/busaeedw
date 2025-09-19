@@ -210,12 +210,12 @@ export default function BrowseEvents() {
 
                     {/* Event Title */}
                     <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-1" data-testid={`event-title-${event.id}`}>
-                      {language === 'ar' && event.titleAr ? event.titleAr : event.title}
+                      {language === 'ar' && event.title_ar ? event.title_ar : event.title}
                     </h3>
 
                     {/* Event Description */}
                     <p className="text-gray-600 mb-4 line-clamp-2 text-sm" data-testid={`event-description-${event.id}`}>
-                      {language === 'ar' && event.descriptionAr ? event.descriptionAr : event.description}
+                      {language === 'ar' && event.description_ar ? event.description_ar : event.description}
                     </p>
 
                     {/* Event Details */}
