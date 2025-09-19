@@ -93,7 +93,7 @@ export function FeaturedEvents() {
                 <div className="relative">
                   <img
                     src={event.imageUrl || "https://images.unsplash.com/photo-1475721027785-f74eccf877e2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400"}
-                    alt={language === 'ar' && event.title_ar ? event.title_ar : event.title}
+                    alt={language === 'ar' && event.titleAr ? event.titleAr : event.title}
                     className="w-full h-48 object-cover"
                   />
                 </div>
@@ -109,10 +109,10 @@ export function FeaturedEvents() {
                     </span>
                   </div>
                   <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                    {language === 'ar' && event.title_ar ? event.title_ar : event.title}
+                    {language === 'ar' && event.titleAr ? event.titleAr : event.title}
                   </h3>
                   <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                    {language === 'ar' && event.description_ar ? event.description_ar : event.description}
+                    {language === 'ar' && event.descriptionAr ? event.descriptionAr : event.description}
                   </p>
                   <div className="flex items-center text-sm text-gray-500 mb-4">
                     <Calendar className="h-4 w-4 mr-2" />

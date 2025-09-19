@@ -95,8 +95,8 @@ export default function BrowseEvents() {
   // Filter events locally based on search query, category, and city
   const filteredEvents = events.filter(event => {
     const matchesSearch = !searchQuery || 
-      event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      event.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (language === 'ar' && event.titleAr ? event.titleAr : event.title).toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (language === 'ar' && event.descriptionAr ? event.descriptionAr : event.description).toLowerCase().includes(searchQuery.toLowerCase()) ||
       (event.venue && event.venue.toLowerCase().includes(searchQuery.toLowerCase())) ||
       event.city.toLowerCase().includes(searchQuery.toLowerCase()) ||
       event.location.toLowerCase().includes(searchQuery.toLowerCase());
@@ -210,12 +210,12 @@ export default function BrowseEvents() {
 
                     {/* Event Title */}
                     <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-1" data-testid={`event-title-${event.id}`}>
-                      {language === 'ar' && event.title_ar ? event.title_ar : event.title}
+                      {language === 'ar' && event.titleAr ? event.titleAr : event.title}
                     </h3>
 
                     {/* Event Description */}
                     <p className="text-gray-600 mb-4 line-clamp-2 text-sm" data-testid={`event-description-${event.id}`}>
-                      {language === 'ar' && event.description_ar ? event.description_ar : event.description}
+                      {language === 'ar' && event.descriptionAr ? event.descriptionAr : event.description}
                     </p>
 
                     {/* Event Details */}
