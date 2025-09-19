@@ -75,7 +75,9 @@ export const events = pgTable("events", {
   organizerId: varchar("organizer_id").notNull().references(() => users.id, { onDelete: "cascade" }),
   venueId: varchar("venue_id").references(() => venues.id, { onDelete: "set null" }),
   title: varchar("title").notNull(),
+  titleAr: varchar("title_ar"),
   description: text("description").notNull(),
+  descriptionAr: text("description_ar"),
   category: varchar("category").notNull(), // business, cultural, technology, entertainment
   startDate: timestamp("start_date").notNull(),
   endDate: timestamp("end_date").notNull(),
