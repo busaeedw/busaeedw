@@ -7,7 +7,7 @@ interface LanguageProviderProps {
 }
 
 export function LanguageProvider({ children }: LanguageProviderProps) {
-  const [language, setLanguage] = useState<'en' | 'ar'>('en');
+  const [language, setLanguage] = useState<'en' | 'ar'>('ar');
 
   useEffect(() => {
     // Update document attributes for RTL support
