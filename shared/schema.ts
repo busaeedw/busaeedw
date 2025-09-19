@@ -30,6 +30,8 @@ export const sessions = pgTable(
 export const users = pgTable("users", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   email: varchar("email").unique().notNull(),
+  username: varchar("username").unique(), // Optional for OIDC users
+  fullName: varchar("full_name"), // Optional for OIDC users
   password: varchar("password"), // Optional for OIDC users
   firstName: varchar("first_name"),
   lastName: varchar("last_name"),
@@ -251,6 +253,26 @@ export const insertUserSchema = createInsertSchema(users).omit({
   updatedAt: true,
 });
 
+// Registration schema with validation
+export const registerUserSchema = createInsertSchema(users, {
+  email: z.string().email("Please enter a valid email address"),
+  username: z.string().regex(/^[a-zA-Z0-9._-]{3,30}$/, "Username must be 3-30 characters and contain only letters, numbers, dots, underscores, and hyphens"),
+  fullName: z.string().min(2, "Full name must be at least 2 characters").max(100, "Full name must be less than 100 characters"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
+}).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+  firstName: true,
+  lastName: true,
+});
+
+// Login schema
+export const loginSchema = z.object({
+  username: z.string().min(1, "Username is required"),
+  password: z.string().min(1, "Password is required"),
+});
+
 export const insertEventSchema = createInsertSchema(events).omit({
   id: true,
   createdAt: true,
@@ -301,6 +323,8 @@ export const venueAggregateSchema = z.object({
 // Types
 export type UpsertUser = typeof users.$inferInsert;
 export type User = typeof users.$inferSelect;
+export type RegisterUser = z.infer<typeof registerUserSchema>;
+export type LoginUser = z.infer<typeof loginSchema>;
 export type Event = typeof events.$inferSelect;
 export type InsertEvent = z.infer<typeof insertEventSchema>;
 export type EventRegistration = typeof eventRegistrations.$inferSelect;
