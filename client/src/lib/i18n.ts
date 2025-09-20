@@ -209,6 +209,17 @@ const translations = {
     'dashboard.serviceProviderComingSoon': 'Service Provider features coming soon',
     'dashboard.viewServiceProviders': 'View Service Providers',
 
+    // Profile
+    'profile.title': 'Profile',
+    'profile.subtitle': 'Manage your account information and settings',
+    'profile.details': 'Profile Details',
+    'profile.bio': 'Bio',
+    'profile.phone': 'Phone',
+    'profile.city': 'City',
+    'profile.memberSince': 'Member since',
+    'profile.editNote': 'Profile editing will be available in a future update.',
+    'profile.editProfile': 'Edit Profile',
+
     // Admin Dashboard  
     'admin.dashboard.title': 'Admin Dashboard',
     'admin.dashboard.subtitle': 'Manage platform operations and monitor activity',
@@ -465,6 +476,17 @@ const translations = {
     'dashboard.goToAdminDashboard': 'الذهاب إلى لوحة تحكم الإدارة',
     'dashboard.serviceProviderComingSoon': 'مميزات مقدم الخدمات ستتوفر قريباً',
     'dashboard.viewServiceProviders': 'عرض مقدمي الخدمات',
+
+    // Profile
+    'profile.title': 'الملف الشخصي',
+    'profile.subtitle': 'إدارة معلومات حسابك والإعدادات',
+    'profile.details': 'تفاصيل الملف الشخصي',
+    'profile.bio': 'السيرة الذاتية',
+    'profile.phone': 'الهاتف',
+    'profile.city': 'المدينة',
+    'profile.memberSince': 'عضو منذ',
+    'profile.editNote': 'سيتوفر تحرير الملف الشخصي في تحديث مستقبلي.',
+    'profile.editProfile': 'تحرير الملف الشخصي',
 
     // Admin Dashboard  
     'admin.dashboard.title': 'لوحة تحكم الإدارة',

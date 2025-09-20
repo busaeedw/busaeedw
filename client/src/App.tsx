@@ -23,6 +23,7 @@ import BrowseProviders from "@/pages/browse/BrowseProviders";
 import BrowseUsers from "@/pages/browse/BrowseUsers";
 import Register from "@/pages/Register";
 import Login from "@/pages/Login";
+import Profile from "@/pages/Profile";
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -56,6 +57,7 @@ function Router() {
         <>
           <Route path="/" component={Dashboard} />
           <Route path="/dashboard" component={Dashboard} />
+          <Route path="/profile" component={Profile} />
           <Route path="/messages" component={Messages} />
           <Route path="/admin" component={AdminDashboard} />
         </>
