@@ -272,7 +272,10 @@ export const loginSchema = z.object({
   password: z.string().min(1, "Password is required"),
 });
 
-export const insertEventSchema = createInsertSchema(events).omit({
+export const insertEventSchema = createInsertSchema(events, {
+  startDate: z.string().or(z.date()).transform((val) => new Date(val)),
+  endDate: z.string().or(z.date()).transform((val) => new Date(val)),
+}).omit({
   id: true,
   createdAt: true,
   updatedAt: true,

@@ -23,7 +23,10 @@ import { isUnauthorizedError } from '@/lib/authUtils';
 const eventFormSchema = insertEventSchema.extend({
   startDate: z.string().min(1, 'Start date is required'),
   endDate: z.string().min(1, 'End date is required'),
-  price: z.string().min(1, 'Price is required'),
+  price: z.string().refine((val) => {
+    const num = parseFloat(val);
+    return !isNaN(num) && num >= 0;
+  }, 'Price must be a valid number (0 or greater)'),
   maxAttendees: z.string().optional(),
 }).omit({
   organizerId: true,
@@ -124,13 +127,17 @@ export default function EventCreate() {
     mutationFn: async (data: EventFormData) => {
       const eventData = {
         ...data,
-        startDate: new Date(data.startDate).toISOString(),
-        endDate: new Date(data.endDate).toISOString(),
-        price: parseFloat(data.price),
-        maxAttendees: data.maxAttendees ? parseInt(data.maxAttendees) : null,
-        venueId: data.venueId || null, // Use venueId if selected, otherwise null
+        startDate: new Date(data.startDate), // Send Date object, not ISO string
+        endDate: new Date(data.endDate),     // Send Date object, not ISO string
+        price: data.price.toString(),        // Send string, not number (for decimal precision)
+        maxAttendees: data.maxAttendees && data.maxAttendees.trim() !== '' ? parseInt(data.maxAttendees) : null,
+        venueId: data.venueId && data.venueId !== 'custom' ? data.venueId : null, // Set to null for custom venues
       };
-      const response = await apiRequest('POST', '/api/events', eventData);
+      const response = await apiRequest('/api/events', {
+        method: 'POST',
+        body: JSON.stringify(eventData),
+        headers: { 'Content-Type': 'application/json' }
+      });
       return response.json();
     },
     onSuccess: (event) => {
@@ -154,9 +161,21 @@ export default function EventCreate() {
         }, 500);
         return;
       }
+      console.error('Event creation error:', error);
+      // Try to parse validation errors if available
+      let errorMessage = error.message || "Failed to create event";
+      try {
+        // If error has validation details, show them
+        const errorData = JSON.parse(error.message);
+        if (errorData.errors && Array.isArray(errorData.errors)) {
+          errorMessage = errorData.errors.map((err: any) => `${err.path?.join('.') || 'Field'}: ${err.message}`).join(', ');
+        }
+      } catch {
+        // Use original error message if parsing fails
+      }
       toast({
         title: "Error",
-        description: error.message || "Failed to create event",
+        description: errorMessage,
         variant: "destructive",
       });
     },
@@ -187,10 +206,10 @@ export default function EventCreate() {
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            {t('hero.cta.create')}
+            {t('event.create.title')}
           </h1>
           <p className="text-gray-600">
-            Fill in the details below to create your event
+            {t('event.create.subtitle')}
           </p>
         </div>
 
@@ -198,7 +217,7 @@ export default function EventCreate() {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <Card>
               <CardHeader>
-                <CardTitle>Basic Information</CardTitle>
+                <CardTitle>{t('event.create.basic.title')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
                 <FormField
@@ -206,9 +225,9 @@ export default function EventCreate() {
                   name="title"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Event Title *</FormLabel>
+                      <FormLabel>{t('event.create.basic.event.title')}</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter event title" {...field} />
+                        <Input placeholder={t('event.create.basic.event.title.placeholder')} {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -220,10 +239,10 @@ export default function EventCreate() {
                   name="description"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Description *</FormLabel>
+                      <FormLabel>{t('event.create.basic.description')}</FormLabel>
                       <FormControl>
                         <Textarea 
-                          placeholder="Describe your event" 
+                          placeholder={t('event.create.basic.description.placeholder')} 
                           className="min-h-[120px]"
                           {...field} 
                         />
@@ -239,18 +258,18 @@ export default function EventCreate() {
                     name="category"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Category *</FormLabel>
+                        <FormLabel>{t('event.create.basic.category')}</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="Select category" />
+                              <SelectValue placeholder={t('event.create.basic.category.placeholder')} />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="business">Business</SelectItem>
-                            <SelectItem value="cultural">Cultural</SelectItem>
-                            <SelectItem value="technology">Technology</SelectItem>
-                            <SelectItem value="entertainment">Entertainment</SelectItem>
+                            <SelectItem value="business">{t('event.create.basic.category.business')}</SelectItem>
+                            <SelectItem value="cultural">{t('event.create.basic.category.cultural')}</SelectItem>
+                            <SelectItem value="technology">{t('event.create.basic.category.technology')}</SelectItem>
+                            <SelectItem value="entertainment">{t('event.create.basic.category.entertainment')}</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -263,16 +282,16 @@ export default function EventCreate() {
                     name="status"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Status</FormLabel>
+                        <FormLabel>{t('event.create.basic.status')}</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="Select status" />
+                              <SelectValue placeholder={t('event.create.basic.status.placeholder')} />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="draft">Draft</SelectItem>
-                            <SelectItem value="published">Published</SelectItem>
+                            <SelectItem value="draft">{t('event.create.basic.status.draft')}</SelectItem>
+                            <SelectItem value="published">{t('event.create.basic.status.published')}</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -285,7 +304,7 @@ export default function EventCreate() {
 
             <Card>
               <CardHeader>
-                <CardTitle>Date & Location</CardTitle>
+                <CardTitle>{t('event.create.datetime.title')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-6">
@@ -294,7 +313,7 @@ export default function EventCreate() {
                     name="startDate"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Start Date *</FormLabel>
+                        <FormLabel>{t('event.create.datetime.start')}</FormLabel>
                         <FormControl>
                           <Input type="datetime-local" {...field} />
                         </FormControl>
@@ -308,7 +327,7 @@ export default function EventCreate() {
                     name="endDate"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>End Date *</FormLabel>
+                        <FormLabel>{t('event.create.datetime.end')}</FormLabel>
                         <FormControl>
                           <Input type="datetime-local" {...field} />
                         </FormControl>
@@ -323,9 +342,9 @@ export default function EventCreate() {
                   name="location"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Location *</FormLabel>
+                      <FormLabel>{t('event.create.datetime.location')}</FormLabel>
                       <FormControl>
-                        <Input placeholder="Event location" {...field} />
+                        <Input placeholder={t('event.create.datetime.location.placeholder')} {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -338,19 +357,19 @@ export default function EventCreate() {
                     name="city"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>City *</FormLabel>
+                        <FormLabel>{t('event.create.datetime.city')}</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="Select city" />
+                              <SelectValue placeholder={t('event.create.datetime.city.placeholder')} />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="riyadh">Riyadh</SelectItem>
-                            <SelectItem value="jeddah">Jeddah</SelectItem>
-                            <SelectItem value="dammam">Dammam</SelectItem>
-                            <SelectItem value="mecca">Mecca</SelectItem>
-                            <SelectItem value="medina">Medina</SelectItem>
+                            <SelectItem value="riyadh">{t('event.create.datetime.city.riyadh')}</SelectItem>
+                            <SelectItem value="jeddah">{t('event.create.datetime.city.jeddah')}</SelectItem>
+                            <SelectItem value="dammam">{t('event.create.datetime.city.dammam')}</SelectItem>
+                            <SelectItem value="mecca">{t('event.create.datetime.city.mecca')}</SelectItem>
+                            <SelectItem value="medina">{t('event.create.datetime.city.medina')}</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -371,11 +390,11 @@ export default function EventCreate() {
                       if (venuesLoading) {
                         return (
                           <FormItem>
-                            <FormLabel>Venue</FormLabel>
+                            <FormLabel>{t('event.create.datetime.venue')}</FormLabel>
                             <Select disabled>
                               <FormControl>
                                 <SelectTrigger data-testid="select-venue">
-                                  <SelectValue placeholder="Loading venues..." />
+                                  <SelectValue placeholder={t('event.create.datetime.venue.loading')} />
                                 </SelectTrigger>
                               </FormControl>
                             </Select>
@@ -388,7 +407,7 @@ export default function EventCreate() {
                       if (selectedCity && cityVenues.length > 0) {
                         return (
                           <FormItem>
-                            <FormLabel>Venue</FormLabel>
+                            <FormLabel>{t('event.create.datetime.venue')}</FormLabel>
                             <Select 
                               onValueChange={(value) => {
                                 field.onChange(value);
@@ -400,7 +419,7 @@ export default function EventCreate() {
                                 } else {
                                   const selectedVenue = venues.find(v => v.id === value);
                                   if (selectedVenue) {
-                                    const venueName = language === 'ar' && selectedVenue.venue_ar ? selectedVenue.venue_ar : selectedVenue.venue;
+                                    const venueName = selectedVenue.venue;
                                     form.setValue("venue", venueName);
                                     form.setValue("location", selectedVenue.location);
                                   }
@@ -410,16 +429,16 @@ export default function EventCreate() {
                             >
                               <FormControl>
                                 <SelectTrigger data-testid="select-venue">
-                                  <SelectValue placeholder={`Select a venue in ${selectedCity}`} />
+                                  <SelectValue placeholder={`${t('event.create.datetime.venue.select').replace('{{city}}', selectedCity || '')}`} />
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
                                 <SelectItem value="custom" key="custom">
-                                  Custom Venue (enter below)
+                                  {t('event.create.datetime.venue.custom')}
                                 </SelectItem>
                                 {cityVenues.map((venue) => (
                                   <SelectItem key={venue.id} value={venue.id}>
-                                    {language === 'ar' && venue.venue_ar ? venue.venue_ar : venue.venue}
+                                    {venue.venue}
                                   </SelectItem>
                                 ))}
                               </SelectContent>
@@ -432,10 +451,10 @@ export default function EventCreate() {
                       // For custom venues or cities without venues in database
                       return (
                         <FormItem>
-                          <FormLabel>Venue ID</FormLabel>
+                          <FormLabel>{t('event.create.datetime.venue.id')}</FormLabel>
                           <FormControl>
                             <Input 
-                              placeholder="Will be auto-set when venue is selected" 
+                              placeholder={t('event.create.datetime.venue.id.placeholder')} 
                               {...field} 
                               value={field.value || ''} 
                               disabled
@@ -457,10 +476,10 @@ export default function EventCreate() {
 
                       return (
                         <FormItem>
-                          <FormLabel>Venue Name</FormLabel>
+                          <FormLabel>{t('event.create.datetime.venue.name')}</FormLabel>
                           <FormControl>
                             <Input 
-                              placeholder="Enter venue name" 
+                              placeholder={t('event.create.datetime.venue.name.placeholder')} 
                               {...field} 
                               value={field.value || ''} 
                               disabled={isVenueSelected}
@@ -478,7 +497,7 @@ export default function EventCreate() {
 
             <Card>
               <CardHeader>
-                <CardTitle>Pricing & Capacity</CardTitle>
+                <CardTitle>{t('event.create.pricing.title')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="grid md:grid-cols-3 gap-6">
@@ -487,9 +506,9 @@ export default function EventCreate() {
                     name="price"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Price *</FormLabel>
+                        <FormLabel>{t('event.create.pricing.price')}</FormLabel>
                         <FormControl>
-                          <Input type="number" placeholder="0" {...field} />
+                          <Input type="number" placeholder={t('event.create.pricing.price.placeholder')} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -501,16 +520,16 @@ export default function EventCreate() {
                     name="currency"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Currency</FormLabel>
+                        <FormLabel>{t('event.create.pricing.currency')}</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="Currency" />
+                              <SelectValue placeholder={t('event.create.pricing.currency.placeholder')} />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="SAR">SAR</SelectItem>
-                            <SelectItem value="USD">USD</SelectItem>
+                            <SelectItem value="SAR">{t('event.create.pricing.currency.sar')}</SelectItem>
+                            <SelectItem value="USD">{t('event.create.pricing.currency.usd')}</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -523,9 +542,9 @@ export default function EventCreate() {
                     name="maxAttendees"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Max Attendees</FormLabel>
+                        <FormLabel>{t('event.create.pricing.maxattendees')}</FormLabel>
                         <FormControl>
-                          <Input type="number" placeholder="Unlimited" {...field} />
+                          <Input type="number" placeholder={t('event.create.pricing.maxattendees.placeholder')} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -538,9 +557,9 @@ export default function EventCreate() {
                   name="imageUrl"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Event Image URL</FormLabel>
+                      <FormLabel>{t('event.create.pricing.image')}</FormLabel>
                       <FormControl>
-                        <Input placeholder="https://example.com/image.jpg" {...field} value={field.value || ''} />
+                        <Input placeholder={t('event.create.pricing.image.placeholder')} {...field} value={field.value || ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -565,7 +584,7 @@ export default function EventCreate() {
                 {createEventMutation.isPending ? (
                   <>
                     <LoadingSpinner size="sm" className="mr-2" />
-                    Creating...
+                    {t('event.create.button.create')}
                   </>
                 ) : (
                   t('common.create')
