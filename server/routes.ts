@@ -12,10 +12,13 @@ import {
   insertVenueSchema,
   registerUserSchema,
   loginSchema,
+  forgotPasswordSchema,
+  resetPasswordSchema,
 } from "@shared/schema";
 import { z } from "zod";
 import bcrypt from "bcrypt";
 import { randomUUID } from "crypto";
+import crypto from "crypto";
 
 // Unified authentication middleware that supports both session and OIDC
 const unifiedAuth = async (req: any, res: any, next: any) => {
@@ -187,6 +190,89 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       res.json({ message: "Logged out successfully" });
     });
+  });
+
+  // Forgot password route
+  app.post('/api/auth/forgot-password', async (req, res) => {
+    try {
+      const { email } = forgotPasswordSchema.parse(req.body);
+      
+      // Always return generic success message to prevent user enumeration
+      const genericMessage = "If an account with this email exists, a password reset link has been sent.";
+      
+      // Check if user exists
+      const user = await storage.getUserByEmail(email);
+      if (!user) {
+        // Still return success to prevent enumeration
+        return res.json({ message: genericMessage });
+      }
+      
+      // Generate secure reset token
+      const resetToken = crypto.randomBytes(32).toString('hex');
+      const tokenHash = crypto.createHash('sha256').update(resetToken).digest('hex');
+      
+      // Set token expiry to 15 minutes from now
+      const expiresAt = new Date(Date.now() + 15 * 60 * 1000);
+      
+      // Store token hash in database
+      await storage.createPasswordResetToken(user.id, tokenHash, expiresAt);
+      
+      // In a real app, you would send an email with the reset link
+      // For now, we'll log it for development purposes
+      console.log(`Password reset link for ${email}: /reset-password?token=${resetToken}`);
+      
+      res.json({ message: genericMessage });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ 
+          message: "Invalid email format",
+          errors: error.errors 
+        });
+      }
+      console.error("Error in forgot password:", error);
+      res.status(500).json({ message: "Failed to process password reset request" });
+    }
+  });
+
+  // Reset password route
+  app.post('/api/auth/reset-password', async (req, res) => {
+    try {
+      const { token, password, confirmPassword } = resetPasswordSchema.parse(req.body);
+      
+      // Hash the token to match what's stored in the database
+      const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
+      
+      // Verify token is valid and not expired
+      const resetToken = await storage.getValidResetToken(tokenHash);
+      if (!resetToken) {
+        return res.status(400).json({ 
+          message: "Invalid or expired reset token" 
+        });
+      }
+      
+      // Hash the new password
+      const passwordHash = await bcrypt.hash(password, 12);
+      
+      // Update user password
+      await storage.updateUserPassword(resetToken.userId, passwordHash);
+      
+      // Mark token as used
+      await storage.markResetTokenUsed(resetToken.id);
+      
+      // Invalidate all user sessions for security
+      await storage.invalidateUserSessions(resetToken.userId);
+      
+      res.json({ message: "Password reset successfully" });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ 
+          message: "Invalid input",
+          errors: error.errors 
+        });
+      }
+      console.error("Error in reset password:", error);
+      res.status(500).json({ message: "Failed to reset password" });
+    }
   });
 
   // Event routes
