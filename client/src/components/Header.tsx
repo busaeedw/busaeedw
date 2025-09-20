@@ -178,7 +178,7 @@ export function Header() {
                     <DropdownMenuTrigger asChild>
                       <Button variant="outline" className="flex items-center space-x-2">
                         <User className="h-4 w-4" />
-                        <span className="text-xs" data-testid="text-username">{(user as any).fullName || (user as any).firstName || (user as any).email}</span>
+                        <span className="text-xs" data-testid="text-username">{(user as any).firstName && (user as any).lastName ? `${(user as any).firstName} ${(user as any).lastName}` : (user as any).email}</span>
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-56">
