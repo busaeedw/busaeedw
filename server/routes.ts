@@ -113,31 +113,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { username, password } = req.body;
 
+      // Validate required fields
       if (!username || !password) {
         return res.status(400).json({ message: "Username and password are required" });
       }
 
-      // Find user by username
+      // Find user by username in users table
       const user = await storage.getUserByUsername(username);
-      if (!user || !user.password) {
-        return res.status(401).json({ message: "Invalid credentials" });
+      if (!user) {
+        return res.status(401).json({ message: "User not found. Please check your username." });
       }
 
-      // Verify password
+      // Check if user has a password set (not OIDC-only user)
+      if (!user.password) {
+        return res.status(401).json({ message: "This account does not support password login. Please use social login." });
+      }
+
+      // Verify password against database
       const isPasswordValid = await bcrypt.compare(password, user.password);
       if (!isPasswordValid) {
-        return res.status(401).json({ message: "Invalid credentials" });
+        return res.status(401).json({ message: "Incorrect password. Please try again." });
       }
 
       // Set up session
-      req.session.userId = user.id;
+      (req.session as any).userId = user.id;
       
       // Return user data without password
       const { password: _, ...userWithoutPassword } = user;
       res.json(userWithoutPassword);
     } catch (error) {
       console.error("Error during login:", error);
-      res.status(500).json({ message: "Internal server error" });
+      res.status(500).json({ message: "Login failed. Please try again." });
     }
   });
 
@@ -172,7 +178,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       // Set up session
-      req.session.userId = newUser.id;
+      (req.session as any).userId = newUser.id;
 
       // Return user data without password
       const { password: _, ...userWithoutPassword } = newUser;
