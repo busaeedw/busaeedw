@@ -37,8 +37,7 @@ export function Header() {
       });
       // Invalidate the auth user query
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
-      // Switch to Arabic language before redirecting to homepage
-      setLanguage('ar');
+      // Redirect to homepage
       setLocation("/");
     },
     onError: (error: any) => {
