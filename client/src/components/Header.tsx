@@ -35,10 +35,14 @@ export function Header() {
         title: "Logged out",
         description: "You have been successfully logged out.",
       });
-      // Invalidate the auth user query
-      queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
-      // Redirect to homepage
+      // Clear all queries to ensure fresh state
+      queryClient.clear();
+      // Force navigation to homepage
       setLocation("/");
+      // Force a page reload to ensure clean state
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 100);
     },
     onError: (error: any) => {
       toast({
