@@ -33,8 +33,8 @@ export default function Dashboard() {
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
       toast({
-        title: "Unauthorized",
-        description: "You are logged out. Logging in again...",
+        title: t('common.unauthorized'),
+        description: t('common.unauthorized.desc'),
         variant: "destructive",
       });
       setTimeout(() => {
@@ -68,8 +68,8 @@ export default function Dashboard() {
     errors.forEach(error => {
       if (error && isUnauthorizedError(error)) {
         toast({
-          title: "Unauthorized",
-          description: "You are logged out. Logging in again...",
+          title: t('common.unauthorized'),
+          description: t('common.unauthorized.desc'),
           variant: "destructive",
         });
         setTimeout(() => {
@@ -99,34 +99,34 @@ export default function Dashboard() {
       <div className="grid md:grid-cols-3 gap-6 mb-8">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">My Events</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('dashboard.myEvents')}</CardTitle>
             <CalendarCheck className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{userEvents?.length || 0}</div>
-            <p className="text-xs text-muted-foreground">Total events created</p>
+            <p className="text-xs text-muted-foreground">{t('dashboard.totalEventsCreated')}</p>
           </CardContent>
         </Card>
         
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Attendees</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('dashboard.totalAttendees')}</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">0</div>
-            <p className="text-xs text-muted-foreground">Across all events</p>
+            <p className="text-xs text-muted-foreground">{t('dashboard.acrossAllEvents')}</p>
           </CardContent>
         </Card>
         
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Messages</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('dashboard.messages')}</CardTitle>
             <MessageSquare className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{conversations?.length || 0}</div>
-            <p className="text-xs text-muted-foreground">Active conversations</p>
+            <p className="text-xs text-muted-foreground">{t('dashboard.activeConversations')}</p>
           </CardContent>
         </Card>
       </div>
@@ -134,11 +134,11 @@ export default function Dashboard() {
       <div className="grid md:grid-cols-2 gap-8">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle>Recent Events</CardTitle>
+            <CardTitle>{t('dashboard.recentEvents')}</CardTitle>
             <Button asChild size="sm">
               <Link href="/events/create">
                 <Plus className="h-4 w-4 mr-2" />
-                Create Event
+                {t('dashboard.createEvent')}
               </Link>
             </Button>
           </CardHeader>
@@ -257,12 +257,12 @@ export default function Dashboard() {
         
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Messages</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('dashboard.messages')}</CardTitle>
             <MessageSquare className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{conversations?.length || 0}</div>
-            <p className="text-xs text-muted-foreground">Active conversations</p>
+            <p className="text-xs text-muted-foreground">{t('dashboard.activeConversations')}</p>
           </CardContent>
         </Card>
       </div>
@@ -280,9 +280,9 @@ export default function Dashboard() {
                 {userRegistrations.slice(0, 3).map((registration: any) => (
                   <div key={registration.id} className="flex items-center justify-between p-4 border rounded-lg">
                     <div>
-                      <h3 className="font-medium">Event Details</h3>
+                      <h3 className="font-medium">{t('dashboard.eventDetails')}</h3>
                       <p className="text-sm text-muted-foreground">
-                        Ticket: {registration.ticketCode}
+                        {t('dashboard.ticket')} {registration.ticketCode}
                       </p>
                       <Badge variant={registration.status === 'registered' ? 'default' : 'secondary'}>
                         {registration.status}
@@ -294,9 +294,9 @@ export default function Dashboard() {
             ) : (
               <div className="text-center py-8">
                 <CalendarCheck className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <p className="text-muted-foreground mb-4">No registered events</p>
+                <p className="text-muted-foreground mb-4">{t('dashboard.noRegisteredEvents')}</p>
                 <Button asChild>
-                  <Link href="/events">Browse Events</Link>
+                  <Link href="/events">{t('dashboard.browseEventsButton')}</Link>
                 </Button>
               </div>
             )}
@@ -362,15 +362,15 @@ export default function Dashboard() {
         {user?.role === 'admin' && (
           <div className="text-center py-8">
             <Button asChild>
-              <Link href="/admin">Go to Admin Dashboard</Link>
+              <Link href="/admin">{t('dashboard.goToAdminDashboard')}</Link>
             </Button>
           </div>
         )}
         {user?.role === 'service_provider' && (
           <div className="text-center py-8">
-            <p className="text-muted-foreground mb-4">Service Provider features coming soon</p>
+            <p className="text-muted-foreground mb-4">{t('dashboard.serviceProviderComingSoon')}</p>
             <Button asChild>
-              <Link href="/service-providers">View Service Providers</Link>
+              <Link href="/service-providers">{t('dashboard.viewServiceProviders')}</Link>
             </Button>
           </div>
         )}

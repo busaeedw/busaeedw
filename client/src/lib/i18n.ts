@@ -199,6 +199,15 @@ const translations = {
     'dashboard.acrossAllEvents': 'Across all events',
     'dashboard.messages': 'Messages',
     'dashboard.activeConversations': 'Active conversations',
+    'dashboard.recentEvents': 'Recent Events',
+    'dashboard.createEvent': 'Create Event',
+    'dashboard.eventDetails': 'Event Details',
+    'dashboard.ticket': 'Ticket:',
+    'dashboard.noRegisteredEvents': 'No registered events',
+    'dashboard.browseEventsButton': 'Browse Events',
+    'dashboard.goToAdminDashboard': 'Go to Admin Dashboard',
+    'dashboard.serviceProviderComingSoon': 'Service Provider features coming soon',
+    'dashboard.viewServiceProviders': 'View Service Providers',
 
     // Admin Dashboard  
     'admin.dashboard.title': 'Admin Dashboard',
@@ -447,6 +456,15 @@ const translations = {
     'dashboard.acrossAllEvents': 'عبر جميع الفعاليات',
     'dashboard.messages': 'الرسائل',
     'dashboard.activeConversations': 'المحادثات النشطة',
+    'dashboard.recentEvents': 'الفعاليات الأخيرة',
+    'dashboard.createEvent': 'إنشاء فعالية',
+    'dashboard.eventDetails': 'تفاصيل الفعالية',
+    'dashboard.ticket': 'التذكرة:',
+    'dashboard.noRegisteredEvents': 'لا توجد فعاليات مسجلة',
+    'dashboard.browseEventsButton': 'تصفح الفعاليات',
+    'dashboard.goToAdminDashboard': 'الذهاب إلى لوحة تحكم الإدارة',
+    'dashboard.serviceProviderComingSoon': 'مميزات مقدم الخدمات ستتوفر قريباً',
+    'dashboard.viewServiceProviders': 'عرض مقدمي الخدمات',
 
     // Admin Dashboard  
     'admin.dashboard.title': 'لوحة تحكم الإدارة',
