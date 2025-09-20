@@ -9,12 +9,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/hooks/useLanguage";
 import { apiRequest } from "@/lib/queryClient";
 import { registerUserSchema, type RegisterUser } from "@shared/schema";
 
 export default function Register() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
+  const { t } = useLanguage();
   const queryClient = useQueryClient();
 
   const form = useForm<RegisterUser>({
@@ -39,8 +41,8 @@ export default function Register() {
     },
     onSuccess: () => {
       toast({
-        title: "Registration successful",
-        description: "Welcome to EventHub! You have been logged in.",
+        title: t('auth.register.success.title'),
+        description: t('auth.register.success.description'),
       });
       // Invalidate the auth user query to fetch the new logged-in user
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
@@ -48,8 +50,8 @@ export default function Register() {
     },
     onError: (error: any) => {
       toast({
-        title: "Registration failed",
-        description: error.message || "Something went wrong. Please try again.",
+        title: t('auth.register.error.title'),
+        description: error.message || t('auth.register.error.description'),
         variant: "destructive",
       });
     },
@@ -64,10 +66,10 @@ export default function Register() {
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center" data-testid="title-register">
-            Create an account
+            {t('auth.register.title')}
           </CardTitle>
           <CardDescription className="text-center">
-            Enter your details below to create your account
+            {t('auth.register.subtitle')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -79,10 +81,10 @@ export default function Register() {
                   name="firstName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>First Name</FormLabel>
+                      <FormLabel>{t('auth.register.firstName')}</FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="Enter your first name"
+                          placeholder={t('auth.register.firstName.placeholder')}
                           data-testid="input-firstname"
                           {...field}
                         />
@@ -97,10 +99,10 @@ export default function Register() {
                   name="lastName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Last Name</FormLabel>
+                      <FormLabel>{t('auth.register.lastName')}</FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="Enter your last name"
+                          placeholder={t('auth.register.lastName.placeholder')}
                           data-testid="input-lastname"
                           {...field}
                         />
@@ -116,11 +118,11 @@ export default function Register() {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>{t('auth.register.email')}</FormLabel>
                     <FormControl>
                       <Input
                         type="email"
-                        placeholder="Enter your email"
+                        placeholder={t('auth.register.email.placeholder')}
                         data-testid="input-email"
                         {...field}
                       />
@@ -135,10 +137,10 @@ export default function Register() {
                 name="username"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Username</FormLabel>
+                    <FormLabel>{t('auth.register.username')}</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Choose a username"
+                        placeholder={t('auth.register.username.placeholder')}
                         data-testid="input-username"
                         {...field}
                       />
@@ -153,15 +155,39 @@ export default function Register() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel>{t('auth.register.password')}</FormLabel>
                     <FormControl>
                       <Input
                         type="password"
-                        placeholder="Create a password"
+                        placeholder={t('auth.register.password.placeholder')}
                         data-testid="input-password"
                         {...field}
                       />
                     </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="role"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('auth.register.role')}</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value} data-testid="select-role">
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder={t('auth.register.role.placeholder')} />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="attendee" data-testid="role-attendee">{t('auth.register.role.attendee')}</SelectItem>
+                        <SelectItem value="organizer" data-testid="role-organizer">{t('auth.register.role.organizer')}</SelectItem>
+                        <SelectItem value="venue" data-testid="role-venue">{t('auth.register.role.venue')}</SelectItem>
+                        <SelectItem value="services" data-testid="role-services">{t('auth.register.role.services')}</SelectItem>
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -173,17 +199,17 @@ export default function Register() {
                 disabled={registerMutation.isPending}
                 data-testid="button-register"
               >
-                {registerMutation.isPending ? "Creating account..." : "Create account"}
+                {registerMutation.isPending ? t('auth.register.button.loading') : t('auth.register.button')}
               </Button>
             </form>
           </Form>
 
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
-              Already have an account?{" "}
+              {t('auth.register.footer')}{" "}
               <Link href="/login">
                 <a className="font-medium text-primary hover:text-primary/80" data-testid="link-login">
-                  Sign in
+                  {t('auth.register.footer.signin')}
                 </a>
               </Link>
             </p>

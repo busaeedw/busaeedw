@@ -139,10 +139,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post('/api/auth/register', async (req, res) => {
     try {
-      const { email, username, fullName, password } = req.body;
+      const { email, username, firstName, lastName, password, role } = req.body;
 
-      if (!email || !username || !fullName || !password) {
-        return res.status(400).json({ message: "Email, username, full name, and password are required" });
+      if (!email || !username || !firstName || !lastName || !password) {
+        return res.status(400).json({ message: "Email, username, first name, last name, and password are required" });
       }
 
       // Check if user already exists by email
@@ -161,9 +161,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const newUser = await storage.upsertUser({
         email,
         username,
-        fullName,
+        firstName,
+        lastName,
         password,
-        role: "attendee"
+        role: role || "attendee"
       });
 
       // Set up session
