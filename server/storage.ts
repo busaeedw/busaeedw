@@ -7,6 +7,7 @@ import {
   messages,
   serviceBookings,
   venues,
+  passwordResetTokens,
   type User,
   type UpsertUser,
   type Event,
@@ -23,6 +24,8 @@ import {
   type InsertServiceBooking,
   type Venue,
   type InsertVenue,
+  type PasswordResetToken,
+  type InsertPasswordResetToken,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and, or, ilike, sql } from "drizzle-orm";
@@ -102,6 +105,13 @@ export interface IStorage {
   
   // Analytics
   getEventStats(): Promise<{ totalEvents: number; totalAttendees: number; totalProviders: number }>;
+  
+  // Password reset operations
+  createPasswordResetToken(userId: string, tokenHash: string, expiresAt: Date): Promise<void>;
+  getValidResetToken(tokenHash: string): Promise<{ id: string; userId: string } | undefined>;
+  markResetTokenUsed(id: string): Promise<void>;
+  updateUserPassword(userId: string, passwordHash: string): Promise<void>;
+  invalidateUserSessions(userId: string): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -564,6 +574,50 @@ export class DatabaseStorage implements IStorage {
       totalAttendees: Number(attendeeCount.count),
       totalProviders: Number(providerCount.count),
     };
+  }
+
+  // Password reset operations
+  async createPasswordResetToken(userId: string, tokenHash: string, expiresAt: Date): Promise<void> {
+    await db.insert(passwordResetTokens).values({
+      userId,
+      tokenHash,
+      expiresAt,
+    });
+  }
+
+  async getValidResetToken(tokenHash: string): Promise<{ id: string; userId: string } | undefined> {
+    const [token] = await db
+      .select({ id: passwordResetTokens.id, userId: passwordResetTokens.userId })
+      .from(passwordResetTokens)
+      .where(
+        and(
+          eq(passwordResetTokens.tokenHash, tokenHash),
+          sql`${passwordResetTokens.expiresAt} > NOW()`, // Token not expired
+          sql`${passwordResetTokens.usedAt} IS NULL` // Token not used
+        )
+      );
+    return token;
+  }
+
+  async markResetTokenUsed(id: string): Promise<void> {
+    await db
+      .update(passwordResetTokens)
+      .set({ usedAt: new Date() })
+      .where(eq(passwordResetTokens.id, id));
+  }
+
+  async updateUserPassword(userId: string, passwordHash: string): Promise<void> {
+    await db
+      .update(users)
+      .set({ password: passwordHash, updatedAt: new Date() })
+      .where(eq(users.id, userId));
+  }
+
+  async invalidateUserSessions(userId: string): Promise<void> {
+    // Note: This implementation depends on session management strategy
+    // For express-session with PostgreSQL store, we would need to delete sessions
+    // This is a placeholder - actual implementation would depend on session store
+    console.log(`Invalidating sessions for user ${userId}`);
   }
 }
 
