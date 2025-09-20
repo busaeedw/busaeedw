@@ -49,7 +49,7 @@ const translations = {
     'auth.login.button.loading': 'Signing in...',
     'auth.login.footer': 'Don\'t have an account?',
     'auth.login.footer.signup': 'Sign up',
-    'auth.login.forgot': 'Forgot your password?',
+    'auth.login.forgot': 'Forgot password?',
     
     'auth.forgot.title': 'Reset Password',
     'auth.forgot.subtitle': 'Enter your email address and we\'ll send you instructions to reset your password',

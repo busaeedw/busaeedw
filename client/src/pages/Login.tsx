@@ -110,7 +110,7 @@ export default function Login() {
               <div className="text-right">
                 <Link href="/forgot-password">
                   <a className="text-sm text-primary hover:text-primary/80 font-medium" data-testid="link-forgot-password">
-                    {t('auth.forgot.link')}
+                    {t('auth.login.forgot')}
                   </a>
                 </Link>
               </div>
