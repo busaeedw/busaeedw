@@ -23,6 +23,8 @@ import BrowseProviders from "@/pages/browse/BrowseProviders";
 import BrowseUsers from "@/pages/browse/BrowseUsers";
 import Register from "@/pages/Register";
 import Login from "@/pages/Login";
+import ForgotPassword from "@/pages/ForgotPassword";
+import ResetPassword from "@/pages/ResetPassword";
 import Profile from "@/pages/Profile";
 
 function Router() {
@@ -33,6 +35,8 @@ function Router() {
       {/* Authentication routes */}
       <Route path="/register" component={Register} />
       <Route path="/login" component={Login} />
+      <Route path="/forgot-password" component={ForgotPassword} />
+      <Route path="/reset-password" component={ResetPassword} />
       
       {/* Public routes available to all users */}
       <Route path="/events" component={EventList} />
