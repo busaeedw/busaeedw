@@ -5,6 +5,7 @@ import { useMutation } from "@tanstack/react-query";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
@@ -166,8 +167,7 @@ export default function ForgotPassword() {
                     <FormItem>
                       <FormLabel>{t('auth.reset.password')}</FormLabel>
                       <FormControl>
-                        <Input
-                          type="password"
+                        <PasswordInput
                           placeholder={t('auth.reset.password.placeholder')}
                           data-testid="input-password"
                           {...field}
@@ -185,8 +185,7 @@ export default function ForgotPassword() {
                     <FormItem>
                       <FormLabel>{t('auth.reset.confirmPassword')}</FormLabel>
                       <FormControl>
-                        <Input
-                          type="password"
+                        <PasswordInput
                           placeholder={t('auth.reset.confirmPassword.placeholder')}
                           data-testid="input-confirm-password"
                           {...field}
