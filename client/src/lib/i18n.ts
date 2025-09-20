@@ -71,6 +71,8 @@ const translations = {
     'auth.reset.footer': 'Remember your password?',
     'auth.reset.footer.signin': 'Sign in',
     'auth.reset.loading': 'Loading...',
+    'auth.reset.emailVerified': 'Email verified',
+    'auth.reset.changeEmail': 'Change email',
     
     // Auth Messages
     'auth.register.success.title': 'Registration successful',
@@ -421,6 +423,8 @@ const translations = {
     'auth.reset.footer': 'تذكرت كلمة المرور؟',
     'auth.reset.footer.signin': 'تسجيل الدخول',
     'auth.reset.loading': 'جاري التحميل...',
+    'auth.reset.emailVerified': 'تم التحقق من البريد الإلكتروني',
+    'auth.reset.changeEmail': 'تغيير البريد الإلكتروني',
     
     // Auth Messages
     'auth.register.success.title': 'تم إنشاء الحساب بنجاح',
