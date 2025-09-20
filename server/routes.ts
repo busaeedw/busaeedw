@@ -14,6 +14,7 @@ import {
   loginSchema,
   forgotPasswordSchema,
   resetPasswordSchema,
+  directResetPasswordSchema,
 } from "@shared/schema";
 import { z } from "zod";
 import bcrypt from "bcrypt";
@@ -197,31 +198,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { email } = forgotPasswordSchema.parse(req.body);
       
-      // Always return generic success message to prevent user enumeration
-      const genericMessage = "If an account with this email exists, a password reset link has been sent.";
-      
       // Check if user exists
       const user = await storage.getUserByEmail(email);
       if (!user) {
-        // Still return success to prevent enumeration
-        return res.json({ message: genericMessage });
+        // Return error if email not found
+        return res.status(404).json({ 
+          message: "This email is not registered before." 
+        });
       }
       
-      // Generate secure reset token
-      const resetToken = crypto.randomBytes(32).toString('hex');
-      const tokenHash = crypto.createHash('sha256').update(resetToken).digest('hex');
-      
-      // Set token expiry to 15 minutes from now
-      const expiresAt = new Date(Date.now() + 15 * 60 * 1000);
-      
-      // Store token hash in database
-      await storage.createPasswordResetToken(user.id, tokenHash, expiresAt);
-      
-      // In a real app, you would send an email with the reset link
-      // For now, we'll log it for development purposes
-      console.log(`Password reset link for ${email}: /reset-password?token=${resetToken}`);
-      
-      res.json({ message: genericMessage });
+      // Return success if email exists - frontend will show password reset form
+      res.json({ 
+        message: "Email verified successfully.",
+        emailExists: true 
+      });
     } catch (error) {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ 
@@ -231,6 +221,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       console.error("Error in forgot password:", error);
       res.status(500).json({ message: "Failed to process password reset request" });
+    }
+  });
+
+  // Direct reset password route (without token)
+  app.post('/api/auth/reset-password-direct', async (req, res) => {
+    try {
+      const { email, password, confirmPassword } = directResetPasswordSchema.parse(req.body);
+      
+      // Check if user exists
+      const user = await storage.getUserByEmail(email);
+      if (!user) {
+        return res.status(404).json({ 
+          message: "This email is not registered before." 
+        });
+      }
+      
+      // Hash the new password
+      const passwordHash = await bcrypt.hash(password, 12);
+      
+      // Update user password
+      await storage.updateUserPassword(user.id, passwordHash);
+      
+      // Invalidate all user sessions for security
+      await storage.invalidateUserSessions(user.id);
+      
+      res.json({ message: "Password reset successfully" });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ 
+          message: "Invalid input",
+          errors: error.errors 
+        });
+      }
+      console.error("Error in direct reset password:", error);
+      res.status(500).json({ message: "Failed to reset password" });
     }
   });
 

@@ -300,6 +300,16 @@ export const resetPasswordSchema = z.object({
   path: ["confirmPassword"],
 });
 
+// Direct reset password schema (without token)
+export const directResetPasswordSchema = z.object({
+  email: z.string().email("Please enter a valid email address"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
+  confirmPassword: z.string().min(8, "Please confirm your password"),
+}).refine(data => data.password === data.confirmPassword, {
+  message: "Passwords do not match",
+  path: ["confirmPassword"],
+});
+
 export const insertEventSchema = createInsertSchema(events, {
   startDate: z.string().or(z.date()).transform((val) => new Date(val)),
   endDate: z.string().or(z.date()).transform((val) => new Date(val)),
@@ -376,6 +386,7 @@ export type PasswordResetToken = typeof passwordResetTokens.$inferSelect;
 export type InsertPasswordResetToken = z.infer<typeof insertPasswordResetTokenSchema>;
 export type ForgotPassword = z.infer<typeof forgotPasswordSchema>;
 export type ResetPassword = z.infer<typeof resetPasswordSchema>;
+export type DirectResetPassword = z.infer<typeof directResetPasswordSchema>;
 export type Venue = typeof venues.$inferSelect;
 export type InsertVenue = z.infer<typeof insertVenueSchema>;
 export type VenueAggregate = z.infer<typeof venueAggregateSchema>;
