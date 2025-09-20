@@ -393,11 +393,17 @@ export default function EventCreate() {
                               onValueChange={(value) => {
                                 field.onChange(value);
                                 // Auto-fill venue and location when venue is selected
-                                const selectedVenue = venues.find(v => v.id === value);
-                                if (selectedVenue) {
-                                  const venueName = language === 'ar' && selectedVenue.venue_ar ? selectedVenue.venue_ar : selectedVenue.venue;
-                                  form.setValue("venue", venueName);
-                                  form.setValue("location", selectedVenue.location);
+                                if (value === "custom") {
+                                  // Clear auto-filled values for custom venue
+                                  form.setValue("venue", "");
+                                  form.setValue("location", "");
+                                } else {
+                                  const selectedVenue = venues.find(v => v.id === value);
+                                  if (selectedVenue) {
+                                    const venueName = language === 'ar' && selectedVenue.venue_ar ? selectedVenue.venue_ar : selectedVenue.venue;
+                                    form.setValue("venue", venueName);
+                                    form.setValue("location", selectedVenue.location);
+                                  }
                                 }
                               }} 
                               value={field.value || ""}
@@ -408,7 +414,7 @@ export default function EventCreate() {
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
-                                <SelectItem value="" key="custom">
+                                <SelectItem value="custom" key="custom">
                                   Custom Venue (enter below)
                                 </SelectItem>
                                 {cityVenues.map((venue) => (
@@ -447,7 +453,7 @@ export default function EventCreate() {
                     name="venue"
                     render={({ field }) => {
                       const selectedVenueId = form.watch("venueId");
-                      const isVenueSelected = Boolean(selectedVenueId && selectedVenueId !== "");
+                      const isVenueSelected = Boolean(selectedVenueId && selectedVenueId !== "" && selectedVenueId !== "custom");
 
                       return (
                         <FormItem>
