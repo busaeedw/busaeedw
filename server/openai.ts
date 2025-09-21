@@ -39,9 +39,21 @@ export async function chatWithAssistant(
     });
 
     return response.choices[0].message.content || "I'm sorry, I couldn't process your request right now.";
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error in AI chat:", error);
-    throw new Error("Failed to get AI response");
+    
+    // Handle specific OpenAI errors
+    if (error.status === 429) {
+      return "I'm experiencing high demand right now. Please try again in a few moments. If this continues, there may be API quota limitations.";
+    } else if (error.status === 401) {
+      return "There's an authentication issue with the AI service. Please contact support if this persists.";
+    } else if (error.status === 400) {
+      return "I couldn't understand your request. Could you please rephrase it?";
+    } else if (error.status >= 500) {
+      return "The AI service is temporarily unavailable. Please try again later.";
+    }
+    
+    return "I'm having trouble processing your request right now. Please try again or contact support if the issue persists.";
   }
 }
 
@@ -76,9 +88,19 @@ export async function getEventRecommendations(
 
     const result = JSON.parse(response.choices[0].message.content || '{"recommendations": [], "reasoning": "No recommendations available"}');
     return result;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error getting event recommendations:", error);
-    return { recommendations: [], reasoning: "Unable to generate recommendations at this time" };
+    
+    let reasoning = "Unable to generate recommendations at this time.";
+    if (error.status === 429) {
+      reasoning = "The AI service is experiencing high demand. Please try again in a few moments.";
+    } else if (error.status === 401) {
+      reasoning = "Authentication issue with AI service. Please contact support.";
+    } else if (error.status >= 500) {
+      reasoning = "AI service temporarily unavailable. Please try again later.";
+    }
+    
+    return { recommendations: [], reasoning };
   }
 }
 
