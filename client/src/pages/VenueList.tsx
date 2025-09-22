@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { LoadingSkeleton } from '@/components/ui/loading';
 import { useQuery } from '@tanstack/react-query';
 import { useLanguage } from '@/hooks/useLanguage';
+import { Link } from 'wouter';
 import { Search, Filter, MapPin, Users, AlertTriangle, Loader2 } from 'lucide-react';
 import { type VenueAggregate, venueAggregateSchema } from '@shared/schema';
 import { z } from 'zod';
@@ -164,13 +165,15 @@ export default function VenueList() {
                         <Users className="h-4 w-4 mr-2" />
                         <span>{venue.event_count || 0} {t('venues.events.upcoming')}</span>
                       </div>
-                      <Button 
-                        size="sm" 
-                        className="bg-saudi-green hover:bg-saudi-green/90"
-                        data-testid={`button-view-venue-${venue.id}`}
-                      >
-                        {t('venues.button.view')}
-                      </Button>
+                      <Link href={`/venues/${venue.id}`}>
+                        <Button 
+                          size="sm" 
+                          className="bg-saudi-green hover:bg-saudi-green/90"
+                          data-testid={`button-view-venue-${venue.id}`}
+                        >
+                          {t('venues.button.view')}
+                        </Button>
+                      </Link>
                     </div>
                   </CardContent>
                 </Card>
