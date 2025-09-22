@@ -65,8 +65,8 @@ export default function EventCreate() {
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
       toast({
-        title: "Unauthorized",
-        description: "You are logged out. Logging in again...",
+        title: t('common.unauthorized'),
+        description: t('common.unauthorized.desc'),
         variant: "destructive",
       });
       setTimeout(() => {
@@ -152,8 +152,8 @@ export default function EventCreate() {
     onError: (error: Error) => {
       if (isUnauthorizedError(error)) {
         toast({
-          title: "Unauthorized",
-          description: "You are logged out. Logging in again...",
+          title: t('common.unauthorized'),
+          description: t('common.unauthorized.desc'),
           variant: "destructive",
         });
         setTimeout(() => {
