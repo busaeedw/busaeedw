@@ -27,8 +27,8 @@ export default function Messages() {
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
       toast({
-        title: "Unauthorized",
-        description: "You are logged out. Logging in again...",
+        title: t('common.unauthorized'),
+        description: t('common.unauthorized.desc'),
         variant: "destructive",
       });
       setTimeout(() => {
@@ -63,8 +63,8 @@ export default function Messages() {
     onError: (error: Error) => {
       if (isUnauthorizedError(error)) {
         toast({
-          title: "Unauthorized",
-          description: "You are logged out. Logging in again...",
+          title: t('common.unauthorized'),
+          description: t('common.unauthorized.desc'),
           variant: "destructive",
         });
         setTimeout(() => {
@@ -86,8 +86,8 @@ export default function Messages() {
     errors.forEach(error => {
       if (error && isUnauthorizedError(error)) {
         toast({
-          title: "Unauthorized",
-          description: "You are logged out. Logging in again...",
+          title: t('common.unauthorized'),
+          description: t('common.unauthorized.desc'),
           variant: "destructive",
         });
         setTimeout(() => {
