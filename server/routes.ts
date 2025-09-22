@@ -10,6 +10,7 @@ import {
   insertMessageSchema,
   insertServiceBookingSchema,
   insertVenueSchema,
+  insertOrganizerSchema,
   registerUserSchema,
   loginSchema,
   forgotPasswordSchema,
@@ -704,6 +705,111 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching statistics:", error);
       res.status(500).json({ message: "Failed to fetch statistics" });
+    }
+  });
+
+  // Organizer endpoints
+  app.get('/api/organizers', async (req, res) => {
+    try {
+      const { category, city, search, verified, featured, limit, offset } = req.query;
+      
+      const organizers = await storage.getOrganizers({
+        category: category as string,
+        city: city as string,
+        search: search as string,
+        verified: verified === 'true',
+        featured: featured === 'true',
+        limit: limit ? parseInt(limit as string) : undefined,
+        offset: offset ? parseInt(offset as string) : undefined,
+      });
+      
+      res.json(organizers);
+    } catch (error) {
+      console.error("Error fetching organizers:", error);
+      res.status(500).json({ message: "Failed to fetch organizers" });
+    }
+  });
+
+  app.get('/api/organizers/:id', async (req, res) => {
+    try {
+      const organizer = await storage.getOrganizer(req.params.id);
+      if (!organizer) {
+        return res.status(404).json({ message: "Organizer not found" });
+      }
+      res.json(organizer);
+    } catch (error) {
+      console.error("Error fetching organizer:", error);
+      res.status(500).json({ message: "Failed to fetch organizer" });
+    }
+  });
+
+  app.post('/api/organizers', unifiedAuth, async (req: any, res) => {
+    try {
+      const userId = req.authUserId;
+      
+      // Get current user to check permissions
+      const user = await storage.getUser(userId);
+      if (!user || user.role !== 'admin') {
+        return res.status(403).json({ message: "Only admins can create organizers" });
+      }
+      
+      const organizerData = insertOrganizerSchema.parse(req.body);
+      const organizer = await storage.createOrganizer(organizerData);
+      res.status(201).json(organizer);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid organizer data", errors: error.errors });
+      }
+      console.error("Error creating organizer:", error);
+      res.status(500).json({ message: "Failed to create organizer" });
+    }
+  });
+
+  app.patch('/api/organizers/:id', unifiedAuth, async (req: any, res) => {
+    try {
+      const userId = req.authUserId;
+      const organizerId = req.params.id;
+      
+      // Get current user and organizer to check permissions
+      const user = await storage.getUser(userId);
+      const organizer = await storage.getOrganizer(organizerId);
+      
+      if (!organizer) {
+        return res.status(404).json({ message: "Organizer not found" });
+      }
+      
+      // Allow update if user is admin or if organizer email matches user email
+      if (user?.role !== 'admin' && organizer.email !== user?.email) {
+        return res.status(403).json({ message: "You can only update your own organizer profile" });
+      }
+      
+      const updateData = insertOrganizerSchema.partial().parse(req.body);
+      const updatedOrganizer = await storage.updateOrganizer(organizerId, updateData);
+      res.json(updatedOrganizer);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid organizer data", errors: error.errors });
+      }
+      console.error("Error updating organizer:", error);
+      res.status(500).json({ message: "Failed to update organizer" });
+    }
+  });
+
+  app.delete('/api/organizers/:id', unifiedAuth, async (req: any, res) => {
+    try {
+      const userId = req.authUserId;
+      
+      // Get current user to check admin permissions
+      const user = await storage.getUser(userId);
+      if (!user || user.role !== 'admin') {
+        return res.status(403).json({ message: "Only admins can delete organizers" });
+      }
+      
+      await storage.deleteOrganizer(req.params.id);
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error deleting organizer:", error);
+      res.status(500).json({ message: "Failed to delete organizer" });
     }
   });
 
