@@ -218,6 +218,18 @@ const translations = {
     'venues.error.banner.title': 'Unable to load venue data from server',
     'venues.error.banner.subtitle': 'Showing sample venues instead. Please try again later.',
 
+    // Venue Details
+    'venue.details.back': 'Back to Venues',
+    'venue.details.notFound': 'Venue Not Found',
+    'venue.details.notFoundDesc': 'The venue you\'re looking for doesn\'t exist or has been removed.',
+    'venue.details.badge': 'Venue',
+    'venue.details.eventsHosted': 'Events Hosted',
+    'venue.details.city': 'City',
+    'venue.details.location': 'Location',
+    'venue.details.eventsAt': 'Events at',
+    'venue.details.noEvents': 'No events found at this venue yet.',
+    'venue.details.free': 'Free',
+
     // Dashboard
     'dashboard.quickActions': 'Quick Actions',
     'dashboard.goToHomepage': 'Go to Homepage', 
@@ -594,6 +606,18 @@ const translations = {
     'venues.notfound.subtitle': 'حاول تعديل معايير البحث أو تصفح جميع الأماكن.',
     'venues.error.banner.title': 'غير قادر على تحميل بيانات الأماكن من الخادم',
     'venues.error.banner.subtitle': 'عرض أماكن تجريبية بدلاً من ذلك. يرجى المحاولة مرة أخرى لاحقاً.',
+
+    // Venue Details
+    'venue.details.back': 'العودة إلى الأماكن',
+    'venue.details.notFound': 'المكان غير موجود',
+    'venue.details.notFoundDesc': 'المكان الذي تبحث عنه غير موجود أو تم حذفه.',
+    'venue.details.badge': 'مكان',
+    'venue.details.eventsHosted': 'الفعاليات المستضافة',
+    'venue.details.city': 'المدينة',
+    'venue.details.location': 'الموقع',
+    'venue.details.eventsAt': 'الفعاليات في',
+    'venue.details.noEvents': 'لم يتم العثور على فعاليات في هذا المكان بعد.',
+    'venue.details.free': 'مجاني',
 
     // Dashboard
     'dashboard.quickActions': 'الإجراءات السريعة',
