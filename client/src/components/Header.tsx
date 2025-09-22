@@ -191,7 +191,7 @@ export function Header() {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-56">
                       <DropdownMenuItem asChild>
-                        <Link href="/dashboard">Dashboard</Link>
+                        <Link href="/dashboard">{t('nav.dashboard')}</Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem asChild>
                         <Link href="/profile">Profile</Link>
@@ -262,7 +262,7 @@ export function Header() {
                           onClick={() => setMobileMenuOpen(false)}
                           className="block text-lg font-medium text-gray-900 hover:text-saudi-green"
                         >
-                          Dashboard
+                          {t('nav.dashboard')}
                         </Link>
                         <button
                           onClick={handleLogout}
