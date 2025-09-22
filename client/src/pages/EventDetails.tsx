@@ -46,7 +46,7 @@ export default function EventDetails() {
 
   const registerMutation = useMutation({
     mutationFn: async () => {
-      const response = await apiRequest('POST', `/api/events/${id}/register`);
+      const response = await apiRequest(`/api/events/${id}/register`, { method: 'POST' });
       return response.json();
     },
     onSuccess: () => {
