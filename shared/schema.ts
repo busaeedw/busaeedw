@@ -311,7 +311,7 @@ export const registerUserSchema = createInsertSchema(users, {
   firstName: z.string().min(2, "First name must be at least 2 characters").max(50, "First name must be less than 50 characters"),
   lastName: z.string().min(2, "Last name must be at least 2 characters").max(50, "Last name must be less than 50 characters"),
   password: z.string().min(8, "Password must be at least 8 characters"),
-  role: z.enum(["attendee", "organizer", "venue", "services"]).default("attendee"),
+  role: z.enum(["attendee", "organizer", "venue", "services", "admin"]).default("attendee"),
 }).omit({
   id: true,
   createdAt: true,
