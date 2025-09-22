@@ -11,7 +11,7 @@ import type { VenueAggregate, Event } from "@shared/schema";
 
 export default function VenueDetails() {
   const { id } = useParams<{ id: string }>();
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
 
   const { data: venue, isLoading: venueLoading, error: venueError } = useQuery<VenueAggregate>({
     queryKey: [`/api/venues/${id}`],
@@ -44,12 +44,12 @@ export default function VenueDetails() {
           <Link href="/venues">
             <Button variant="ghost" className="mb-6" data-testid="button-back-venues">
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Venues
+              {t('venue.details.back')}
             </Button>
           </Link>
           <div className="text-center">
-            <h1 className="text-2xl font-bold text-gray-900 mb-4">Venue Not Found</h1>
-            <p className="text-gray-600">The venue you're looking for doesn't exist or has been removed.</p>
+            <h1 className="text-2xl font-bold text-gray-900 mb-4">{t('venue.details.notFound')}</h1>
+            <p className="text-gray-600">{t('venue.details.notFoundDesc')}</p>
           </div>
         </div>
       </div>
@@ -63,7 +63,7 @@ export default function VenueDetails() {
         <Link href="/venues">
           <Button variant="ghost" className="mb-6" data-testid="button-back-venues">
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Venues
+            {t('venue.details.back')}
           </Button>
         </Link>
 
@@ -82,7 +82,7 @@ export default function VenueDetails() {
               </div>
               <Badge variant="outline" className="text-saudi-green border-saudi-green">
                 <Building2 className="h-4 w-4 mr-1" />
-                Venue
+                {t('venue.details.badge')}
               </Badge>
             </div>
           </CardHeader>
@@ -92,19 +92,19 @@ export default function VenueDetails() {
                 <div className="text-2xl font-bold text-saudi-green mb-1" data-testid="text-venue-events-count">
                   {venue.event_count}
                 </div>
-                <div className="text-sm text-gray-600">Events Hosted</div>
+                <div className="text-sm text-gray-600">{t('venue.details.eventsHosted')}</div>
               </div>
               <div className="text-center p-4 bg-saudi-green/5 rounded-lg">
                 <div className="text-2xl font-bold text-saudi-green mb-1">
                   {venue.city}
                 </div>
-                <div className="text-sm text-gray-600">City</div>
+                <div className="text-sm text-gray-600">{t('venue.details.city')}</div>
               </div>
               <div className="text-center p-4 bg-saudi-green/5 rounded-lg">
                 <div className="text-2xl font-bold text-saudi-green mb-1">
                   {venue.location}
                 </div>
-                <div className="text-sm text-gray-600">Location</div>
+                <div className="text-sm text-gray-600">{t('venue.details.location')}</div>
               </div>
             </div>
           </CardContent>
@@ -115,7 +115,7 @@ export default function VenueDetails() {
           <CardHeader>
             <CardTitle className="flex items-center">
               <Building2 className="h-5 w-5 mr-2" />
-              Events at {language === 'ar' && venue.venue_ar ? venue.venue_ar : venue.venue}
+              {t('venue.details.eventsAt')} {language === 'ar' && venue.venue_ar ? venue.venue_ar : venue.venue}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -150,7 +150,7 @@ export default function VenueDetails() {
                           <Separator orientation="vertical" className="mx-2 h-4" />
                           <span data-testid={`text-event-price-${event.id}`}>
                             {event.price === '0.00' || Number(event.price) === 0 ? (
-                              'Free'
+                              t('venue.details.free')
                             ) : (
                               `${event.currency} ${event.price}`
                             )}
@@ -170,7 +170,7 @@ export default function VenueDetails() {
             ) : (
               <div className="text-center py-8">
                 <Building2 className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-500">No events found at this venue yet.</p>
+                <p className="text-gray-500">{t('venue.details.noEvents')}</p>
               </div>
             )}
           </CardContent>
