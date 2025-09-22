@@ -81,8 +81,8 @@ export default function AdminDashboard() {
     errors.forEach(error => {
       if (error && isUnauthorizedError(error)) {
         toast({
-          title: "Unauthorized",
-          description: "You are logged out. Logging in again...",
+          title: t('common.unauthorized'),
+          description: t('common.unauthorized.desc'),
           variant: "destructive",
         });
         setTimeout(() => {
