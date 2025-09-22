@@ -7,7 +7,16 @@ interface LanguageProviderProps {
 }
 
 export function LanguageProvider({ children }: LanguageProviderProps) {
-  const [language, setLanguage] = useState<'en' | 'ar'>('ar');
+  const [language, setLanguage] = useState<'en' | 'ar'>(() => {
+    // Load from localStorage on initialization
+    const saved = localStorage.getItem('language');
+    return (saved === 'ar' || saved === 'en') ? saved : 'en';
+  });
+
+  useEffect(() => {
+    // Save to localStorage whenever language changes
+    localStorage.setItem('language', language);
+  }, [language]);
 
   useEffect(() => {
     // Update document attributes for RTL support

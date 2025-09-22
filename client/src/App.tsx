@@ -47,6 +47,8 @@ function Router() {
       <Route path="/service-providers" component={EventList} />
       <Route path="/venues" component={VenueList} />
       <Route path="/venues/:id" component={VenueDetails} />
+      <Route path="/admin" component={AdminDashboard} />
+      <Route path="/messages" component={Messages} />
       
       {/* Browse routes */}
       <Route path="/browse/events" component={BrowseEvents} />
@@ -63,9 +65,7 @@ function Router() {
           <Route path="/" component={Dashboard} />
           <Route path="/dashboard" component={Dashboard} />
           <Route path="/profile" component={Profile} />
-          <Route path="/messages" component={Messages} />
           <Route path="/ai-assistant" component={AIAssistant} />
-          <Route path="/admin" component={AdminDashboard} />
         </>
       )}
       <Route component={NotFound} />

@@ -24,7 +24,7 @@ import { isUnauthorizedError } from '@/lib/authUtils';
 
 export default function AdminDashboard() {
   const { user, isAuthenticated, isLoading } = useAuth();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { toast } = useToast();
   const [, setLocation] = useLocation();
 
@@ -41,7 +41,7 @@ export default function AdminDashboard() {
       }, 500);
       return;
     }
-  }, [isAuthenticated, isLoading, toast]);
+  }, [isAuthenticated, isLoading, toast, t, language]);
 
   // Check if user is admin
   useEffect(() => {
@@ -55,7 +55,7 @@ export default function AdminDashboard() {
         setLocation('/dashboard');
       }
     }
-  }, [user, isAuthenticated, isLoading, toast, setLocation]);
+  }, [user, isAuthenticated, isLoading, toast, setLocation, t]);
 
   const { data: stats, isLoading: statsLoading, error: statsError } = useQuery({
     queryKey: ['/api/stats'],
