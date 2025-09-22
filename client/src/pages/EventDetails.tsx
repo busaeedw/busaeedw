@@ -59,8 +59,8 @@ export default function EventDetails() {
     onError: (error: Error) => {
       if (isUnauthorizedError(error)) {
         toast({
-          title: "Unauthorized",
-          description: "You are logged out. Logging in again...",
+          title: t('common.unauthorized'),
+          description: t('common.unauthorized.desc'),
           variant: "destructive",
         });
         setTimeout(() => {
