@@ -115,9 +115,9 @@ export default function EventDetails() {
         <Header />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center">
-            <h1 className="text-2xl font-bold text-gray-900 mb-4">Event Not Found</h1>
-            <p className="text-gray-600 mb-8">The event you're looking for doesn't exist or has been removed.</p>
-            <Button onClick={() => window.history.back()}>Go Back</Button>
+            <h1 className="text-2xl font-bold text-gray-900 mb-4">{t('event.details.notFound')}</h1>
+            <p className="text-gray-600 mb-8">{t('event.details.notFoundDesc')}</p>
+            <Button onClick={() => window.history.back()}>{t('event.details.goBack')}</Button>
           </div>
         </div>
       </div>
@@ -171,7 +171,7 @@ export default function EventDetails() {
             {/* Description */}
             <Card>
               <CardHeader>
-                <CardTitle>About This Event</CardTitle>
+                <CardTitle>{t('event.details.about')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
@@ -183,7 +183,7 @@ export default function EventDetails() {
             {/* Location Details */}
             <Card>
               <CardHeader>
-                <CardTitle>Location & Venue</CardTitle>
+                <CardTitle>{t('event.details.location')}</CardTitle>
               </CardHeader>
               <CardContent>
                 {venueLoading ? (
@@ -194,15 +194,15 @@ export default function EventDetails() {
                     {venue ? (
                       <>
                         <div>
-                          <h4 className="font-medium text-gray-900">Venue</h4>
+                          <h4 className="font-medium text-gray-900">{t('event.details.venue')}</h4>
                           <p className="text-gray-600">{language === 'ar' && venue.venue_ar ? venue.venue_ar : venue.venue}</p>
                         </div>
                         <div>
-                          <h4 className="font-medium text-gray-900">Address</h4>
+                          <h4 className="font-medium text-gray-900">{t('event.details.address')}</h4>
                           <p className="text-gray-600">{venue.location}</p>
                         </div>
                         <div>
-                          <h4 className="font-medium text-gray-900">City</h4>
+                          <h4 className="font-medium text-gray-900">{t('event.details.city')}</h4>
                           <p className="text-gray-600">{venue.city}, Saudi Arabia</p>
                         </div>
                       </>
@@ -210,17 +210,17 @@ export default function EventDetails() {
                       /* Fallback to legacy venue fields for backward compatibility */
                       <>
                         <div>
-                          <h4 className="font-medium text-gray-900">Address</h4>
+                          <h4 className="font-medium text-gray-900">{t('event.details.address')}</h4>
                           <p className="text-gray-600">{event.location}</p>
                         </div>
                         {event.venue && (
                           <div>
-                            <h4 className="font-medium text-gray-900">Venue</h4>
+                            <h4 className="font-medium text-gray-900">{t('event.details.venue')}</h4>
                             <p className="text-gray-600">{event.venue}</p>
                           </div>
                         )}
                         <div>
-                          <h4 className="font-medium text-gray-900">City</h4>
+                          <h4 className="font-medium text-gray-900">{t('event.details.city')}</h4>
                           <p className="text-gray-600">{event.city}, Saudi Arabia</p>
                         </div>
                       </>
@@ -233,7 +233,7 @@ export default function EventDetails() {
             {/* Reviews */}
             <Card>
               <CardHeader>
-                <CardTitle>Reviews & Ratings</CardTitle>
+                <CardTitle>{t('event.details.reviews')}</CardTitle>
               </CardHeader>
               <CardContent>
                 {reviewsLoading ? (
@@ -272,7 +272,7 @@ export default function EventDetails() {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-gray-500">No reviews yet. Be the first to review this event!</p>
+                  <p className="text-gray-500">{t('event.details.noReviews')}</p>
                 )}
               </CardContent>
             </Card>
@@ -291,18 +291,18 @@ export default function EventDetails() {
                       `${event.currency} ${event.price}`
                     )}
                   </div>
-                  <p className="text-gray-600">Per ticket</p>
+                  <p className="text-gray-600">{t('event.details.perTicket')}</p>
                 </div>
 
                 <div className="space-y-4 mb-6">
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-600">Date:</span>
+                    <span className="text-gray-600">{t('event.details.date')}</span>
                     <span className="font-medium">
                       {new Date(event.startDate).toLocaleDateString()}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-600">Time:</span>
+                    <span className="text-gray-600">{t('event.details.time')}</span>
                     <span className="font-medium">
                       {new Date(event.startDate).toLocaleTimeString([], { 
                         hour: '2-digit', 
@@ -312,7 +312,7 @@ export default function EventDetails() {
                   </div>
                   {event.maxAttendees && (
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-600">Capacity:</span>
+                      <span className="text-gray-600">{t('event.details.capacity')}</span>
                       <span className="font-medium">{event.maxAttendees}</span>
                     </div>
                   )}
@@ -338,11 +338,11 @@ export default function EventDetails() {
                 <div className="flex space-x-2">
                   <Button variant="outline" size="sm" className="flex-1">
                     <MessageSquare className="h-4 w-4 mr-2" />
-                    Contact
+                    {t('event.details.contact')}
                   </Button>
                   <Button variant="outline" size="sm" className="flex-1">
                     <Share2 className="h-4 w-4 mr-2" />
-                    Share
+                    {t('event.details.share')}
                   </Button>
                 </div>
               </CardContent>
@@ -351,7 +351,7 @@ export default function EventDetails() {
             {/* Organizer Info */}
             <Card>
               <CardHeader>
-                <CardTitle>Event Organizer</CardTitle>
+                <CardTitle>{t('event.details.organizer')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center space-x-4 mb-4">
@@ -363,14 +363,14 @@ export default function EventDetails() {
                   </Avatar>
                   <div>
                     <h4 className="font-medium">
-                      {event.organizer?.firstName || 'Event Organizer'}
+                      {event.organizer?.firstName || t('event.details.organizer')}
                     </h4>
                     <p className="text-sm text-gray-600">{event.organizer?.role}</p>
                   </div>
                 </div>
                 <Button variant="outline" className="w-full">
                   <MessageSquare className="h-4 w-4 mr-2" />
-                  Message Organizer
+                  {t('event.details.messageOrganizer')}
                 </Button>
               </CardContent>
             </Card>
@@ -380,7 +380,7 @@ export default function EventDetails() {
              (user?.id === event.organizerId || user?.role === 'admin') && (
               <Card>
                 <CardHeader>
-                  <CardTitle>Attendees ({registrations?.length || 0})</CardTitle>
+                  <CardTitle>{t('event.details.attendees')} ({registrations?.length || 0})</CardTitle>
                 </CardHeader>
                 <CardContent>
                   {registrationsLoading ? (
@@ -412,7 +412,7 @@ export default function EventDetails() {
                       )}
                     </div>
                   ) : (
-                    <p className="text-gray-500 text-sm">No attendees yet</p>
+                    <p className="text-gray-500 text-sm">{t('event.details.noAttendees')}</p>
                   )}
                 </CardContent>
               </Card>
