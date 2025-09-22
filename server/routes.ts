@@ -99,7 +99,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Only admins can change user roles" });
       }
       
-      if (!["admin", "organizer", "attendee", "service_provider"].includes(role)) {
+      if (!["admin", "organizer", "attendee", "services", "venue"].includes(role)) {
         return res.status(400).json({ message: "Invalid role" });
       }
 
@@ -875,9 +875,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = req.authUserId;
       const user = await storage.getUser(userId);
       
-      // Only admins and organizers can create venues
-      if (!user || (user.role !== 'admin' && user.role !== 'organizer')) {
-        return res.status(403).json({ message: "Only admins and organizers can create venues" });
+      // Only admins, organizers, and venue owners can create venues
+      if (!user || (user.role !== 'admin' && user.role !== 'organizer' && user.role !== 'venue')) {
+        return res.status(403).json({ message: "Only admins, organizers, and venue owners can create venues" });
       }
 
       const venueData = insertVenueSchema.parse(req.body);
@@ -913,9 +913,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = req.authUserId;
       const user = await storage.getUser(userId);
       
-      // Only admins and organizers can update venues
-      if (!user || (user.role !== 'admin' && user.role !== 'organizer')) {
-        return res.status(403).json({ message: "Only admins and organizers can update venues" });
+      // Only admins, organizers, and venue owners can update venues
+      if (!user || (user.role !== 'admin' && user.role !== 'organizer' && user.role !== 'venue')) {
+        return res.status(403).json({ message: "Only admins, organizers, and venue owners can update venues" });
       }
 
       const venueData = insertVenueSchema.partial().parse(req.body);
@@ -937,9 +937,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = req.authUserId;
       const user = await storage.getUser(userId);
       
-      // Only admins can delete venues
-      if (!user || user.role !== 'admin') {
-        return res.status(403).json({ message: "Only admins can delete venues" });
+      // Only admins and venue owners can delete venues
+      if (!user || (user.role !== 'admin' && user.role !== 'venue')) {
+        return res.status(403).json({ message: "Only admins and venue owners can delete venues" });
       }
 
       await storage.deleteVenue(req.params.id);
