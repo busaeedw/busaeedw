@@ -67,7 +67,7 @@ export default function BrowseOrganizers() {
             {t('nav.browse.organizers')}
           </h1>
           <p className="text-gray-600">
-            Connect with event organizers and explore their events
+            {t('organizers.browse.subtitle')}
           </p>
         </div>
 
@@ -77,7 +77,7 @@ export default function BrowseOrganizers() {
             <div className="relative md:col-span-2">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
               <Input
-                placeholder="Search organizers by name, business, or email..."
+                placeholder={t('organizers.search.placeholder')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10"
@@ -108,8 +108,8 @@ export default function BrowseOrganizers() {
           </div>
         ) : organizers.length === 0 ? (
           <Card className="bg-white p-12 text-center">
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No organizers found</h3>
-            <p className="text-gray-600">Try adjusting your search criteria</p>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">{t('organizers.notfound.title')}</h3>
+            <p className="text-gray-600">{t('organizers.notfound.subtitle')}</p>
           </Card>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -174,7 +174,7 @@ export default function BrowseOrganizers() {
         )}
 
         <div className="mt-8 text-center text-gray-600">
-          <p>Total organizers: {organizers.length}</p>
+          <p>{t('organizers.total.text')} {organizers.length}</p>
         </div>
       </main>
     </div>

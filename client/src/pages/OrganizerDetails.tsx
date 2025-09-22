@@ -73,8 +73,8 @@ export default function OrganizerDetails() {
         <Header />
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <Card className="bg-white p-8 text-center">
-            <h2 className="text-xl font-semibold text-gray-900 mb-2">Organizer not found</h2>
-            <p className="text-gray-600">The organizer you're looking for doesn't exist.</p>
+            <h2 className="text-xl font-semibold text-gray-900 mb-2">{t('organizers.detail.notfound')}</h2>
+            <p className="text-gray-600">{t('organizers.detail.notfound.desc')}</p>
           </Card>
         </main>
       </div>
@@ -109,12 +109,12 @@ export default function OrganizerDetails() {
                   <div className="flex gap-2 mt-4 md:mt-0">
                     {organizer.verified && (
                       <Badge variant="secondary" className="bg-green-100 text-green-700">
-                        Verified
+                        {t('organizers.verified')}
                       </Badge>
                     )}
                     {organizer.featured && (
                       <Badge variant="secondary" className="bg-yellow-100 text-yellow-700">
-                        Featured
+                        {t('organizers.featured')}
                       </Badge>
                     )}
                   </div>
@@ -124,11 +124,11 @@ export default function OrganizerDetails() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                   <div className="flex items-center justify-center md:justify-start text-sm text-gray-600">
                     <Calendar className="h-4 w-4 mr-2" />
-                    <span>{organizer.totalEventsOrganized || 0} events organized</span>
+                    <span>{organizer.totalEventsOrganized || 0} {t('organizers.events.organized')}</span>
                   </div>
                   <div className="flex items-center justify-center md:justify-start text-sm text-gray-600">
                     <Star className="h-4 w-4 mr-2" />
-                    <span>{organizer.rating || "0.0"} ({organizer.reviewCount || 0} reviews)</span>
+                    <span>{organizer.rating || "0.0"} ({organizer.reviewCount || 0} {t('organizers.reviews')})</span>
                   </div>
                   {organizer.city && (
                     <div className="flex items-center justify-center md:justify-start text-sm text-gray-600">
@@ -146,11 +146,11 @@ export default function OrganizerDetails() {
                 <div className="flex flex-col sm:flex-row gap-4">
                   <Button className="bg-saudi-green hover:bg-saudi-green/90" data-testid="contact-organizer-button">
                     <MessageSquare className="h-4 w-4 mr-2" />
-                    Contact Organizer
+                    {t('organizers.contact')}
                   </Button>
                   <Button variant="outline" data-testid="view-events-button">
                     <Calendar className="h-4 w-4 mr-2" />
-                    View Events ({events.length})
+                    {t('organizers.view.events')} ({events.length})
                   </Button>
                 </div>
               </div>
@@ -166,18 +166,18 @@ export default function OrganizerDetails() {
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <Building className="h-5 w-5 mr-2" />
-                  Business Information
+                  {t('organizers.business.info')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
-                    <label className="text-sm font-medium text-gray-700">Category</label>
-                    <p className="capitalize text-gray-900">{organizer.category || 'General'} Events</p>
+                    <label className="text-sm font-medium text-gray-700">{t('organizers.category')}</label>
+                    <p className="capitalize text-gray-900">{organizer.category === 'general' ? t('organizers.general.events') : organizer.category === 'corporate' ? t('organizers.corporate.events') : organizer.category === 'wedding' ? t('organizers.wedding.events') : organizer.category === 'exhibition' ? t('organizers.exhibition.events') : (organizer.category || 'General') + ' Events'}</p>
                   </div>
                   {organizer.priceRange && (
                     <div>
-                      <label className="text-sm font-medium text-gray-700">Price Range</label>
+                      <label className="text-sm font-medium text-gray-700">{t('organizers.price.range')}</label>
                       <p className="text-gray-900">{organizer.priceRange} SAR</p>
                     </div>
                   )}
@@ -185,7 +185,7 @@ export default function OrganizerDetails() {
                 
                 {organizer.specialties && organizer.specialties.length > 0 && (
                   <div>
-                    <label className="text-sm font-medium text-gray-700 mb-2 block">Specialties</label>
+                    <label className="text-sm font-medium text-gray-700 mb-2 block">{t('organizers.specialties')}</label>
                     <div className="flex flex-wrap gap-2">
                       {organizer.specialties.map((specialty, index) => (
                         <Badge key={index} variant="outline" className="capitalize">
@@ -198,7 +198,7 @@ export default function OrganizerDetails() {
 
                 {organizer.businessDescription && (
                   <div>
-                    <label className="text-sm font-medium text-gray-700">Description</label>
+                    <label className="text-sm font-medium text-gray-700">{t('organizers.description')}</label>
                     <p className="text-gray-700 mt-1">{organizer.businessDescription}</p>
                   </div>
                 )}
@@ -210,12 +210,12 @@ export default function OrganizerDetails() {
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <Calendar className="h-5 w-5 mr-2" />
-                  Recent Events
+                  {t('organizers.recent.events')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 {events.length === 0 ? (
-                  <p className="text-gray-600">No events organized yet.</p>
+                  <p className="text-gray-600">{t('organizers.no.events')}</p>
                 ) : (
                   <div className="space-y-4">
                     {events.slice(0, 3).map((event: any) => (
@@ -241,7 +241,7 @@ export default function OrganizerDetails() {
             {/* Contact Information */}
             <Card>
               <CardHeader>
-                <CardTitle>Contact Information</CardTitle>
+                <CardTitle>{t('organizers.contact.info')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center">
@@ -263,7 +263,7 @@ export default function OrganizerDetails() {
                       rel="noopener noreferrer"
                       className="text-sm text-saudi-green hover:underline"
                     >
-                      Visit Website
+                      {t('organizers.visit.website')}
                     </a>
                   </div>
                 )}
@@ -273,23 +273,23 @@ export default function OrganizerDetails() {
             {/* Quick Stats */}
             <Card>
               <CardHeader>
-                <CardTitle>Quick Stats</CardTitle>
+                <CardTitle>{t('organizers.quick.stats')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Events Organized</span>
+                  <span className="text-sm text-gray-600">{t('organizers.events.count')}</span>
                   <span className="text-sm font-medium">{organizer.totalEventsOrganized || 0}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Average Rating</span>
+                  <span className="text-sm text-gray-600">{t('organizers.average.rating')}</span>
                   <span className="text-sm font-medium">{organizer.rating || "N/A"}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Total Reviews</span>
+                  <span className="text-sm text-gray-600">{t('organizers.total.reviews')}</span>
                   <span className="text-sm font-medium">{organizer.reviewCount || 0}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Member Since</span>
+                  <span className="text-sm text-gray-600">{t('organizers.member.since')}</span>
                   <span className="text-sm font-medium">
                     {organizer.createdAt ? new Date(organizer.createdAt).getFullYear() : 'N/A'}
                   </span>
