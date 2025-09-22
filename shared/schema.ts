@@ -86,7 +86,7 @@ export const venues = pgTable("venues", {
 // Events table
 export const events = pgTable("events", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  organizerId: varchar("organizer_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  organizerId: varchar("organizer_id").notNull().references(() => organizers.id, { onDelete: "cascade" }),
   venueId: varchar("venue_id").references(() => venues.id, { onDelete: "set null" }),
   title: varchar("title").notNull(),
   titleAr: varchar("title_ar"),
@@ -163,7 +163,7 @@ export const serviceBookings = pgTable("service_bookings", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   eventId: varchar("event_id").notNull().references(() => events.id, { onDelete: "cascade" }),
   serviceProviderId: varchar("service_provider_id").notNull().references(() => serviceProviders.id, { onDelete: "cascade" }),
-  organizerId: varchar("organizer_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  organizerId: varchar("organizer_id").notNull().references(() => organizers.id, { onDelete: "cascade" }),
   status: varchar("status").notNull().default("pending"), // pending, confirmed, completed, cancelled
   totalAmount: decimal("total_amount", { precision: 10, scale: 2 }).notNull(),
   notes: text("notes"),
@@ -171,9 +171,43 @@ export const serviceBookings = pgTable("service_bookings", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Organizers table - dedicated table for event organizers
+export const organizers = pgTable("organizers", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  email: varchar("email").unique().notNull(),
+  firstName: varchar("first_name").notNull(),
+  lastName: varchar("last_name").notNull(),
+  profileImageUrl: varchar("profile_image_url"),
+  bio: text("bio"),
+  phone: varchar("phone"),
+  city: varchar("city"),
+  businessName: varchar("business_name").notNull(),
+  businessNameAr: varchar("business_name_ar"),
+  category: varchar("category").notNull(), // entertainment, planning, catering, technology
+  specialties: text("specialties").array(), // Services/areas of expertise
+  yearsExperience: integer("years_experience"),
+  priceRange: varchar("price_range"),
+  portfolio: text("portfolio").array(), // URLs to portfolio images/videos
+  website: varchar("website"),
+  socialMedia: jsonb("social_media"), // Links to social media profiles
+  availableServices: text("available_services").array(),
+  businessDescription: text("business_description"),
+  businessDescriptionAr: text("business_description_ar"),
+  rating: decimal("rating", { precision: 3, scale: 2 }).default("0"),
+  reviewCount: integer("review_count").default(0),
+  totalEventsOrganized: integer("total_events_organized").default(0),
+  verified: boolean("verified").default(false),
+  featured: boolean("featured").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => [
+  index("organizers_email_idx").on(table.email),
+  index("organizers_city_category_idx").on(table.city, table.category),
+  index("organizers_verified_featured_idx").on(table.verified, table.featured),
+]);
+
 // Relations
 export const usersRelations = relations(users, ({ many, one }) => ({
-  organizedEvents: many(events),
   eventRegistrations: many(eventRegistrations),
   serviceProvider: one(serviceProviders, {
     fields: [users.id],
@@ -182,7 +216,12 @@ export const usersRelations = relations(users, ({ many, one }) => ({
   sentMessages: many(messages, { relationName: "sentMessages" }),
   receivedMessages: many(messages, { relationName: "receivedMessages" }),
   reviews: many(reviews),
+}));
+
+export const organizersRelations = relations(organizers, ({ many }) => ({
+  events: many(events),
   serviceBookings: many(serviceBookings),
+  reviews: many(reviews),
 }));
 
 export const venuesRelations = relations(venues, ({ many }) => ({
@@ -190,9 +229,9 @@ export const venuesRelations = relations(venues, ({ many }) => ({
 }));
 
 export const eventsRelations = relations(events, ({ one, many }) => ({
-  organizer: one(users, {
+  organizer: one(organizers, {
     fields: [events.organizerId],
-    references: [users.id],
+    references: [organizers.id],
   }),
   venue: one(venues, {
     fields: [events.venueId],
@@ -252,9 +291,9 @@ export const serviceBookingsRelations = relations(serviceBookings, ({ one }) => 
     fields: [serviceBookings.serviceProviderId],
     references: [serviceProviders.id],
   }),
-  organizer: one(users, {
+  organizer: one(organizers, {
     fields: [serviceBookings.organizerId],
-    references: [users.id],
+    references: [organizers.id],
   }),
 }));
 
@@ -350,6 +389,12 @@ export const insertVenueSchema = createInsertSchema(venues).omit({
   id: true,
 });
 
+export const insertOrganizerSchema = createInsertSchema(organizers).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 export const insertPasswordResetTokenSchema = createInsertSchema(passwordResetTokens).omit({
   id: true,
   createdAt: true,
@@ -390,3 +435,5 @@ export type DirectResetPassword = z.infer<typeof directResetPasswordSchema>;
 export type Venue = typeof venues.$inferSelect;
 export type InsertVenue = z.infer<typeof insertVenueSchema>;
 export type VenueAggregate = z.infer<typeof venueAggregateSchema>;
+export type Organizer = typeof organizers.$inferSelect;
+export type InsertOrganizer = z.infer<typeof insertOrganizerSchema>;
