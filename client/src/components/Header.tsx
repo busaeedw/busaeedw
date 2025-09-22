@@ -194,7 +194,7 @@ export function Header() {
                         <Link href="/dashboard">{t('nav.dashboard')}</Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem asChild>
-                        <Link href="/profile">Profile</Link>
+                        <Link href="/profile">{t('nav.profile')}</Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         onClick={handleLogout}
