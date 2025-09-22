@@ -7,6 +7,7 @@ import {
   messages,
   serviceBookings,
   venues,
+  organizers,
   passwordResetTokens,
   type User,
   type UpsertUser,
@@ -24,6 +25,8 @@ import {
   type InsertServiceBooking,
   type Venue,
   type InsertVenue,
+  type Organizer,
+  type InsertOrganizer,
   type PasswordResetToken,
   type InsertPasswordResetToken,
 } from "@shared/schema";
@@ -102,6 +105,22 @@ export interface IStorage {
   }): Promise<Venue[]>;
   updateVenue(id: string, updates: Partial<InsertVenue>): Promise<Venue>;
   deleteVenue(id: string): Promise<void>;
+  
+  // Organizer operations
+  createOrganizer(organizer: InsertOrganizer): Promise<Organizer>;
+  getOrganizer(id: string): Promise<Organizer | undefined>;
+  getOrganizerByEmail(email: string): Promise<Organizer | undefined>;
+  getOrganizers(filters?: {
+    category?: string;
+    city?: string;
+    search?: string;
+    verified?: boolean;
+    featured?: boolean;
+    limit?: number;
+    offset?: number;
+  }): Promise<Organizer[]>;
+  updateOrganizer(id: string, updates: Partial<InsertOrganizer>): Promise<Organizer>;
+  deleteOrganizer(id: string): Promise<void>;
   
   // Analytics
   getEventStats(): Promise<{ totalEvents: number; totalAttendees: number; totalProviders: number }>;
@@ -561,6 +580,94 @@ export class DatabaseStorage implements IStorage {
     }
     
     await db.delete(venues).where(eq(venues.id, id));
+  }
+
+  // Organizer operations
+  async createOrganizer(organizer: InsertOrganizer): Promise<Organizer> {
+    const [createdOrganizer] = await db.insert(organizers).values(organizer).returning();
+    return createdOrganizer;
+  }
+
+  async getOrganizer(id: string): Promise<Organizer | undefined> {
+    const [organizer] = await db.select().from(organizers).where(eq(organizers.id, id));
+    return organizer;
+  }
+
+  async getOrganizerByEmail(email: string): Promise<Organizer | undefined> {
+    const [organizer] = await db.select().from(organizers).where(eq(organizers.email, email));
+    return organizer;
+  }
+
+  async getOrganizers(filters?: {
+    category?: string;
+    city?: string;
+    search?: string;
+    verified?: boolean;
+    featured?: boolean;
+    limit?: number;
+    offset?: number;
+  }): Promise<Organizer[]> {
+    const conditions = [];
+
+    if (filters?.category) {
+      conditions.push(eq(organizers.category, filters.category));
+    }
+    if (filters?.city) {
+      conditions.push(eq(organizers.city, filters.city));
+    }
+    if (filters?.search) {
+      conditions.push(
+        or(
+          ilike(organizers.firstName, `%${filters.search}%`),
+          ilike(organizers.lastName, `%${filters.search}%`),
+          ilike(organizers.businessName, `%${filters.search}%`),
+          ilike(organizers.email, `%${filters.search}%`)
+        )!
+      );
+    }
+    if (filters?.verified !== undefined) {
+      conditions.push(eq(organizers.verified, filters.verified));
+    }
+    if (filters?.featured !== undefined) {
+      conditions.push(eq(organizers.featured, filters.featured));
+    }
+
+    let query = db.select().from(organizers).$dynamic();
+    
+    if (conditions.length > 0) {
+      query = query.where(and(...conditions));
+    }
+
+    query = query.orderBy(desc(organizers.featured), desc(organizers.verified), organizers.businessName);
+
+    if (filters?.limit) {
+      query = query.limit(filters.limit);
+    }
+    if (filters?.offset) {
+      query = query.offset(filters.offset);
+    }
+
+    return await query;
+  }
+
+  async updateOrganizer(id: string, updates: Partial<InsertOrganizer>): Promise<Organizer> {
+    const [organizer] = await db
+      .update(organizers)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(organizers.id, id))
+      .returning();
+    return organizer;
+  }
+
+  async deleteOrganizer(id: string): Promise<void> {
+    // Check if organizer has any events
+    const [referencingEvent] = await db.select({ id: events.id }).from(events).where(eq(events.organizerId, id)).limit(1);
+    
+    if (referencingEvent) {
+      throw new Error('Cannot delete organizer: they have organized events');
+    }
+    
+    await db.delete(organizers).where(eq(organizers.id, id));
   }
 
   // Analytics
