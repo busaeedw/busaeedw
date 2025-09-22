@@ -607,47 +607,71 @@ export class DatabaseStorage implements IStorage {
     limit?: number;
     offset?: number;
   }): Promise<Organizer[]> {
-    const conditions = [];
-
-    if (filters?.category) {
-      conditions.push(eq(organizers.category, filters.category));
-    }
-    if (filters?.city) {
-      conditions.push(eq(organizers.city, filters.city));
-    }
-    if (filters?.search) {
-      conditions.push(
-        or(
-          ilike(organizers.firstName, `%${filters.search}%`),
-          ilike(organizers.lastName, `%${filters.search}%`),
-          ilike(organizers.businessName, `%${filters.search}%`),
-          ilike(organizers.email, `%${filters.search}%`)
-        )!
-      );
-    }
-    if (filters?.verified !== undefined) {
-      conditions.push(eq(organizers.verified, filters.verified));
-    }
-    if (filters?.featured !== undefined) {
-      conditions.push(eq(organizers.featured, filters.featured));
-    }
-
-    let query = db.select().from(organizers).$dynamic();
+    console.log("🔍 getOrganizers called with filters:", filters);
     
-    if (conditions.length > 0) {
-      query = query.where(and(...conditions));
-    }
+    try {
+      const conditions = [];
 
-    query = query.orderBy(desc(organizers.featured), desc(organizers.verified), organizers.businessName);
+      if (filters?.category) {
+        conditions.push(eq(organizers.category, filters.category));
+      }
+      if (filters?.city) {
+        conditions.push(eq(organizers.city, filters.city));
+      }
+      if (filters?.search) {
+        conditions.push(
+          or(
+            ilike(organizers.firstName, `%${filters.search}%`),
+            ilike(organizers.lastName, `%${filters.search}%`),
+            ilike(organizers.businessName, `%${filters.search}%`),
+            ilike(organizers.email, `%${filters.search}%`)
+          )!
+        );
+      }
+      if (filters?.verified === true) {
+        conditions.push(eq(organizers.verified, true));
+      } else if (filters?.verified === false) {
+        conditions.push(eq(organizers.verified, false));
+      }
+      if (filters?.featured === true) {
+        conditions.push(eq(organizers.featured, true));
+      } else if (filters?.featured === false) {
+        conditions.push(eq(organizers.featured, false));
+      }
 
-    if (filters?.limit) {
-      query = query.limit(filters.limit);
-    }
-    if (filters?.offset) {
-      query = query.offset(filters.offset);
-    }
+      console.log("📋 Query conditions count:", conditions.length);
 
-    return await query;
+      let query = db.select().from(organizers).$dynamic();
+      
+      if (conditions.length > 0) {
+        query = query.where(and(...conditions));
+      }
+
+      query = query.orderBy(desc(organizers.featured), desc(organizers.verified), organizers.businessName);
+
+      if (filters?.limit) {
+        query = query.limit(filters.limit);
+      }
+      if (filters?.offset) {
+        query = query.offset(filters.offset);
+      }
+
+      const result = await query;
+      console.log("✅ getOrganizers result count:", result.length);
+      
+      if (result.length > 0) {
+        console.log("📄 First organizer sample:", {
+          id: result[0].id,
+          businessName: result[0].businessName,
+          verified: result[0].verified
+        });
+      }
+      
+      return result;
+    } catch (error) {
+      console.error("❌ Error in getOrganizers:", error);
+      throw error;
+    }
   }
 
   async updateOrganizer(id: string, updates: Partial<InsertOrganizer>): Promise<Organizer> {

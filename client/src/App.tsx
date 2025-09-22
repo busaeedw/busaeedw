@@ -21,6 +21,7 @@ import BrowseVenues from "@/pages/browse/BrowseVenues";
 import BrowseOrganizers from "@/pages/browse/BrowseOrganizers";
 import BrowseProviders from "@/pages/browse/BrowseProviders";
 import BrowseUsers from "@/pages/browse/BrowseUsers";
+import OrganizerDetails from "@/pages/OrganizerDetails";
 import Register from "@/pages/Register";
 import Login from "@/pages/Login";
 import ForgotPassword from "@/pages/ForgotPassword";
@@ -43,6 +44,7 @@ function Router() {
       <Route path="/events" component={EventList} />
       <Route path="/events/create" component={EventCreate} />
       <Route path="/events/:id" component={EventDetails} />
+      <Route path="/organizers/:id" component={OrganizerDetails} />
       <Route path="/service-providers/:id" component={ServiceProviderProfile} />
       <Route path="/service-providers" component={EventList} />
       <Route path="/venues" component={VenueList} />

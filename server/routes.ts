@@ -712,16 +712,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/organizers', async (req, res) => {
     try {
       const { category, city, search, verified, featured, limit, offset } = req.query;
+      console.log("🔍 Raw query params:", { verified, featured, typeof_verified: typeof verified, typeof_featured: typeof featured });
       
-      const organizers = await storage.getOrganizers({
-        category: category as string,
-        city: city as string,
-        search: search as string,
-        verified: verified === 'true',
-        featured: featured === 'true',
-        limit: limit ? parseInt(limit as string) : undefined,
-        offset: offset ? parseInt(offset as string) : undefined,
-      });
+      const filters: any = {};
+      if (category) filters.category = category as string;
+      if (city) filters.city = city as string;
+      if (search) filters.search = search as string;
+      if (verified !== undefined) filters.verified = verified === 'true';
+      if (featured !== undefined) filters.featured = featured === 'true';
+      if (limit) filters.limit = parseInt(limit as string);
+      if (offset) filters.offset = parseInt(offset as string);
+      
+      const organizers = await storage.getOrganizers(filters);
       
       res.json(organizers);
     } catch (error) {

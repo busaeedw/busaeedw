@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { User, Search, Filter, Calendar, MapPin } from 'lucide-react';
 import { useState } from 'react';
+import { Link } from 'wouter';
 
 interface Organizer {
   id: string;
@@ -113,7 +114,8 @@ export default function BrowseOrganizers() {
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {organizers.map((organizer, index) => (
-              <Card key={organizer.id} className="bg-white p-6 hover:shadow-lg transition-shadow" data-testid={`organizer-card-${index}`}>
+              <Link key={organizer.id} href={`/organizers/${organizer.id}`}>
+                <Card className="bg-white p-6 hover:shadow-lg transition-shadow cursor-pointer" data-testid={`organizer-card-${index}`}>
                 <div className="flex items-center mb-4">
                   <Avatar className="w-12 h-12 mr-4">
                     <AvatarImage src={organizer.profileImageUrl || `https://avatar.vercel.sh/${organizer.email}`} />
@@ -165,7 +167,8 @@ export default function BrowseOrganizers() {
                     Contact
                   </Button>
                 </div>
-              </Card>
+                </Card>
+              </Link>
             ))}
           </div>
         )}
