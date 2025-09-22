@@ -66,7 +66,7 @@ export function Header() {
     { href: '/venues', label: t('nav.venues') },
     ...(isAuthenticated ? [{ 
       href: '/ai-assistant', 
-      label: 'AI Assistant',
+      label: t('nav.ai'),
       requireAuth: true
     }] : []),
   ];
