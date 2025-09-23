@@ -1,0 +1,1427 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "prevId": "",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.messages": {
+      "name": "messages",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "sender_id": {
+          "name": "sender_id",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "receiver_id": {
+          "name": "receiver_id",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "content": {
+          "name": "content",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "read": {
+          "name": "read",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "messages_sender_id_users_id_fk": {
+          "name": "messages_sender_id_users_id_fk",
+          "tableFrom": "messages",
+          "tableTo": "users",
+          "schemaTo": "public",
+          "columnsFrom": [
+            "sender_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "messages_receiver_id_users_id_fk": {
+          "name": "messages_receiver_id_users_id_fk",
+          "tableFrom": "messages",
+          "tableTo": "users",
+          "schemaTo": "public",
+          "columnsFrom": [
+            "receiver_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false
+    },
+    "public.reviews": {
+      "name": "reviews",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "reviewer_id": {
+          "name": "reviewer_id",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "target_type": {
+          "name": "target_type",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "target_id": {
+          "name": "target_id",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "rating": {
+          "name": "rating",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "comment": {
+          "name": "comment",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "reviews_reviewer_id_users_id_fk": {
+          "name": "reviews_reviewer_id_users_id_fk",
+          "tableFrom": "reviews",
+          "tableTo": "users",
+          "schemaTo": "public",
+          "columnsFrom": [
+            "reviewer_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false
+    },
+    "public.events": {
+      "name": "events",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "organizer_id": {
+          "name": "organizer_id",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "title": {
+          "name": "title",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "category": {
+          "name": "category",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "start_date": {
+          "name": "start_date",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "end_date": {
+          "name": "end_date",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "location": {
+          "name": "location",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "city": {
+          "name": "city",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "venue": {
+          "name": "venue",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "price": {
+          "name": "price",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'0'"
+        },
+        "currency": {
+          "name": "currency",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'SAR'"
+        },
+        "max_attendees": {
+          "name": "max_attendees",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "image_url": {
+          "name": "image_url",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "status": {
+          "name": "status",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'draft'"
+        },
+        "tags": {
+          "name": "tags",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "venue_id": {
+          "name": "venue_id",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "title_ar": {
+          "name": "title_ar",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "description_ar": {
+          "name": "description_ar",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "events_venue_id_idx": {
+          "name": "events_venue_id_idx",
+          "columns": [
+            {
+              "expression": "venue_id",
+              "asc": true,
+              "nulls": "last",
+              "opclass": "text_ops",
+              "isExpression": false
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "events_venue_id_venues_id_fk": {
+          "name": "events_venue_id_venues_id_fk",
+          "tableFrom": "events",
+          "tableTo": "venues",
+          "schemaTo": "public",
+          "columnsFrom": [
+            "venue_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false
+    },
+    "public.sessions": {
+      "name": "sessions",
+      "schema": "",
+      "columns": {
+        "sid": {
+          "name": "sid",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "sess": {
+          "name": "sess",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "expire": {
+          "name": "expire",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "IDX_session_expire": {
+          "name": "IDX_session_expire",
+          "columns": [
+            {
+              "expression": "expire",
+              "asc": true,
+              "nulls": "last",
+              "opclass": "timestamp_ops",
+              "isExpression": false
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false
+    },
+    "public.event_registrations": {
+      "name": "event_registrations",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "event_id": {
+          "name": "event_id",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "attendee_id": {
+          "name": "attendee_id",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'registered'"
+        },
+        "ticket_code": {
+          "name": "ticket_code",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "registered_at": {
+          "name": "registered_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "event_registrations_event_id_events_id_fk": {
+          "name": "event_registrations_event_id_events_id_fk",
+          "tableFrom": "event_registrations",
+          "tableTo": "events",
+          "schemaTo": "public",
+          "columnsFrom": [
+            "event_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "event_registrations_attendee_id_users_id_fk": {
+          "name": "event_registrations_attendee_id_users_id_fk",
+          "tableFrom": "event_registrations",
+          "tableTo": "users",
+          "schemaTo": "public",
+          "columnsFrom": [
+            "attendee_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "event_registrations_ticket_code_unique": {
+          "columns": [
+            "ticket_code"
+          ],
+          "nullsNotDistinct": false,
+          "name": "event_registrations_ticket_code_unique"
+        }
+      },
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false
+    },
+    "public.service_bookings": {
+      "name": "service_bookings",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "event_id": {
+          "name": "event_id",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "service_provider_id": {
+          "name": "service_provider_id",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "organizer_id": {
+          "name": "organizer_id",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'pending'"
+        },
+        "total_amount": {
+          "name": "total_amount",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "notes": {
+          "name": "notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "service_bookings_event_id_events_id_fk": {
+          "name": "service_bookings_event_id_events_id_fk",
+          "tableFrom": "service_bookings",
+          "tableTo": "events",
+          "schemaTo": "public",
+          "columnsFrom": [
+            "event_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "service_bookings_service_provider_id_service_providers_id_fk": {
+          "name": "service_bookings_service_provider_id_service_providers_id_fk",
+          "tableFrom": "service_bookings",
+          "tableTo": "service_providers",
+          "schemaTo": "public",
+          "columnsFrom": [
+            "service_provider_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false
+    },
+    "public.service_providers": {
+      "name": "service_providers",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "business_name": {
+          "name": "business_name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "category": {
+          "name": "category",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "services": {
+          "name": "services",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "price_range": {
+          "name": "price_range",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "portfolio": {
+          "name": "portfolio",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "availability": {
+          "name": "availability",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "rating": {
+          "name": "rating",
+          "type": "numeric(3, 2)",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'0'"
+        },
+        "review_count": {
+          "name": "review_count",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "default": 0
+        },
+        "verified": {
+          "name": "verified",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "service_providers_user_id_users_id_fk": {
+          "name": "service_providers_user_id_users_id_fk",
+          "tableFrom": "service_providers",
+          "tableTo": "users",
+          "schemaTo": "public",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false
+    },
+    "public.password_reset_tokens": {
+      "name": "password_reset_tokens",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "token_hash": {
+          "name": "token_hash",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "expires_at": {
+          "name": "expires_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "used_at": {
+          "name": "used_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "password_reset_tokens_expires_at_idx": {
+          "name": "password_reset_tokens_expires_at_idx",
+          "columns": [
+            {
+              "expression": "expires_at",
+              "asc": true,
+              "nulls": "last",
+              "opclass": "timestamp_ops",
+              "isExpression": false
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "password_reset_tokens_user_id_idx": {
+          "name": "password_reset_tokens_user_id_idx",
+          "columns": [
+            {
+              "expression": "user_id",
+              "asc": true,
+              "nulls": "last",
+              "opclass": "text_ops",
+              "isExpression": false
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "password_reset_tokens_user_id_users_id_fk": {
+          "name": "password_reset_tokens_user_id_users_id_fk",
+          "tableFrom": "password_reset_tokens",
+          "tableTo": "users",
+          "schemaTo": "public",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "password_reset_tokens_token_hash_unique": {
+          "columns": [
+            "token_hash"
+          ],
+          "nullsNotDistinct": false,
+          "name": "password_reset_tokens_token_hash_unique"
+        }
+      },
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false
+    },
+    "public.venues": {
+      "name": "venues",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "city": {
+          "name": "city",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "location": {
+          "name": "location",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name_ar": {
+          "name": "name_ar",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "description_ar": {
+          "name": "description_ar",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "venue_type": {
+          "name": "venue_type",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "capacity": {
+          "name": "capacity",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "image_url": {
+          "name": "image_url",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "image_urls": {
+          "name": "image_urls",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "amenities": {
+          "name": "amenities",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "contact_phone": {
+          "name": "contact_phone",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "contact_email": {
+          "name": "contact_email",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "website": {
+          "name": "website",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "price_range": {
+          "name": "price_range",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "rating": {
+          "name": "rating",
+          "type": "numeric(3, 2)",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'0'"
+        },
+        "verified": {
+          "name": "verified",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "owner_user": {
+          "name": "owner_user",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "venues_name_city_location_idx": {
+          "name": "venues_name_city_location_idx",
+          "columns": [
+            {
+              "expression": "name",
+              "asc": true,
+              "nulls": "last",
+              "opclass": "text_ops",
+              "isExpression": false
+            },
+            {
+              "expression": "city",
+              "asc": true,
+              "nulls": "last",
+              "opclass": "text_ops",
+              "isExpression": false
+            },
+            {
+              "expression": "location",
+              "asc": true,
+              "nulls": "last",
+              "opclass": "text_ops",
+              "isExpression": false
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "venues_type_city_idx": {
+          "name": "venues_type_city_idx",
+          "columns": [
+            {
+              "expression": "venue_type",
+              "asc": true,
+              "nulls": "last",
+              "opclass": "text_ops",
+              "isExpression": false
+            },
+            {
+              "expression": "city",
+              "asc": true,
+              "nulls": "last",
+              "opclass": "text_ops",
+              "isExpression": false
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false
+    },
+    "public.organizers": {
+      "name": "organizers",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "first_name": {
+          "name": "first_name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "last_name": {
+          "name": "last_name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "profile_image_url": {
+          "name": "profile_image_url",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "bio": {
+          "name": "bio",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "phone": {
+          "name": "phone",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "city": {
+          "name": "city",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "business_name": {
+          "name": "business_name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "business_name_ar": {
+          "name": "business_name_ar",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "category": {
+          "name": "category",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "specialties": {
+          "name": "specialties",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "years_experience": {
+          "name": "years_experience",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "price_range": {
+          "name": "price_range",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "portfolio": {
+          "name": "portfolio",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "website": {
+          "name": "website",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "social_media": {
+          "name": "social_media",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "available_services": {
+          "name": "available_services",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "business_description": {
+          "name": "business_description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "business_description_ar": {
+          "name": "business_description_ar",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "rating": {
+          "name": "rating",
+          "type": "numeric(3, 2)",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'0'"
+        },
+        "review_count": {
+          "name": "review_count",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "default": 0
+        },
+        "total_events_organized": {
+          "name": "total_events_organized",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "default": 0
+        },
+        "verified": {
+          "name": "verified",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "featured": {
+          "name": "featured",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "organizers_city_category_idx": {
+          "name": "organizers_city_category_idx",
+          "columns": [
+            {
+              "expression": "city",
+              "asc": true,
+              "nulls": "last",
+              "opclass": "text_ops",
+              "isExpression": false
+            },
+            {
+              "expression": "category",
+              "asc": true,
+              "nulls": "last",
+              "opclass": "text_ops",
+              "isExpression": false
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "organizers_email_idx": {
+          "name": "organizers_email_idx",
+          "columns": [
+            {
+              "expression": "email",
+              "asc": true,
+              "nulls": "last",
+              "opclass": "text_ops",
+              "isExpression": false
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "organizers_verified_featured_idx": {
+          "name": "organizers_verified_featured_idx",
+          "columns": [
+            {
+              "expression": "verified",
+              "asc": true,
+              "nulls": "last",
+              "opclass": "bool_ops",
+              "isExpression": false
+            },
+            {
+              "expression": "featured",
+              "asc": true,
+              "nulls": "last",
+              "opclass": "bool_ops",
+              "isExpression": false
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "organizers_email_unique": {
+          "columns": [
+            "email"
+          ],
+          "nullsNotDistinct": false,
+          "name": "organizers_email_unique"
+        }
+      },
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false
+    },
+    "public.users": {
+      "name": "users",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "first_name": {
+          "name": "first_name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "last_name": {
+          "name": "last_name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "profile_image_url": {
+          "name": "profile_image_url",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "role": {
+          "name": "role",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'attendee'"
+        },
+        "bio": {
+          "name": "bio",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "phone": {
+          "name": "phone",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "city": {
+          "name": "city",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "password": {
+          "name": "password",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "username": {
+          "name": "username",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "users_email_unique": {
+          "columns": [
+            "email"
+          ],
+          "nullsNotDistinct": false,
+          "name": "users_email_unique"
+        },
+        "users_username_unique": {
+          "columns": [
+            "username"
+          ],
+          "nullsNotDistinct": false,
+          "name": "users_username_unique"
+        }
+      },
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  },
+  "internal": {
+    "tables": {
+      "events": {
+        "columns": {
+          "tags": {
+            "isArray": true,
+            "dimensions": 1,
+            "rawType": "text"
+          }
+        }
+      },
+      "service_providers": {
+        "columns": {
+          "services": {
+            "isArray": true,
+            "dimensions": 1,
+            "rawType": "text"
+          },
+          "portfolio": {
+            "isArray": true,
+            "dimensions": 1,
+            "rawType": "text"
+          }
+        }
+      },
+      "venues": {
+        "columns": {
+          "image_urls": {
+            "isArray": true,
+            "dimensions": 1,
+            "rawType": "text"
+          },
+          "amenities": {
+            "isArray": true,
+            "dimensions": 1,
+            "rawType": "text"
+          }
+        }
+      },
+      "organizers": {
+        "columns": {
+          "specialties": {
+            "isArray": true,
+            "dimensions": 1,
+            "rawType": "text"
+          },
+          "portfolio": {
+            "isArray": true,
+            "dimensions": 1,
+            "rawType": "text"
+          },
+          "available_services": {
+            "isArray": true,
+            "dimensions": 1,
+            "rawType": "text"
+          }
+        }
+      }
+    }
+  }
+}
