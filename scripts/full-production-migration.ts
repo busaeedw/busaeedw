@@ -12,12 +12,13 @@ import fs from "fs/promises";
 
 neonConfig.webSocketConstructor = ws;
 
-// Connect to database using current environment
-if (!process.env.DATABASE_URL) {
-  throw new Error("DATABASE_URL must be set");
+// Connect to database using target environment (supports deployment database)
+const targetDatabaseUrl = process.env.TARGET_DATABASE_URL || process.env.DATABASE_URL;
+if (!targetDatabaseUrl) {
+  throw new Error("DATABASE_URL or TARGET_DATABASE_URL must be set");
 }
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const pool = new Pool({ connectionString: targetDatabaseUrl });
 const db = drizzle({ client: pool, schema });
 
 interface BackupData {
@@ -35,7 +36,10 @@ interface BackupData {
 
 async function fullProductionMigration() {
   console.log("🚀 Starting FULL Production Database Migration");
-  console.log(`🔗 Database: ${process.env.DATABASE_URL?.substring(0, 50)}...`);
+  console.log(`🔗 Database: ${targetDatabaseUrl?.substring(0, 50)}...`);
+  if (process.env.TARGET_DATABASE_URL) {
+    console.log(`🎯 Using TARGET_DATABASE_URL for deployment database`);
+  }
   console.log("");
 
   try {
