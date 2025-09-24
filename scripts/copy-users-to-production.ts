@@ -6,6 +6,7 @@
 
 import { Pool, neonConfig } from '@neondatabase/serverless';
 import { drizzle } from 'drizzle-orm/neon-serverless';
+import { eq } from 'drizzle-orm';
 import ws from "ws";
 import * as schema from "../shared/schema";
 
@@ -31,8 +32,8 @@ const prodDb = drizzle({ client: prodPool, schema });
 
 async function copyUsersToProduction() {
   console.log("🚀 Starting Users Table Copy to Production");
-  console.log(`📊 Source (Dev): ${devDatabaseUrl.substring(0, 50)}...`);
-  console.log(`🎯 Target (Prod): ${prodDatabaseUrl.substring(0, 50)}...`);
+  console.log(`📊 Source (Dev): ${devDatabaseUrl?.substring(0, 50)}...`);
+  console.log(`🎯 Target (Prod): ${prodDatabaseUrl?.substring(0, 50)}...`);
   
   if (process.env.TARGET_DATABASE_URL) {
     console.log(`✅ Using TARGET_DATABASE_URL for production database`);
@@ -77,7 +78,7 @@ async function copyUsersToProduction() {
     console.log(`📊 Production database now has ${prodUsers.length} users`);
 
     // Verify test user exists
-    const testUser = await prodDb.select().from(schema.users).where(schema.users.username === 'wbusaeedv');
+    const testUser = await prodDb.select().from(schema.users).where(eq(schema.users.username, 'wbusaeedv'));
     if (testUser.length > 0) {
       console.log(`✅ Test user confirmed: ${testUser[0].username} (${testUser[0].email})`);
     } else {
