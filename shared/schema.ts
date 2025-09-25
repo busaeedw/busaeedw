@@ -407,6 +407,7 @@ export const venueAggregateSchema = z.object({
   venue_ar: z.string().optional().nullable(),
   city: z.string(),
   location: z.string(),
+  imageUrl: z.string().optional().nullable(), // Add imageUrl for venue thumbnails
   event_count: z.number().or(z.string().transform(Number)), // Handle both number and string from DB
 });
 

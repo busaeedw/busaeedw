@@ -142,9 +142,10 @@ export default function VenueList() {
                 >
                   <div className="relative">
                     <img
-                      src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&h=400&fit=crop"
-                      alt={venue.venue || t('common.venue.image')}
+                      src={venue.imageUrl || "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&h=400&fit=crop"}
+                      alt={language === 'ar' && venue.venue_ar ? venue.venue_ar : venue.venue || t('common.venue.image')}
                       className="w-full h-48 object-cover"
+                      data-testid={`image-venue-${venue.id}`}
                     />
                     <div className="absolute top-4 right-4">
                       <Badge className="bg-saudi-green text-white">
