@@ -142,10 +142,17 @@ export default function VenueList() {
                 >
                   <div className="relative">
                     <img
-                      src={venue.imageUrl || "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&h=400&fit=crop"}
+                      src={venue.imageUrl || "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&h=400&fit=crop&auto=format"}
                       alt={language === 'ar' && venue.venue_ar ? venue.venue_ar : venue.venue || t('common.venue.image')}
                       className="w-full h-48 object-cover"
                       data-testid={`image-venue-${venue.id}`}
+                      onError={(e) => {
+                        console.error('Image failed to load:', venue.imageUrl, e);
+                        e.currentTarget.src = "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&h=400&fit=crop&auto=format";
+                      }}
+                      onLoad={() => {
+                        console.log('Image loaded successfully:', venue.imageUrl);
+                      }}
                     />
                     <div className="absolute top-4 right-4">
                       <Badge className="bg-saudi-green text-white">
