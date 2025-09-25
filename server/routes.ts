@@ -826,7 +826,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Build query with proper parameter indexing
       let query = `
         SELECT v.id, v.name as venue, v.name_ar as venue_ar, v.city, v.location,
-               v.image_url as "imageUrl", COUNT(e.id) as event_count
+               v.image_url as "imageUrl", v.venue_type, COUNT(e.id) as event_count
         FROM venues v
         LEFT JOIN events e ON v.id = e.venue_id AND e.status = 'published'
         WHERE 1=1
