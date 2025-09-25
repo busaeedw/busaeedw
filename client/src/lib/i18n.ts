@@ -173,6 +173,28 @@ const translations = {
     'services.planning.desc': 'Full-service event planning and coordination',
     'services.providers': 'Providers',
     'services.cta.profile': 'View Profile',
+
+    // Service Providers Browse
+    'providers.browse.title': 'Service Providers',
+    'providers.browse.subtitle': 'Find professional service providers for your events',
+    'providers.search.placeholder': 'Search service providers...',
+    'providers.category.all': 'All Categories',
+    'providers.category.catering': 'Catering',
+    'providers.category.photography': 'Photography',
+    'providers.category.entertainment': 'Entertainment',
+    'providers.category.decoration': 'Decoration',
+    'providers.category.audio_visual': 'Audio/Visual',
+    'providers.category.placeholder': 'Category',
+    'providers.notfound.title': 'No service providers found',
+    'providers.notfound.subtitle': 'Try adjusting your search criteria',
+    'providers.button.contact': 'Contact',
+    'providers.verified': 'Verified',
+    'providers.reviews': 'reviews',
+    'providers.rating': 'Rating',
+
+    // Venue Browse Additional Keys
+    'venues.browse.subtitle': 'Discover and explore available venues for your events',
+    'venues.total': 'Total venues:',
     'services.cta.browse': 'Browse All Providers',
     'services.reviews': 'reviews',
     'services.from': 'From',
@@ -602,6 +624,28 @@ const translations = {
     'services.cta.browse': 'تصفح جميع المقدمين',
     'services.reviews': 'مراجعة',
     'services.from': 'من',
+
+    // Service Providers Browse
+    'providers.browse.title': 'مقدمو الخدمات',
+    'providers.browse.subtitle': 'ابحث عن مقدمي خدمات محترفين لفعالياتك',
+    'providers.search.placeholder': 'البحث في مقدمي الخدمات...',
+    'providers.category.all': 'جميع الفئات',
+    'providers.category.catering': 'تقديم الطعام',
+    'providers.category.photography': 'التصوير',
+    'providers.category.entertainment': 'الترفيه',
+    'providers.category.decoration': 'الديكور',
+    'providers.category.audio_visual': 'الصوت والمرئيات',
+    'providers.category.placeholder': 'الفئة',
+    'providers.notfound.title': 'لم يتم العثور على مقدمي خدمات',
+    'providers.notfound.subtitle': 'جرب تعديل معايير البحث',
+    'providers.button.contact': 'تواصل',
+    'providers.verified': 'موثق',
+    'providers.reviews': 'مراجعات',
+    'providers.rating': 'التقييم',
+
+    // Venue Browse Additional Keys
+    'venues.browse.subtitle': 'اكتشف واستكشف الأماكن المتاحة لفعالياتك',
+    'venues.total': 'إجمالي الأماكن:',
     
     // Features
     'features.title': 'لماذا تختار منصة الفعاليات السعودية؟',
