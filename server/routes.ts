@@ -203,7 +203,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.error("Error during logout:", err);
         return res.status(500).json({ message: "Failed to logout" });
       }
-      res.json({ message: "Logged out successfully" });
+      
+      // For OIDC users, we need to redirect to the OIDC logout endpoint
+      // to ensure they're properly logged out from Replit as well
+      if ((req.user as any)?.claims?.sub) {
+        // This is an OIDC authenticated user, redirect to OIDC logout
+        res.json({ 
+          message: "Logged out successfully",
+          redirect: "/api/logout" // This will trigger the OIDC logout flow
+        });
+      } else {
+        // Regular session-based logout
+        res.json({ message: "Logged out successfully" });
+      }
     });
   });
 

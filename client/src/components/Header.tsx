@@ -30,14 +30,22 @@ export function Header() {
       });
       return response;
     },
-    onSuccess: () => {
+    onSuccess: (data: any) => {
       toast({
-        title: "Logged out",
-        description: "You have been successfully logged out.",
+        title: t('common.logout.success.title'),
+        description: t('common.logout.success.description'),
       });
+      
       // Clear all queries to ensure fresh state
       queryClient.clear();
-      // Force navigation to homepage
+      
+      // If there's a redirect (for OIDC users), follow it
+      if (data?.redirect) {
+        window.location.href = data.redirect;
+        return;
+      }
+      
+      // For regular session-based logout, redirect to homepage
       setLocation("/");
       // Force a page reload to ensure clean state
       setTimeout(() => {
@@ -46,8 +54,8 @@ export function Header() {
     },
     onError: (error: any) => {
       toast({
-        title: "Logout failed",
-        description: error.message || "Something went wrong. Please try again.",
+        title: t('common.logout.error.title'),
+        description: error.message || t('common.logout.error.description'),
         variant: "destructive",
       });
     },
