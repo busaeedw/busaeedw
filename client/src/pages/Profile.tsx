@@ -19,10 +19,11 @@ export default function Profile() {
   const { t } = useLanguage();
   const [, setLocation] = useLocation();
 
-  // Redirect to login if not authenticated
+  // Redirect to homepage if not authenticated
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
-      setLocation('/login');
+      // Redirect to homepage instead of login to prevent auto-login loop
+      setLocation('/');
     }
   }, [isAuthenticated, isLoading, setLocation]);
 
