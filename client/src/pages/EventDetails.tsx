@@ -63,9 +63,10 @@ export default function EventDetails() {
           description: t('common.unauthorized.desc'),
           variant: "destructive",
         });
+        // Redirect to homepage instead of login to prevent auto-login loop
         setTimeout(() => {
-          window.location.href = "/api/login";
-        }, 500);
+          window.location.href = "/";
+        }, 1000);
         return;
       }
       toast({
@@ -92,7 +93,8 @@ export default function EventDetails() {
         title: "Authentication Required",
         description: "Please log in to register for this event.",
       });
-      window.location.href = "/api/login";
+      // Redirect to traditional login page instead of OIDC to prevent auto-login loop
+      window.location.href = "/login";
       return;
     }
     registerMutation.mutate();
