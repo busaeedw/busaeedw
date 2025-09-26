@@ -27,7 +27,6 @@ import Login from "@/pages/Login";
 import ForgotPassword from "@/pages/ForgotPassword";
 import ResetPassword from "@/pages/ResetPassword";
 import Profile from "@/pages/Profile";
-import AIAssistant from "@/pages/AIAssistant";
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -54,7 +53,6 @@ function Router() {
       <Route path="/admin" component={AdminDashboard} />
       <Route path="/messages" component={Messages} />
       <Route path="/profile" component={Profile} />
-      <Route path="/ai-assistant" component={AIAssistant} />
       
       {/* Browse routes */}
       <Route path="/browse/events" component={BrowseEvents} />
