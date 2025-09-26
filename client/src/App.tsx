@@ -49,8 +49,12 @@ function Router() {
       <Route path="/service-providers" component={EventList} />
       <Route path="/venues" component={VenueList} />
       <Route path="/venues/:id" component={VenueDetails} />
+      
+      {/* Protected routes - components handle their own auth logic */}
       <Route path="/admin" component={AdminDashboard} />
       <Route path="/messages" component={Messages} />
+      <Route path="/profile" component={Profile} />
+      <Route path="/ai-assistant" component={AIAssistant} />
       
       {/* Browse routes */}
       <Route path="/browse/events" component={BrowseEvents} />
@@ -59,15 +63,13 @@ function Router() {
       <Route path="/browse/providers" component={BrowseProviders} />
       <Route path="/browse/users" component={BrowseUsers} />
       
-      {/* Authenticated routes */}
+      {/* Home routes */}
       {isLoading || !isAuthenticated ? (
         <Route path="/" component={Landing} />
       ) : (
         <>
           <Route path="/" component={Dashboard} />
           <Route path="/dashboard" component={Dashboard} />
-          <Route path="/profile" component={Profile} />
-          <Route path="/ai-assistant" component={AIAssistant} />
         </>
       )}
       <Route component={NotFound} />
