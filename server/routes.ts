@@ -21,14 +21,6 @@ import { z } from "zod";
 import bcrypt from "bcrypt";
 import { randomUUID } from "crypto";
 import crypto from "crypto";
-import { 
-  chatWithAssistant, 
-  getEventRecommendations, 
-  enhanceEventDescription,
-  analyzeReviewSentiment,
-  getSearchSuggestions 
-} from "./openai";
-
 // Unified authentication middleware that supports both session and OIDC
 const unifiedAuth = async (req: any, res: any, next: any) => {
   let userId: string | undefined;
@@ -989,107 +981,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // AI Assistant routes
-  app.post('/api/ai/chat', unifiedAuth, async (req: any, res) => {
-    try {
-      const userId = req.authUserId;
-      const { message } = req.body;
-
-      if (!message || typeof message !== 'string') {
-        return res.status(400).json({ message: "Message is required" });
-      }
-
-      // Get user context for better AI responses
-      const user = await storage.getUser(userId);
-      const context = {
-        userRole: user?.role,
-        userLocation: user?.city || undefined
-      };
-
-      const response = await chatWithAssistant(message, context);
-      res.json({ response });
-    } catch (error) {
-      console.error("Error in AI chat:", error);
-      res.status(500).json({ message: "Failed to get AI response" });
-    }
-  });
-
-  app.post('/api/ai/recommendations', unifiedAuth, async (req: any, res) => {
-    try {
-      const userId = req.authUserId;
-      const { preferences } = req.body;
-
-      // Get user info for personalization
-      const user = await storage.getUser(userId);
-      
-      // Get available events for recommendations
-      const events = await storage.getEvents({
-        limit: 20 // Limit to prevent token overflow
-      });
-
-      const userPreferences = {
-        ...preferences,
-        location: user?.city,
-        // Add any other user preferences from their profile
-      };
-
-      const recommendations = await getEventRecommendations(userPreferences, events);
-      res.json(recommendations);
-    } catch (error) {
-      console.error("Error getting AI recommendations:", error);
-      res.status(500).json({ message: "Failed to get recommendations" });
-    }
-  });
-
-  app.post('/api/ai/enhance-description', unifiedAuth, async (req: any, res) => {
-    try {
-      const userId = req.authUserId;
-      const { title, description, eventType } = req.body;
-
-      if (!title || !description) {
-        return res.status(400).json({ message: "Title and description are required" });
-      }
-
-      const enhancedDescription = await enhanceEventDescription(title, description, eventType || 'general');
-      res.json({ enhancedDescription });
-    } catch (error) {
-      console.error("Error enhancing description:", error);
-      res.status(500).json({ message: "Failed to enhance description" });
-    }
-  });
-
-  app.post('/api/ai/search-suggestions', async (req, res) => {
-    try {
-      const { query, type } = req.body;
-
-      if (!query || typeof query !== 'string') {
-        return res.status(400).json({ message: "Search query is required" });
-      }
-
-      const searchType = ['events', 'service-providers', 'venues'].includes(type) ? type : 'events';
-      const suggestions = await getSearchSuggestions(query, searchType);
-      res.json({ suggestions });
-    } catch (error) {
-      console.error("Error getting search suggestions:", error);
-      res.status(500).json({ message: "Failed to get search suggestions" });
-    }
-  });
-
-  app.post('/api/ai/analyze-sentiment', unifiedAuth, async (req: any, res) => {
-    try {
-      const { text } = req.body;
-
-      if (!text || typeof text !== 'string') {
-        return res.status(400).json({ message: "Text is required for sentiment analysis" });
-      }
-
-      const sentiment = await analyzeReviewSentiment(text);
-      res.json(sentiment);
-    } catch (error) {
-      console.error("Error analyzing sentiment:", error);
-      res.status(500).json({ message: "Failed to analyze sentiment" });
-    }
-  });
 
 
   const httpServer = createServer(app);
