@@ -72,11 +72,6 @@ export function Header() {
       isInternal: !isAuthenticated
     },
     { href: '/venues', label: t('nav.venues') },
-    ...(isAuthenticated ? [{ 
-      href: '/ai-assistant', 
-      label: t('nav.ai'),
-      requireAuth: true
-    }] : []),
   ];
 
   const handleLanguageToggle = () => {
