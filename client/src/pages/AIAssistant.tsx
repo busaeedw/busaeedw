@@ -71,9 +71,10 @@ What would you like help with today?`,
         description: 'Please log in to access the AI Assistant',
         variant: "destructive",
       });
+      // Redirect to homepage instead of login to prevent auto-login loop
       setTimeout(() => {
-        window.location.href = "/login";
-      }, 500);
+        window.location.href = "/";
+      }, 1000);
       return;
     }
   }, [isAuthenticated, isLoading, toast]);
