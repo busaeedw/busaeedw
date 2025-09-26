@@ -32,16 +32,17 @@ export default function AdminDashboard() {
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
       toast({
-        title: t('common.unauthorized'),
-        description: t('common.unauthorized.desc'),
+        title: t('common.access.denied'),
+        description: t('common.admin.required'),
         variant: "destructive",
       });
+      // Redirect to homepage instead of login to prevent auto-login loop
       setTimeout(() => {
-        window.location.href = "/api/login";
-      }, 500);
+        window.location.href = "/";
+      }, 1000);
       return;
     }
-  }, [isAuthenticated, isLoading, toast, t, language]);
+  }, [isAuthenticated, isLoading, toast, t]);
 
   // Check if user is admin
   useEffect(() => {
