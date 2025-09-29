@@ -28,6 +28,14 @@ export function LoginModal({ isOpen, onClose, onLoginSuccess }: LoginModalProps)
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
+  const form = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+  });
+
   // Add cleanup when modal closes
   useEffect(() => {
     if (!isOpen) {
@@ -36,7 +44,7 @@ export function LoginModal({ isOpen, onClose, onLoginSuccess }: LoginModalProps)
       setIsLoading(false);
       form.reset();
     }
-  }, [isOpen]);
+  }, [isOpen, form]);
 
   // Add escape key handler for better mobile/tablet experience
   useEffect(() => {
@@ -51,14 +59,6 @@ export function LoginModal({ isOpen, onClose, onLoginSuccess }: LoginModalProps)
       return () => document.removeEventListener('keydown', handleEscape);
     }
   }, [isOpen, isLoading, onClose]);
-
-  const form = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema),
-    defaultValues: {
-      email: '',
-      password: '',
-    },
-  });
 
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
