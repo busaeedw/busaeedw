@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLanguage } from '@/hooks/useLanguage';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -27,6 +27,30 @@ export function LoginModal({ isOpen, onClose, onLoginSuccess }: LoginModalProps)
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+
+  // Add cleanup when modal closes
+  useEffect(() => {
+    if (!isOpen) {
+      setShowPassword(false);
+      setErrorMessage('');
+      setIsLoading(false);
+      form.reset();
+    }
+  }, [isOpen]);
+
+  // Add escape key handler for better mobile/tablet experience
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen && !isLoading) {
+        onClose();
+      }
+    };
+    
+    if (isOpen) {
+      document.addEventListener('keydown', handleEscape);
+      return () => document.removeEventListener('keydown', handleEscape);
+    }
+  }, [isOpen, isLoading, onClose]);
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -72,9 +96,30 @@ export function LoginModal({ isOpen, onClose, onLoginSuccess }: LoginModalProps)
     }
   };
 
+  // Ensure modal can always be closed, even if there are errors
+  const handleModalClose = (open: boolean) => {
+    if (!open && !isLoading) {
+      onClose();
+    }
+  };
+
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
+    <Dialog open={isOpen} onOpenChange={handleModalClose}>
+      <DialogContent 
+        className="sm:max-w-md"
+        onPointerDownOutside={(e) => {
+          // Allow closing by clicking outside, unless loading
+          if (isLoading) {
+            e.preventDefault();
+          }
+        }}
+        onEscapeKeyDown={(e) => {
+          // Allow escape key, unless loading
+          if (isLoading) {
+            e.preventDefault();
+          }
+        }}
+      >
         <DialogHeader>
           <DialogTitle className="text-center text-xl font-bold">
             {language === 'ar' ? 'تسجيل الدخول' : 'Login'}

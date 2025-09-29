@@ -168,12 +168,13 @@ export function Header() {
           </nav>
 
           {/* Language Toggle */}
-          <div className="fixed top-4 right-4 z-50 md:relative md:top-0 md:right-0">
+          <div className="fixed top-4 right-4 z-[60] md:relative md:top-0 md:right-0 md:z-auto">
             <Button
               variant="outline"
               size="sm"
               onClick={handleLanguageToggle}
               className="rounded-full bg-white shadow-lg"
+              data-testid="language-toggle-button"
             >
               <Globe className="h-4 w-4 mr-2" />
               {language === 'en' ? 'عربي' : 'English'}
