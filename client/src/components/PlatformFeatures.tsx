@@ -38,7 +38,7 @@ export function PlatformFeatures() {
   ];
 
   return (
-    <section className="py-16 bg-gradient-to-br from-saudi-green via-primary-700 to-primary-800 text-white">
+    <section className="relative py-16 bg-gradient-to-br from-saudi-green via-primary-700 to-primary-800 text-white">
       <div className="absolute inset-0 bg-black/10"></div>
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
