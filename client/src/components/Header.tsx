@@ -45,12 +45,8 @@ export function Header() {
         return;
       }
       
-      // For regular session-based logout, redirect to homepage
+      // For regular session-based logout, use SPA routing
       setLocation("/");
-      // Force a page reload to ensure clean state
-      setTimeout(() => {
-        window.location.href = "/";
-      }, 100);
     },
     onError: (error: any) => {
       toast({

@@ -15,7 +15,10 @@ export function RoleSelection() {
 
   const updateRoleMutation = useMutation({
     mutationFn: async (role: string) => {
-      const response = await apiRequest('PATCH', '/api/auth/user/role', { role });
+      const response = await apiRequest('/api/auth/user/role', {
+        method: 'PATCH',
+        body: JSON.stringify({ role }),
+      });
       return response.json();
     },
     onSuccess: () => {
@@ -41,7 +44,7 @@ export function RoleSelection() {
       return;
     }
 
-    if (user?.role !== role) {
+    if ((user as any)?.role !== role) {
       updateRoleMutation.mutate(role);
     }
   };
@@ -122,7 +125,7 @@ export function RoleSelection() {
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {roles.map((role) => {
             const IconComponent = role.icon;
-            const isCurrentRole = user?.role === role.id;
+            const isCurrentRole = (user as any)?.role === role.id;
             
             return (
               <Card
@@ -159,7 +162,7 @@ export function RoleSelection() {
                     className={`w-full ${role.iconBg} hover:opacity-90 transition-colors`}
                     disabled={updateRoleMutation.isPending}
                   >
-                    {updateRoleMutation.isPending && user?.role === role.id ? 'Updating...' : role.cta}
+                    {updateRoleMutation.isPending && (user as any)?.role === role.id ? 'Updating...' : role.cta}
                   </Button>
                 </CardContent>
               </Card>
