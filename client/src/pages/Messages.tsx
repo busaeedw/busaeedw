@@ -16,7 +16,7 @@ import { Send, MessageSquare } from 'lucide-react';
 import { isUnauthorizedError } from '@/lib/authUtils';
 
 export default function Messages() {
-  const { user, isAuthenticated, isLoading } = useAuth();
+  const { user, isAuthenticated, isLoading } = useAuth({ enabled: true });
   const { t } = useLanguage();
   const { toast } = useToast();
   const queryClient = useQueryClient();

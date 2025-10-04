@@ -49,7 +49,7 @@ type Venue = {
 };
 
 export default function EventCreate() {
-  const { user, isAuthenticated, isLoading } = useAuth();
+  const { user, isAuthenticated, isLoading } = useAuth({ enabled: true });
   const { t, language } = useLanguage();
   const { toast } = useToast();
   const [, setLocation] = useLocation();

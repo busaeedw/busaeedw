@@ -18,7 +18,7 @@ import { type Event, type VenueAggregate } from '@shared/schema';
 
 export default function EventDetails() {
   const { id } = useParams();
-  const { user, isAuthenticated, isLoading: authLoading } = useAuth();
+  const { user, isAuthenticated, isLoading: authLoading } = useAuth({ enabled: true });
   const { t, language } = useLanguage();
   const { toast } = useToast();
   const queryClient = useQueryClient();

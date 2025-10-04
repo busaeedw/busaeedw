@@ -23,7 +23,7 @@ import {
 import { isUnauthorizedError } from '@/lib/authUtils';
 
 export default function AdminDashboard() {
-  const { user, isAuthenticated, isLoading } = useAuth();
+  const { user, isAuthenticated, isLoading } = useAuth({ enabled: true });
   const { t, language } = useLanguage();
   const { toast } = useToast();
   const [, setLocation] = useLocation();
