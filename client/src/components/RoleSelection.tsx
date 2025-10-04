@@ -58,8 +58,8 @@ export function RoleSelection() {
         t('roles.organizer.features.4'),
       ],
       icon: CalendarCheck,
-      gradient: 'from-primary-50 to-primary-100',
-      iconBg: 'bg-primary-600',
+      gradient: 'from-purple-primary/10 to-purple-primary/20',
+      iconBg: 'bg-purple-primary',
       cta: t('roles.cta.start'),
     },
     {
@@ -73,8 +73,8 @@ export function RoleSelection() {
         t('roles.attendee.features.4'),
       ],
       icon: Ticket,
-      gradient: 'from-blue-50 to-blue-100',
-      iconBg: 'bg-blue-600',
+      gradient: 'from-blue-500/10 to-blue-500/20',
+      iconBg: 'bg-blue-500',
       cta: t('roles.cta.join'),
     },
     {
@@ -88,8 +88,8 @@ export function RoleSelection() {
         t('roles.provider.features.4'),
       ],
       icon: Handshake,
-      gradient: 'from-gold-50 to-yellow-100',
-      iconBg: 'bg-gold-500',
+      gradient: 'from-amber-500/10 to-amber-500/20',
+      iconBg: 'bg-amber-500',
       cta: t('roles.cta.sell'),
     },
     {
@@ -103,20 +103,20 @@ export function RoleSelection() {
         t('roles.admin.features.4'),
       ],
       icon: Shield,
-      gradient: 'from-purple-50 to-purple-100',
-      iconBg: 'bg-purple-600',
+      gradient: 'from-purple-secondary/10 to-purple-secondary/20',
+      iconBg: 'bg-purple-secondary',
       cta: t('roles.cta.admin'),
     },
   ];
 
   return (
-    <section className="py-16 bg-white">
+    <section className="py-16 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl lg:text-4xl font-bold mb-4">
             {t('roles.title')}
           </h2>
-          <p className="text-xl text-gray-600">{t('roles.subtitle')}</p>
+          <p className="text-xl text-muted-foreground">{t('roles.subtitle')}</p>
         </div>
         
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -128,13 +128,13 @@ export function RoleSelection() {
               <Card
                 key={role.id}
                 className={`relative bg-gradient-to-br ${role.gradient} rounded-2xl p-8 text-center hover:shadow-xl transition-all transform hover:-translate-y-2 cursor-pointer border ${
-                  isCurrentRole ? 'ring-2 ring-saudi-green' : 'border-gray-200'
+                  isCurrentRole ? 'ring-2 ring-purple-primary' : 'border-border'
                 }`}
                 onClick={() => handleRoleSelection(role.id)}
               >
                 <CardContent className="p-0">
                   {isCurrentRole && (
-                    <div className="absolute top-2 right-2 bg-saudi-green text-white text-xs px-2 py-1 rounded-full">
+                    <div className="absolute top-2 right-2 bg-purple-primary text-white text-xs px-2 py-1 rounded-full">
                       Current
                     </div>
                   )}
@@ -143,13 +143,13 @@ export function RoleSelection() {
                     <IconComponent className="text-white h-8 w-8" />
                   </div>
                   
-                  <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                  <h3 className="text-xl font-semibold mb-3">
                     {role.title}
                   </h3>
                   
-                  <p className="text-gray-600 mb-6">{role.description}</p>
+                  <p className="text-muted-foreground mb-6">{role.description}</p>
                   
-                  <ul className="text-sm text-gray-500 space-y-2 mb-6 text-left">
+                  <ul className="text-sm text-muted-foreground space-y-2 mb-6 text-left">
                     {role.features.map((feature, index) => (
                       <li key={index}>{feature}</li>
                     ))}

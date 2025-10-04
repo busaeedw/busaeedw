@@ -27,25 +27,25 @@ export function FeaturedEvents() {
 
   const getCategoryColor = (category: string) => {
     const colors = {
-      technology: 'bg-primary-100 text-primary-700',
-      cultural: 'bg-gold-100 text-gold-700',
-      business: 'bg-blue-100 text-blue-700',
-      entertainment: 'bg-purple-100 text-purple-700',
+      technology: 'bg-purple-primary/20 text-purple-primary',
+      cultural: 'bg-amber-500/20 text-amber-400',
+      business: 'bg-blue-500/20 text-blue-400',
+      entertainment: 'bg-pink-500/20 text-pink-400',
     };
-    return colors[category] || 'bg-gray-100 text-gray-700';
+    return colors[category] || 'bg-muted text-muted-foreground';
   };
 
   if (isLoading) {
     return (
-      <section className="py-16 bg-gray-50">
+      <section className="py-16 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <LoadingSkeleton lines={2} />
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {Array.from({ length: 6 }, (_, i) => (
-              <Card key={i} className="bg-white">
-                <div className="h-48 bg-gray-200 rounded-t-lg animate-pulse" />
+              <Card key={i} className="bg-card">
+                <div className="h-48 bg-muted rounded-t-lg animate-pulse" />
                 <CardContent className="p-6">
                   <LoadingSkeleton lines={4} />
                 </CardContent>
@@ -58,13 +58,13 @@ export function FeaturedEvents() {
   }
 
   return (
-    <section id="events" className="py-16 bg-gray-50">
+    <section id="events" className="py-16 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl lg:text-4xl font-bold mb-4">
             {t('events.title')}
           </h2>
-          <p className="text-xl text-gray-600">{t('events.subtitle')}</p>
+          <p className="text-xl text-muted-foreground">{t('events.subtitle')}</p>
         </div>
 
         <div className="flex flex-wrap gap-4 justify-center mb-8">
@@ -74,8 +74,8 @@ export function FeaturedEvents() {
               variant={category.active ? 'default' : 'outline'}
               className={
                 category.active
-                  ? 'bg-saudi-green hover:bg-saudi-green/90'
-                  : 'hover:bg-primary-50'
+                  ? 'bg-purple-primary hover:bg-purple-primary/90'
+                  : 'hover:bg-muted'
               }
             >
               {category.label}
@@ -88,7 +88,7 @@ export function FeaturedEvents() {
             events.map((event: any) => (
               <Card
                 key={event.id}
-                className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all transform hover:-translate-y-1"
+                className="bg-card rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all transform hover:-translate-y-1"
               >
                 <div className="relative">
                   <img
@@ -102,19 +102,19 @@ export function FeaturedEvents() {
                     <Badge className={getCategoryColor(event.category)}>
                       {event.category}
                     </Badge>
-                    <span className="text-gold-500 font-semibold">
+                    <span className="text-purple-primary font-semibold">
                       {event.price === '0.00' || event.price === 0
                         ? t('events.free')
                         : `${event.currency} ${event.price}`}
                     </span>
                   </div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                  <h3 className="text-xl font-semibold mb-2">
                     {language === 'ar' && event.titleAr ? event.titleAr : event.title}
                   </h3>
-                  <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                  <p className="text-muted-foreground text-sm mb-4 line-clamp-2">
                     {language === 'ar' && event.descriptionAr ? event.descriptionAr : event.description}
                   </p>
-                  <div className="flex items-center text-sm text-gray-500 mb-4">
+                  <div className="flex items-center text-sm text-muted-foreground mb-4">
                     <Calendar className="h-4 w-4 mr-2" />
                     <span className="mr-4">
                       {new Date(event.startDate).toLocaleDateString()}
@@ -132,12 +132,12 @@ export function FeaturedEvents() {
                         <AvatarImage src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&w=100&h=100&fit=face" />
                         <AvatarFallback>U2</AvatarFallback>
                       </Avatar>
-                      <div className="w-8 h-8 rounded-full border-2 border-white bg-gray-100 flex items-center justify-center text-xs font-medium text-gray-600">
+                      <div className="w-8 h-8 rounded-full border-2 border-card bg-muted flex items-center justify-center text-xs font-medium">
                         +{Math.floor(Math.random() * 100)}
                       </div>
                     </div>
                     <Button
-                      className="bg-saudi-green hover:bg-saudi-green/90"
+                      className="bg-purple-primary hover:bg-purple-primary/90"
                       onClick={() => {
                         if (isAuthenticated) {
                           window.location.href = `/events/${event.id}`;
@@ -154,7 +154,7 @@ export function FeaturedEvents() {
             ))
           ) : (
             <div className="col-span-full text-center py-12">
-              <p className="text-gray-500">No events available at the moment.</p>
+              <p className="text-muted-foreground">No events available at the moment.</p>
             </div>
           )}
         </div>
@@ -162,7 +162,7 @@ export function FeaturedEvents() {
         <div className="text-center mt-12">
           <Button
             variant="outline"
-            className="border-2 border-saudi-green text-saudi-green hover:bg-saudi-green hover:text-white transition-all"
+            className="border-2 border-purple-primary text-purple-primary hover:bg-purple-primary hover:text-white transition-all"
             onClick={() => {
               if (isAuthenticated) {
                 window.location.href = '/events';
