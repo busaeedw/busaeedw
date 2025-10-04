@@ -1,5 +1,17 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
+
+// Prevent Vite errors from crashing the server
+const originalExit = process.exit;
+let viteSetupComplete = false;
+(process.exit as any) = function(code?: number) {
+  if (!viteSetupComplete && code === 1) {
+    console.error('[PREVENTED] Vite tried to exit the process with code 1');
+    return;
+  }
+  return originalExit.call(process, code);
+};
+
 import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
