@@ -13,7 +13,7 @@ export function FeaturedEvents() {
   const { t, language } = useLanguage();
   const { isAuthenticated } = useAuth();
 
-  const { data: events, isLoading } = useQuery({
+  const { data: events, isLoading } = useQuery<any[]>({
     queryKey: ['/api/events?limit=6'],
   });
 
@@ -26,7 +26,7 @@ export function FeaturedEvents() {
   ];
 
   const getCategoryColor = (category: string) => {
-    const colors = {
+    const colors: Record<string, string> = {
       technology: 'bg-purple-primary/20 text-purple-primary',
       cultural: 'bg-amber-500/20 text-amber-400',
       business: 'bg-blue-500/20 text-blue-400',

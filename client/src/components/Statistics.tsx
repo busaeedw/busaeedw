@@ -5,7 +5,7 @@ import { LoadingSkeleton } from '@/components/ui/loading';
 export function Statistics() {
   const { t } = useLanguage();
 
-  const { data: stats, isLoading } = useQuery({
+  const { data: stats, isLoading } = useQuery<any>({
     queryKey: ['/api/stats'],
   });
 

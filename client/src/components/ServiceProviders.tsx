@@ -13,7 +13,7 @@ export function ServiceProviders() {
   const { t } = useLanguage();
   const { isAuthenticated } = useAuth();
 
-  const { data: providers, isLoading } = useQuery({
+  const { data: providers, isLoading } = useQuery<any[]>({
     queryKey: ['/api/service-providers?limit=3&verified=true'],
   });
 
