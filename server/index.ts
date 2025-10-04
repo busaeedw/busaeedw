@@ -1,17 +1,5 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
-
-// Prevent Vite errors from crashing the server
-const originalExit = process.exit;
-let viteSetupComplete = false;
-(process.exit as any) = function(code?: number) {
-  if (!viteSetupComplete && code === 1) {
-    console.error('[PREVENTED] Vite tried to exit the process with code 1');
-    return;
-  }
-  return originalExit.call(process, code);
-};
-
 import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
@@ -51,18 +39,12 @@ app.use((req, res, next) => {
 (async () => {
   const server = await registerRoutes(app);
 
-  app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
+  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
     const message = err.message || "Internal Server Error";
 
-    console.error(`[ERROR] ${req.method} ${req.path}:`, {
-      status,
-      message,
-      stack: err.stack,
-      error: err
-    });
-
     res.status(status).json({ message });
+    throw err;
   });
 
   // importantly only setup vite in development and after

@@ -29,6 +29,8 @@ import ResetPassword from "@/pages/ResetPassword";
 import Profile from "@/pages/Profile";
 
 function Router() {
+  const { isAuthenticated, isLoading } = useAuth();
+
   return (
     <Switch>
       {/* Authentication routes */}
@@ -51,7 +53,6 @@ function Router() {
       <Route path="/admin" component={AdminDashboard} />
       <Route path="/messages" component={Messages} />
       <Route path="/profile" component={Profile} />
-      <Route path="/dashboard" component={Dashboard} />
       
       {/* Browse routes */}
       <Route path="/browse/events" component={BrowseEvents} />
@@ -60,9 +61,15 @@ function Router() {
       <Route path="/browse/providers" component={BrowseProviders} />
       <Route path="/browse/users" component={BrowseUsers} />
       
-      {/* Landing page - always shown at root */}
-      <Route path="/" component={Landing} />
-      
+      {/* Home routes */}
+      {isLoading || !isAuthenticated ? (
+        <Route path="/" component={Landing} />
+      ) : (
+        <>
+          <Route path="/" component={Dashboard} />
+          <Route path="/dashboard" component={Dashboard} />
+        </>
+      )}
       <Route component={NotFound} />
     </Switch>
   );

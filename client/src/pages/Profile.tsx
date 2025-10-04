@@ -15,7 +15,7 @@ import { useEffect } from 'react';
 import { useLocation } from 'wouter';
 
 export default function Profile() {
-  const { user, isAuthenticated, isLoading } = useAuth({ enabled: true });
+  const { user, isAuthenticated, isLoading } = useAuth();
   const { t } = useLanguage();
   const [, setLocation] = useLocation();
 

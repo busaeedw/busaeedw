@@ -38,14 +38,14 @@ export function PlatformFeatures() {
   ];
 
   return (
-    <section className="relative py-16 bg-gradient-to-br from-purple-primary/20 via-purple-secondary/20 to-purple-primary/30">
-      <div className="absolute inset-0 bg-black/20"></div>
+    <section className="relative py-16 bg-gradient-to-br from-saudi-green via-primary-700 to-primary-800 text-white">
+      <div className="absolute inset-0 bg-black/10"></div>
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="text-3xl lg:text-4xl font-bold mb-4">
             {t('features.title')}
           </h2>
-          <p className="text-xl text-muted-foreground">{t('features.subtitle')}</p>
+          <p className="text-xl text-green-100">{t('features.subtitle')}</p>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -54,13 +54,13 @@ export function PlatformFeatures() {
             return (
               <div
                 key={index}
-                className="text-center p-6 bg-card/50 rounded-2xl backdrop-blur-sm border border-border hover:bg-card/70 transition-all"
+                className="text-center p-6 bg-white/10 rounded-2xl backdrop-blur-sm border border-white/20 hover:bg-white/15 transition-all"
               >
-                <div className="bg-purple-primary w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                <div className="bg-gold-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
                   <IconComponent className="text-white h-8 w-8" />
                 </div>
                 <h3 className="text-xl font-semibold mb-3">{feature.title}</h3>
-                <p className="text-muted-foreground">{feature.description}</p>
+                <p className="text-green-100">{feature.description}</p>
               </div>
             );
           })}

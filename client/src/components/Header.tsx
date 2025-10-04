@@ -45,8 +45,12 @@ export function Header() {
         return;
       }
       
-      // For regular session-based logout, use SPA routing
+      // For regular session-based logout, redirect to homepage
       setLocation("/");
+      // Force a page reload to ensure clean state
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 100);
     },
     onError: (error: any) => {
       toast({
@@ -75,15 +79,15 @@ export function Header() {
   };
 
   return (
-    <header className="bg-card border-b border-border sticky top-0 z-40">
+    <header className="bg-white shadow-sm border-b border-gray-100 sticky top-0 z-40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex items-center">
             <Link href="/" className="flex-shrink-0">
               <div>
-                <h1 className="text-2xl font-bold text-purple-primary">EventHub</h1>
-                <p className="text-xs text-purple-secondary font-medium">
+                <h1 className="text-2xl font-bold text-saudi-green">EventHub</h1>
+                <p className="text-xs text-gold-500 font-medium">
                   {language === 'ar' ? 'المملكة العربية السعودية' : 'Saudi Arabia'}
                 </p>
               </div>
@@ -100,8 +104,8 @@ export function Header() {
                     href={item.href}
                     className={`px-3 py-2 text-sm font-medium transition-colors ${
                       location === item.href
-                        ? 'text-purple-primary border-b-2 border-purple-primary'
-                        : 'text-muted-foreground hover:text-purple-primary'
+                        ? 'text-saudi-green border-b-2 border-saudi-green'
+                        : 'text-gray-700 hover:text-saudi-green'
                     }`}
                   >
                     {item.label}
@@ -127,8 +131,8 @@ export function Header() {
             <DropdownMenu>
               <DropdownMenuTrigger className={`px-3 py-2 text-sm font-medium transition-colors flex items-center ${
                 location.startsWith('/browse')
-                  ? 'text-purple-primary border-b-2 border-purple-primary'
-                  : 'text-muted-foreground hover:text-purple-primary'
+                  ? 'text-saudi-green border-b-2 border-saudi-green'
+                  : 'text-gray-700 hover:text-saudi-green'
               }`}>
                 {t('nav.browse')}
                 <ChevronDown className="h-4 w-4 ml-1" />
@@ -211,7 +215,7 @@ export function Header() {
                     <Button variant="ghost" asChild data-testid="button-signup">
                       <Link href="/register">{t('auth.signup')}</Link>
                     </Button>
-                    <Button asChild className="bg-purple-primary hover:bg-purple-primary/90" data-testid="button-signin">
+                    <Button asChild className="bg-saudi-green hover:bg-saudi-green/90" data-testid="button-signin">
                       <Link href="/login">{t('auth.signin')}</Link>
                     </Button>
                   </div>
@@ -236,7 +240,7 @@ export function Header() {
                         key={item.href}
                         href={item.href}
                         onClick={() => setMobileMenuOpen(false)}
-                        className="text-lg font-medium text-foreground hover:text-purple-primary"
+                        className="text-lg font-medium text-gray-900 hover:text-saudi-green"
                       >
                         {item.label}
                       </a>
@@ -277,7 +281,7 @@ export function Header() {
                         <Button variant="ghost" asChild className="w-full justify-start" data-testid="button-mobile-signup">
                           <Link href="/register">{t('auth.signup')}</Link>
                         </Button>
-                        <Button asChild className="w-full bg-purple-primary hover:bg-purple-primary/90" data-testid="button-mobile-signin">
+                        <Button asChild className="w-full bg-saudi-green hover:bg-saudi-green/90" data-testid="button-mobile-signin">
                           <Link href="/login">{t('auth.signin')}</Link>
                         </Button>
                       </div>

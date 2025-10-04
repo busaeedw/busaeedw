@@ -18,15 +18,15 @@ export function Hero() {
           <div className="text-center lg:text-left">
             <h1 className="text-4xl lg:text-6xl font-bold text-white leading-tight mb-6">
               {t('hero.title')}{' '}
-              <span className="text-purple-secondary">{t('hero.title.highlight')}</span>
+              <span className="text-gold-400">{t('hero.title.highlight')}</span>
             </h1>
-            <p className="text-xl text-gray-200 mb-8 leading-relaxed">
+            <p className="text-xl text-green-100 mb-8 leading-relaxed">
               {t('hero.subtitle')}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
               <Button
                 size="lg"
-                className="bg-purple-primary text-white hover:bg-purple-primary/90 transition-all transform hover:scale-105 shadow-lg text-lg px-8 py-4"
+                className="bg-gold-500 text-gray-900 hover:bg-gold-400 transition-all transform hover:scale-105 shadow-lg text-lg px-8 py-4"
                 onClick={() => {
                   if (isAuthenticated) {
                     window.location.href = '/events/create';
@@ -42,7 +42,7 @@ export function Hero() {
               <Button
                 variant="outline"
                 size="lg"
-                className="border-2 border-white text-white hover:bg-white hover:text-purple-primary transition-all text-lg px-8 py-4"
+                className="border-2 border-white text-black hover:bg-white hover:text-primary-600 transition-all text-lg px-8 py-4"
                 onClick={() => {
                   if (isAuthenticated) {
                     window.location.href = '/events';

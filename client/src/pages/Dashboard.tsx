@@ -25,7 +25,7 @@ import {
 import { isUnauthorizedError } from '@/lib/authUtils';
 
 export default function Dashboard() {
-  const { user, isAuthenticated, isLoading } = useAuth({ enabled: true });
+  const { user, isAuthenticated, isLoading } = useAuth();
   const { t } = useLanguage();
   const { toast } = useToast();
 

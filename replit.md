@@ -49,31 +49,7 @@ Preferred communication style: Simple, everyday language.
 - **Review & Rating**: Bidirectional review system for events and service providers
 - **Admin Dashboard**: Administrative oversight and management tools
 
-## Recent Updates
-
-### Dark Purple Theme and Manual Login Implementation (October 4, 2025)
-Successfully implemented dark theme with purple accents and disabled automatic login:
-
-**Dark Purple Theme Transformation:**
-- **Color Scheme**: Transformed from green/gold Saudi colors to modern dark theme with purple accents
-- **Background Colors**: Very dark backgrounds (hsl(0 0% 4%)) with dark card surfaces (hsl(0 0% 8%))
-- **Primary Color**: Vibrant purple (hsl(262 83% 58%)) for buttons, links, and accents
-- **Secondary Color**: Purple variant (hsl(280 65% 60%)) for complementary elements
-- **Components Updated**: Header, Hero, RoleSelection, FeaturedEvents, ServiceProviders, Statistics, PlatformFeatures, Footer, LoginModal
-- **Design Inspiration**: Based on modern Saudi sports app design with dark backgrounds and purple highlights
-
-**Manual Login Implementation:**
-- **Disabled Auto-Login**: Modified `useAuth` hook to default to `enabled: false`, preventing automatic authentication checks on page load
-- **Landing Page Behavior**: Landing page (/) now displays without checking authentication, users must manually click login
-- **Protected Pages**: Dashboard, Profile, Admin, Messages, EventCreate, and EventDetails explicitly enable authentication with `{ enabled: true }`
-- **Router Changes**: Removed conditional routing based on auth status, landing page always shown at root path
-- **User Experience**: Clean separation between public landing page and authenticated user areas
-
-**Technical Implementation:**
-- Updated CSS variables in `index.css` with new color palette
-- Modified all landing page components to use new purple theme classes
-- Implemented opt-in authentication model for better control over when auth queries execute
-- Maintained full functionality of login/logout flows and protected route access
+## Recent Updates (September 2025)
 
 ### Complete Bilingual Error Handling Implementation (September 22, 2025)
 Successfully implemented comprehensive bilingual error handling throughout the application:
