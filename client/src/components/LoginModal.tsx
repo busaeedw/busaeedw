@@ -207,7 +207,7 @@ export function LoginModal({ isOpen, onClose, onLoginSuccess }: LoginModalProps)
               <Button
                 type="submit"
                 disabled={isLoading}
-                className="flex-1 bg-saudi-green hover:bg-saudi-green/90"
+                className="flex-1 bg-purple-primary hover:bg-purple-primary/90"
                 data-testid="submit-login-button"
               >
                 {isLoading ? (
