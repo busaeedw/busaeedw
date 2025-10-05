@@ -108,10 +108,8 @@ export default function Login() {
 
               {/* Forgot Password Link */}
               <div className="text-right">
-                <Link href="/forgot-password">
-                  <a className="text-sm text-primary hover:text-primary/80 font-medium" data-testid="link-forgot-password">
-                    {t('auth.login.forgot')}
-                  </a>
+                <Link href="/forgot-password" className="text-sm text-primary hover:text-primary/80 font-medium" data-testid="link-forgot-password">
+                  {t('auth.login.forgot')}
                 </Link>
               </div>
 
@@ -129,10 +127,8 @@ export default function Login() {
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
               {t('auth.login.footer')}{" "}
-              <Link href="/register">
-                <a className="font-medium text-primary hover:text-primary/80" data-testid="link-register">
-                  {t('auth.login.footer.signup')}
-                </a>
+              <Link href="/register" className="font-medium text-primary hover:text-primary/80" data-testid="link-register">
+                {t('auth.login.footer.signup')}
               </Link>
             </p>
           </div>
