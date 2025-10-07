@@ -102,7 +102,7 @@ const translations = {
     'hero.cta.create': 'Create Event',
     'hero.cta.find': 'Find Events',
     'hero.cta.events': 'Browse & Search Events',
-    'hero.cta.venues': 'View & Search Venues',
+    'hero.cta.venues': 'Browse and Search Venues',
     
     // Roles
     'roles.title': 'Join Our Platform',
@@ -551,7 +551,7 @@ const translations = {
     'hero.cta.create': 'إنشاء فعالية',
     'hero.cta.find': 'البحث عن فعاليات',
     'hero.cta.events': 'تصفح والبحث عن الفعاليات',
-    'hero.cta.venues': 'عرض والبحث عن الأماكن',
+    'hero.cta.venues': 'تصفح و بحث القاعات',
     
     // Roles
     'roles.title': 'انضم إلى منصتنا',
