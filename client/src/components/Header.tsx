@@ -81,9 +81,9 @@ export function Header() {
   return (
     <header className="bg-white shadow-sm border-b border-gray-100 sticky top-0 z-40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          {/* Logo */}
-          <div className="flex items-center">
+        <div className="relative flex items-center h-16">
+          {/* Left: Logo & Navigation */}
+          <div className="flex items-center gap-8">
             <Link href="/" className="flex-shrink-0">
               <div>
                 <h1 className="text-2xl font-bold text-saudi-green">EventHub</h1>
@@ -92,14 +92,27 @@ export function Header() {
                 </p>
               </div>
             </Link>
-          </div>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex space-x-8">
-            {navItems.map((item) => {
-              if (item.isInternal) {
+            {/* Desktop Navigation */}
+            <nav className="hidden md:flex space-x-8">
+              {navItems.map((item) => {
+                if (item.isInternal) {
+                  return (
+                    <a
+                      key={item.href}
+                      href={item.href}
+                      className={`px-3 py-2 text-sm font-medium transition-colors ${
+                        location === item.href
+                          ? 'text-saudi-green border-b-2 border-saudi-green'
+                          : 'text-gray-700 hover:text-saudi-green'
+                      }`}
+                    >
+                      {item.label}
+                    </a>
+                  );
+                }
                 return (
-                  <a
+                  <Link
                     key={item.href}
                     href={item.href}
                     className={`px-3 py-2 text-sm font-medium transition-colors ${
@@ -109,71 +122,58 @@ export function Header() {
                     }`}
                   >
                     {item.label}
-                  </a>
+                  </Link>
                 );
-              }
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`px-3 py-2 text-sm font-medium transition-colors ${
-                    location === item.href
-                      ? 'text-saudi-green border-b-2 border-saudi-green'
-                      : 'text-gray-700 hover:text-saudi-green'
-                  }`}
-                >
-                  {item.label}
-                </Link>
-              );
-            })}
-            
-            {/* Browse Dropdown */}
-            <DropdownMenu>
-              <DropdownMenuTrigger className={`px-3 py-2 text-sm font-medium transition-colors flex items-center ${
-                location.startsWith('/browse')
-                  ? 'text-saudi-green border-b-2 border-saudi-green'
-                  : 'text-gray-700 hover:text-saudi-green'
-              }`}>
-                {t('nav.browse')}
-                <ChevronDown className="h-4 w-4 ml-1" />
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-48">
-                <DropdownMenuItem asChild>
-                  <Link href="/browse/events" data-testid="browse-events">
-                    {language === 'ar' ? 'الفعاليات' : 'Events'}
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/browse/venues" data-testid="browse-venues">
-                    {t('nav.browse.venues')}
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/browse/organizers" data-testid="browse-organizers">
-                    {t('nav.browse.organizers')}
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/browse/providers" data-testid="browse-providers">
-                    {t('nav.browse.providers')}
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/browse/users" data-testid="browse-users">
-                    {t('nav.browse.users')}
-                  </Link>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </nav>
+              })}
+              
+              {/* Browse Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger className={`px-3 py-2 text-sm font-medium transition-colors flex items-center ${
+                  location.startsWith('/browse')
+                    ? 'text-saudi-green border-b-2 border-saudi-green'
+                    : 'text-gray-700 hover:text-saudi-green'
+                }`}>
+                  {t('nav.browse')}
+                  <ChevronDown className="h-4 w-4 ml-1" />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-48">
+                  <DropdownMenuItem asChild>
+                    <Link href="/browse/events" data-testid="browse-events">
+                      {language === 'ar' ? 'الفعاليات' : 'Events'}
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/browse/venues" data-testid="browse-venues">
+                      {t('nav.browse.venues')}
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/browse/organizers" data-testid="browse-organizers">
+                      {t('nav.browse.organizers')}
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/browse/providers" data-testid="browse-providers">
+                      {t('nav.browse.providers')}
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/browse/users" data-testid="browse-users">
+                      {t('nav.browse.users')}
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </nav>
+          </div>
 
-          {/* Language Toggle */}
-          <div className="fixed top-4 right-4 z-[60] md:relative md:top-0 md:right-0 md:z-auto">
+          {/* Center: Language Toggle */}
+          <div className="absolute left-1/2 -translate-x-1/2 md:block hidden">
             <Button
               variant="outline"
               size="sm"
               onClick={handleLanguageToggle}
-              className="rounded-full bg-white shadow-lg"
+              className="rounded-full bg-white shadow-sm"
               data-testid="language-toggle-button"
             >
               <Globe className="h-4 w-4 mr-2" />
@@ -181,8 +181,22 @@ export function Header() {
             </Button>
           </div>
 
-          {/* Desktop Auth */}
-          <div className="hidden md:flex items-center space-x-4">
+          {/* Language Toggle (Mobile - Fixed) */}
+          <div className="md:hidden fixed top-4 right-4 z-[60]">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleLanguageToggle}
+              className="rounded-full bg-white shadow-lg"
+              data-testid="language-toggle-button-mobile"
+            >
+              <Globe className="h-4 w-4 mr-2" />
+              {language === 'en' ? 'عربي' : 'English'}
+            </Button>
+          </div>
+
+          {/* Right: Desktop Auth (with ml-auto to push to right) */}
+          <div className="hidden md:flex items-center space-x-4 ml-auto">
             {!isLoading && (
               <>
                 {isAuthenticated && user ? (
