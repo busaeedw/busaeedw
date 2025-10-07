@@ -30,9 +30,8 @@ export function Hero() {
                 {t('hero.cta.events')}
               </Button>
               <Button
-                variant="outline"
                 size="lg"
-                className="border-2 border-white text-white hover:bg-white hover:text-gray-900 transition-all text-lg px-8 py-4"
+                className="bg-gold-500 text-gray-900 hover:bg-gold-400 transition-all transform hover:scale-105 shadow-lg text-lg px-8 py-4"
                 onClick={() => {
                   window.location.href = '/venues';
                 }}
