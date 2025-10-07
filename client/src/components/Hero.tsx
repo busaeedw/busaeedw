@@ -1,6 +1,6 @@
 import { useLanguage } from '@/hooks/useLanguage';
 import { Button } from '@/components/ui/button';
-import { MapPin } from 'lucide-react';
+import { MapPin, Calendar } from 'lucide-react';
 
 export function Hero() {
   const { t } = useLanguage();
@@ -21,6 +21,18 @@ export function Hero() {
               <Button
                 size="lg"
                 className="bg-gold-500 text-gray-900 hover:bg-gold-400 transition-all transform hover:scale-105 shadow-lg text-lg px-8 py-4"
+                onClick={() => {
+                  window.location.href = '/events';
+                }}
+                data-testid="hero-events-button"
+              >
+                <Calendar className="mr-2 h-5 w-5" />
+                {t('hero.cta.events')}
+              </Button>
+              <Button
+                variant="outline"
+                size="lg"
+                className="border-2 border-white text-white hover:bg-white hover:text-gray-900 transition-all text-lg px-8 py-4"
                 onClick={() => {
                   window.location.href = '/venues';
                 }}

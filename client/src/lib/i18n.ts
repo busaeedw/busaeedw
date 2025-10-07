@@ -101,6 +101,7 @@ const translations = {
     'hero.subtitle': 'Connect event organizers, attendees, and service providers on the Kingdom\'s most trusted event management platform.',
     'hero.cta.create': 'Create Event',
     'hero.cta.find': 'Find Events',
+    'hero.cta.events': 'Browse & Search Events',
     'hero.cta.venues': 'View & Search Venues',
     
     // Roles
@@ -549,6 +550,7 @@ const translations = {
     'hero.subtitle': 'ربط منظمي الفعاليات والحضور ومقدمي الخدمات على منصة إدارة الفعاليات الأكثر موثوقية في المملكة.',
     'hero.cta.create': 'إنشاء فعالية',
     'hero.cta.find': 'البحث عن فعاليات',
+    'hero.cta.events': 'تصفح والبحث عن الفعاليات',
     'hero.cta.venues': 'عرض والبحث عن الأماكن',
     
     // Roles
