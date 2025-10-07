@@ -27,7 +27,7 @@ export function Hero() {
                 data-testid="hero-venues-button"
               >
                 <MapPin className="mr-2 h-5 w-5" />
-                View & Search Venues
+                {t('hero.cta.venues')}
               </Button>
             </div>
           </div>
