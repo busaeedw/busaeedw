@@ -58,8 +58,8 @@ export default function VenueList() {
     { value: 'riyadh', label: t('venues.city.riyadh') },
     { value: 'jeddah', label: t('venues.city.jeddah') },
     { value: 'dammam', label: t('venues.city.dammam') },
-    { value: 'mecca', label: t('venues.city.mecca') },
-    { value: 'medina', label: t('venues.city.medina') },
+    { value: 'makkah', label: t('venues.city.mecca') },
+    { value: 'madinah', label: t('venues.city.medina') },
   ];
 
   return (
