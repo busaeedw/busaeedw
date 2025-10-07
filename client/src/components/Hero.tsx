@@ -1,15 +1,9 @@
-import { useState } from 'react';
 import { useLanguage } from '@/hooks/useLanguage';
 import { Button } from '@/components/ui/button';
-import { Calendar, Search } from 'lucide-react';
-import { useAuth } from '@/hooks/useAuth';
-import { Link } from 'wouter';
-import { LoginModal } from '@/components/LoginModal';
+import { MapPin } from 'lucide-react';
 
 export function Hero() {
   const { t } = useLanguage();
-  const { isAuthenticated } = useAuth();
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
   return (
     <section className="relative hero-gradient hero-pattern">
@@ -28,32 +22,12 @@ export function Hero() {
                 size="lg"
                 className="bg-gold-500 text-gray-900 hover:bg-gold-400 transition-all transform hover:scale-105 shadow-lg text-lg px-8 py-4"
                 onClick={() => {
-                  if (isAuthenticated) {
-                    window.location.href = '/events/create';
-                  } else {
-                    setIsLoginModalOpen(true);
-                  }
+                  window.location.href = '/venues';
                 }}
-                data-testid="hero-create-button"
+                data-testid="hero-venues-button"
               >
-                <Calendar className="mr-2 h-5 w-5" />
-                {t('hero.cta.create')}
-              </Button>
-              <Button
-                variant="outline"
-                size="lg"
-                className="border-2 border-white text-black hover:bg-white hover:text-primary-600 transition-all text-lg px-8 py-4"
-                onClick={() => {
-                  if (isAuthenticated) {
-                    window.location.href = '/events';
-                  } else {
-                    setIsLoginModalOpen(true);
-                  }
-                }}
-                data-testid="hero-find-button"
-              >
-                <Search className="mr-2 h-5 w-5" />
-                {t('hero.cta.find')}
+                <MapPin className="mr-2 h-5 w-5" />
+                View & Search Venues
               </Button>
             </div>
           </div>
@@ -67,12 +41,6 @@ export function Hero() {
           </div>
         </div>
       </div>
-      
-      <LoginModal
-        isOpen={isLoginModalOpen}
-        onClose={() => setIsLoginModalOpen(false)}
-        onLoginSuccess={() => setIsLoginModalOpen(false)}
-      />
     </section>
   );
 }
