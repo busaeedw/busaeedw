@@ -551,7 +551,7 @@ const translations = {
     'hero.cta.create': 'إنشاء فعالية',
     'hero.cta.find': 'البحث عن فعاليات',
     'hero.cta.events': 'استعرض و ابحث عن الفعاليات',
-    'hero.cta.venues': 'تصفح و بحث القاعات',
+    'hero.cta.venues': 'استعرض و ابحث عن القاعات',
     
     // Roles
     'roles.title': 'انضم إلى منصتنا',
