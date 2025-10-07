@@ -23,6 +23,7 @@ import {
   Search
 } from 'lucide-react';
 import { isUnauthorizedError } from '@/lib/authUtils';
+import { type Event, type EventRegistration, type Message } from '@shared/schema';
 
 export default function Dashboard() {
   const { user, isAuthenticated, isLoading } = useAuth();
@@ -44,19 +45,19 @@ export default function Dashboard() {
     }
   }, [isAuthenticated, isLoading, toast]);
 
-  const { data: userEvents, isLoading: eventsLoading, error: eventsError } = useQuery({
+  const { data: userEvents, isLoading: eventsLoading, error: eventsError } = useQuery<Event[]>({
     queryKey: ['/api/user/events'],
     enabled: isAuthenticated && (user?.role === 'organizer' || user?.role === 'admin'),
     retry: false,
   });
 
-  const { data: userRegistrations, isLoading: registrationsLoading, error: registrationsError } = useQuery({
+  const { data: userRegistrations, isLoading: registrationsLoading, error: registrationsError } = useQuery<EventRegistration[]>({
     queryKey: ['/api/user/registrations'],
     enabled: isAuthenticated && (user?.role === 'attendee' || user?.role === 'admin'),
     retry: false,
   });
 
-  const { data: conversations, isLoading: conversationsLoading, error: conversationsError } = useQuery({
+  const { data: conversations, isLoading: conversationsLoading, error: conversationsError } = useQuery<Message[]>({
     queryKey: ['/api/conversations'],
     enabled: isAuthenticated,
     retry: false,
@@ -145,9 +146,9 @@ export default function Dashboard() {
           <CardContent>
             {eventsLoading ? (
               <LoadingSkeleton lines={3} />
-            ) : userEvents?.length > 0 ? (
+            ) : userEvents && userEvents.length > 0 ? (
               <div className="space-y-4">
-                {userEvents.slice(0, 3).map((event: any) => (
+                {userEvents.slice(0, 3).map((event) => (
                   <div key={event.id} className="flex items-center justify-between p-4 border rounded-lg">
                     <div>
                       <h3 className="font-medium">
@@ -277,9 +278,9 @@ export default function Dashboard() {
           <CardContent>
             {registrationsLoading ? (
               <LoadingSkeleton lines={3} />
-            ) : userRegistrations?.length > 0 ? (
+            ) : userRegistrations && userRegistrations.length > 0 ? (
               <div className="space-y-4">
-                {userRegistrations.slice(0, 3).map((registration: any) => (
+                {userRegistrations.slice(0, 3).map((registration) => (
                   <div key={registration.id} className="flex items-center justify-between p-4 border rounded-lg">
                     <div>
                       <h3 className="font-medium">{t('dashboard.eventDetails')}</h3>

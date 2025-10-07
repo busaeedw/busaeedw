@@ -14,7 +14,19 @@ import { LoadingSpinner, LoadingSkeleton } from '@/components/ui/loading';
 import { apiRequest } from '@/lib/queryClient';
 import { Calendar, MapPin, Users, Clock, Star, MessageSquare, Share2 } from 'lucide-react';
 import { isUnauthorizedError } from '@/lib/authUtils';
-import { type Event, type VenueAggregate } from '@shared/schema';
+import { type Event, type VenueAggregate, type Organizer, type Review, type EventRegistration, type User } from '@shared/schema';
+
+type EventWithOrganizer = Event & {
+  organizer?: Organizer;
+};
+
+type RegistrationWithAttendee = EventRegistration & {
+  attendee?: User;
+};
+
+type ReviewWithReviewer = Review & {
+  reviewer?: User;
+};
 
 export default function EventDetails() {
   const { id } = useParams();
@@ -23,17 +35,17 @@ export default function EventDetails() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const { data: event, isLoading: eventLoading, error: eventError } = useQuery<Event>({
+  const { data: event, isLoading: eventLoading, error: eventError } = useQuery<EventWithOrganizer>({
     queryKey: ['/api/events', id],
     enabled: !!id,
   });
 
-  const { data: registrations, isLoading: registrationsLoading } = useQuery({
+  const { data: registrations, isLoading: registrationsLoading } = useQuery<RegistrationWithAttendee[]>({
     queryKey: ['/api/events', id, 'registrations'],
-    enabled: !!id && isAuthenticated && ((user as any)?.role === 'organizer' || (user as any)?.role === 'admin'),
+    enabled: !!id && isAuthenticated && (user?.role === 'organizer' || user?.role === 'admin'),
   });
 
-  const { data: reviews, isLoading: reviewsLoading } = useQuery({
+  const { data: reviews, isLoading: reviewsLoading } = useQuery<ReviewWithReviewer[]>({
     queryKey: ['/api/reviews/event', id],
     enabled: !!id,
   });
@@ -360,7 +372,7 @@ export default function EventDetails() {
               <CardContent>
                 <div className="flex items-center space-x-4 mb-4">
                   <Avatar>
-                    <AvatarImage src={event.organizer?.profileImageUrl} />
+                    <AvatarImage src={event.organizer?.profileImageUrl || undefined} />
                     <AvatarFallback>
                       {event.organizer?.firstName?.charAt(0) || 'O'}
                     </AvatarFallback>
@@ -369,7 +381,7 @@ export default function EventDetails() {
                     <h4 className="font-medium">
                       {event.organizer?.firstName || t('event.details.organizer')}
                     </h4>
-                    <p className="text-sm text-gray-600">{event.organizer?.role}</p>
+                    <p className="text-sm text-gray-600">{event.organizer?.businessName || t('event.details.organizer')}</p>
                   </div>
                 </div>
                 <Button variant="outline" className="w-full">
