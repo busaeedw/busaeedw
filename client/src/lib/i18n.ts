@@ -158,8 +158,11 @@ const translations = {
     'events.capacity.upto': 'Up to',
     'events.capacity.attendees': 'attendees',
     'events.capacity.unlimited': 'Unlimited capacity',
+    'events.date.tbd': 'Date TBD',
+    'events.time.tbd': 'Time TBD',
     'common.matching': 'matching',
     'common.at': 'at',
+    'common.showing': 'Showing',
     
     // Services
     'services.title': 'Trusted Service Providers',
@@ -607,8 +610,11 @@ const translations = {
     'events.capacity.upto': 'حتى',
     'events.capacity.attendees': 'حضور',
     'events.capacity.unlimited': 'سعة غير محدودة',
+    'events.date.tbd': 'التاريخ سيحدد لاحقاً',
+    'events.time.tbd': 'الوقت سيحدد لاحقاً',
     'common.matching': 'يطابق',
     'common.at': 'في',
+    'common.showing': 'عرض',
     
     // Services
     'services.title': 'مقدمو الخدمات الموثوقون',

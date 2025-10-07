@@ -65,15 +65,15 @@ export default function BrowseEvents() {
     try {
       const date = new Date(dateStr);
       if (isNaN(date.getTime())) {
-        return 'Date TBD';
+        return t('events.date.tbd');
       }
-      return date.toLocaleDateString('en-US', { 
+      return date.toLocaleDateString(language === 'ar' ? 'ar-SA' : 'en-US', { 
         month: 'short', 
         day: 'numeric', 
         year: 'numeric' 
       });
     } catch {
-      return 'Date TBD';
+      return t('events.date.tbd');
     }
   };
 
@@ -81,14 +81,14 @@ export default function BrowseEvents() {
     try {
       const date = new Date(dateStr);
       if (isNaN(date.getTime())) {
-        return 'Time TBD';
+        return t('events.time.tbd');
       }
-      return date.toLocaleTimeString([], { 
+      return date.toLocaleTimeString(language === 'ar' ? 'ar-SA' : 'en-US', { 
         hour: '2-digit', 
         minute: '2-digit' 
       });
     } catch {
-      return 'Time TBD';
+      return t('events.time.tbd');
     }
   };
 
@@ -204,7 +204,7 @@ export default function BrowseEvents() {
                     {/* Event Category Badge */}
                     <div className="mb-3">
                       <Badge className={`${getCategoryColor(event.category)} text-xs`}>
-                        {event.category}
+                        {t(`events.filter.${event.category}`) || event.category}
                       </Badge>
                     </div>
 
@@ -260,7 +260,7 @@ export default function BrowseEvents() {
             {filteredEvents.length >= 20 && (
               <div className="text-center mt-8">
                 <Button variant="outline" size="lg" data-testid="load-more-events">
-                  {t('events.button.loadmore')}
+                  {t('events.cta.loadmore')}
                 </Button>
               </div>
             )}
