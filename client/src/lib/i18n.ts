@@ -451,12 +451,12 @@ const translations = {
   ar: {
     // Header
     'nav.events': 'الفعاليات',
-    'nav.venues': 'الأماكن',
+    'nav.venues': 'القاعات',
     'nav.services': 'الخدمات',
     'nav.dashboard': 'لوحة تحكم',
     'nav.profile': 'الملف الشخصي',
     'nav.browse': 'تصفح',
-    'nav.browse.venues': 'الأماكن',
+    'nav.browse.venues': 'القاعات',
     'nav.browse.organizers': 'المنظمون',
     'nav.browse.providers': 'مقدمو الخدمات',
     'nav.browse.users': 'المستخدمون',
@@ -646,8 +646,8 @@ const translations = {
     'providers.rating': 'التقييم',
 
     // Venue Browse Additional Keys
-    'venues.browse.subtitle': 'اكتشف واستكشف الأماكن المتاحة لفعالياتك',
-    'venues.total': 'إجمالي الأماكن:',
+    'venues.browse.subtitle': 'اكتشف واستكشف القاعات المتاحة لفعالياتك',
+    'venues.total': 'إجمالي القاعات:',
     
     // Features
     'features.title': 'لماذا تختار منصة الفعاليات السعودية؟',
@@ -672,9 +672,9 @@ const translations = {
     'stats.cities': 'مدينة مغطاة',
     
     // Venues
-    'venues.title': 'أماكن الفعاليات',
-    'venues.subtitle': 'اكتشف أماكن مميزة في جميع أنحاء المملكة العربية السعودية',
-    'venues.search.placeholder': 'البحث في الأماكن...',
+    'venues.title': 'قاعات الفعاليات',
+    'venues.subtitle': 'اكتشف قاعات مميزة في جميع أنحاء المملكة العربية السعودية',
+    'venues.search.placeholder': 'البحث في القاعات...',
     'venues.city.all': 'جميع المدن',
     'venues.city.riyadh': 'الرياض',
     'venues.city.jeddah': 'جدة',
@@ -684,14 +684,14 @@ const translations = {
     'venues.events.count': 'فعاليات',
     'venues.events.upcoming': 'فعاليات قادمة',
     'venues.button.view': 'عرض التفاصيل',
-    'venues.button.loadmore': 'تحميل المزيد من الأماكن',
-    'venues.notfound.title': 'لم يتم العثور على أماكن',
-    'venues.notfound.subtitle': 'حاول تعديل معايير البحث أو تصفح جميع الأماكن.',
-    'venues.error.banner.title': 'غير قادر على تحميل بيانات الأماكن من الخادم',
-    'venues.error.banner.subtitle': 'عرض أماكن تجريبية بدلاً من ذلك. يرجى المحاولة مرة أخرى لاحقاً.',
+    'venues.button.loadmore': 'تحميل المزيد من القاعات',
+    'venues.notfound.title': 'لم يتم العثور على قاعات',
+    'venues.notfound.subtitle': 'حاول تعديل معايير البحث أو تصفح جميع القاعات.',
+    'venues.error.banner.title': 'غير قادر على تحميل بيانات القاعات من الخادم',
+    'venues.error.banner.subtitle': 'عرض قاعات تجريبية بدلاً من ذلك. يرجى المحاولة مرة أخرى لاحقاً.',
 
     // Venue Details
-    'venue.details.back': 'العودة إلى الأماكن',
+    'venue.details.back': 'العودة إلى القاعات',
     'venue.details.notFound': 'المكان غير موجود',
     'venue.details.notFoundDesc': 'المكان الذي تبحث عنه غير موجود أو تم حذفه.',
     'venue.details.badge': 'مكان',
@@ -705,7 +705,7 @@ const translations = {
     // Dashboard
     'dashboard.quickActions': 'الإجراءات السريعة',
     'dashboard.goToHomepage': 'الذهاب للصفحة الرئيسية', 
-    'dashboard.searchVenues': 'البحث في الأماكن',
+    'dashboard.searchVenues': 'البحث في القاعات',
     'dashboard.createNewEvent': 'إنشاء فعالية جديدة',
     'dashboard.manageEvents': 'إدارة الفعاليات',
     'dashboard.viewMessages': 'عرض الرسائل',
@@ -790,7 +790,7 @@ const translations = {
     'event.create.datetime.city.mecca': 'مكة المكرمة',
     'event.create.datetime.city.medina': 'المدينة المنورة',
     'event.create.datetime.venue': 'المكان',
-    'event.create.datetime.venue.loading': 'جاري تحميل الأماكن...',
+    'event.create.datetime.venue.loading': 'جاري تحميل القاعات...',
     'event.create.datetime.venue.select': 'اختر مكان في {{city}}',
     'event.create.datetime.venue.custom': 'مكان مخصص (أدخل أدناه)',
     'event.create.datetime.venue.id': 'معرف المكان',
