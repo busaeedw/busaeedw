@@ -102,7 +102,7 @@ const translations = {
     'hero.cta.create': 'Create Event',
     'hero.cta.find': 'Find Events',
     'hero.cta.events': 'Browse & Search Events',
-    'hero.cta.venues': 'Browse and Search Venues',
+    'hero.cta.venues': 'Browse & Search Venues',
     
     // Roles
     'roles.title': 'Join Our Platform',
