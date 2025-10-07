@@ -80,6 +80,7 @@ export default function Login() {
                       <Input
                         placeholder={t('auth.login.username.placeholder')}
                         data-testid="input-username"
+                        autoCapitalize="off"
                         {...field}
                       />
                     </FormControl>
