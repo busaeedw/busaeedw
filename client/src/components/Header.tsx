@@ -81,17 +81,32 @@ export function Header() {
   return (
     <header className="bg-white shadow-sm border-b border-gray-100 sticky top-0 z-40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="relative flex items-center h-16">
-          {/* Left: Logo & Navigation */}
+        <div className="relative flex items-center min-h-20 py-2">
+          {/* Left: Logo with Language Toggle below & Navigation */}
           <div className="flex items-center gap-8">
-            <Link href="/" className="flex-shrink-0">
-              <div>
-                <h1 className="text-2xl font-bold text-saudi-green">EventHub</h1>
-                <p className="text-xs text-gold-500 font-medium">
-                  {language === 'ar' ? 'المملكة العربية السعودية' : 'Saudi Arabia'}
-                </p>
+            <div className="flex-shrink-0">
+              <Link href="/">
+                <div>
+                  <h1 className="text-2xl font-bold text-saudi-green">EventHub</h1>
+                  <p className="text-xs text-gold-500 font-medium">
+                    {language === 'ar' ? 'المملكة العربية السعودية' : 'Saudi Arabia'}
+                  </p>
+                </div>
+              </Link>
+              {/* Language Toggle below logo - Desktop & Mobile */}
+              <div className="mt-1">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleLanguageToggle}
+                  className="rounded-full bg-white shadow-sm text-xs h-7"
+                  data-testid="language-toggle-button"
+                >
+                  <Globe className="h-3 w-3 mr-1" />
+                  {language === 'en' ? 'عربي' : 'English'}
+                </Button>
               </div>
-            </Link>
+            </div>
 
             {/* Desktop Navigation */}
             <nav className="hidden md:flex space-x-8">
@@ -165,34 +180,6 @@ export function Header() {
                 </DropdownMenuContent>
               </DropdownMenu>
             </nav>
-          </div>
-
-          {/* Center: Language Toggle */}
-          <div className="absolute left-1/2 -translate-x-1/2 md:block hidden">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleLanguageToggle}
-              className="rounded-full bg-white shadow-sm"
-              data-testid="language-toggle-button"
-            >
-              <Globe className="h-4 w-4 mr-2" />
-              {language === 'en' ? 'عربي' : 'English'}
-            </Button>
-          </div>
-
-          {/* Language Toggle (Mobile - Fixed) */}
-          <div className="md:hidden fixed top-4 right-4 z-[60]">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleLanguageToggle}
-              className="rounded-full bg-white shadow-lg"
-              data-testid="language-toggle-button-mobile"
-            >
-              <Globe className="h-4 w-4 mr-2" />
-              {language === 'en' ? 'عربي' : 'English'}
-            </Button>
           </div>
 
           {/* Right: Desktop Auth (with ml-auto to push to right) */}
