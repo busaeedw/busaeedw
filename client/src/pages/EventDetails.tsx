@@ -142,13 +142,15 @@ export default function EventDetails() {
             <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
               <div className="flex items-center gap-4 mb-4">
                 <Badge className={getCategoryColor(event.category)}>
-                  {event.category}
+                  {t(`events.filter.${event.category}`) || event.category}
                 </Badge>
                 <Badge variant={event.status === 'published' ? 'default' : 'secondary'}>
                   {event.status}
                 </Badge>
               </div>
-              <h1 className="text-4xl font-bold mb-4">{event.title}</h1>
+              <h1 className="text-4xl font-bold mb-4" data-testid="event-detail-title">
+                {language === 'ar' && event.titleAr ? event.titleAr : event.title}
+              </h1>
               <div className="flex items-center gap-6 text-lg">
                 <div className="flex items-center">
                   <Calendar className="h-5 w-5 mr-2" />
@@ -176,8 +178,8 @@ export default function EventDetails() {
                 <CardTitle>{t('event.details.about')}</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
-                  {event.description}
+                <p className="text-gray-700 leading-relaxed whitespace-pre-wrap" data-testid="event-detail-description">
+                  {language === 'ar' && event.descriptionAr ? event.descriptionAr : event.description}
                 </p>
               </CardContent>
             </Card>

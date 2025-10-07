@@ -26,7 +26,7 @@ import { isUnauthorizedError } from '@/lib/authUtils';
 
 export default function Dashboard() {
   const { user, isAuthenticated, isLoading } = useAuth();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { toast } = useToast();
 
   // Redirect to login if not authenticated
@@ -150,7 +150,9 @@ export default function Dashboard() {
                 {userEvents.slice(0, 3).map((event: any) => (
                   <div key={event.id} className="flex items-center justify-between p-4 border rounded-lg">
                     <div>
-                      <h3 className="font-medium">{event.title}</h3>
+                      <h3 className="font-medium">
+                        {language === 'ar' && event.titleAr ? event.titleAr : event.title}
+                      </h3>
                       <p className="text-sm text-muted-foreground">
                         {new Date(event.startDate).toLocaleDateString()} • {event.city}
                       </p>
