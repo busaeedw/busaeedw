@@ -712,6 +712,88 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get('/api/service-provider/weekly-engagements', unifiedAuth, async (req: any, res) => {
+    try {
+      const userId = req.authUserId;
+      
+      const serviceProvider = await storage.getServiceProviderByUserId(userId);
+      if (!serviceProvider) {
+        return res.status(404).json({ message: "Service provider profile not found" });
+      }
+
+      const bookings = await storage.getServiceBookings({
+        serviceProviderId: serviceProvider.id,
+      });
+
+      const now = new Date();
+      const startOfWeek = new Date(now);
+      startOfWeek.setDate(now.getDate() - now.getDay());
+      startOfWeek.setHours(0, 0, 0, 0);
+      
+      const endOfWeek = new Date(startOfWeek);
+      endOfWeek.setDate(startOfWeek.getDate() + 7);
+      endOfWeek.setHours(23, 59, 59, 999);
+
+      const weeklyEngagements = [];
+      for (const booking of bookings) {
+        if (booking.status === 'confirmed' || booking.status === 'completed') {
+          const event = await storage.getEvent(booking.eventId);
+          if (event) {
+            const eventDate = new Date(event.startDate);
+            if (eventDate >= startOfWeek && eventDate <= endOfWeek) {
+              weeklyEngagements.push({
+                ...booking,
+                event,
+              });
+            }
+          }
+        }
+      }
+
+      res.json(weeklyEngagements);
+    } catch (error) {
+      console.error("Error fetching weekly engagements:", error);
+      res.status(500).json({ message: "Failed to fetch weekly engagements" });
+    }
+  });
+
+  app.get('/api/service-provider/upcoming-events', unifiedAuth, async (req: any, res) => {
+    try {
+      const userId = req.authUserId;
+      
+      const serviceProvider = await storage.getServiceProviderByUserId(userId);
+      if (!serviceProvider) {
+        return res.status(404).json({ message: "Service provider profile not found" });
+      }
+
+      const myBookings = await storage.getServiceBookings({
+        serviceProviderId: serviceProvider.id,
+      });
+      const bookedEventIds = new Set(myBookings.map(b => b.eventId));
+
+      const allEvents = await storage.getEvents({ limit: 100 });
+      
+      const now = new Date();
+      const upcomingEvents = allEvents.filter(event => {
+        const eventDate = new Date(event.startDate);
+        return (
+          event.status === 'published' &&
+          eventDate > now &&
+          !bookedEventIds.has(event.id)
+        );
+      });
+
+      upcomingEvents.sort((a, b) => 
+        new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
+      );
+
+      res.json(upcomingEvents.slice(0, 10));
+    } catch (error) {
+      console.error("Error fetching upcoming events:", error);
+      res.status(500).json({ message: "Failed to fetch upcoming events" });
+    }
+  });
+
   // Statistics route
   app.get('/api/stats', async (req, res) => {
     try {
