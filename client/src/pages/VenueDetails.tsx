@@ -97,7 +97,7 @@ export default function VenueDetails() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
               <div className="text-center p-4 bg-saudi-green/5 rounded-lg">
                 <div className="text-2xl font-bold text-saudi-green mb-1" data-testid="text-venue-events-count">
                   {venue.event_count}
@@ -117,38 +117,38 @@ export default function VenueDetails() {
                 <div className="text-sm text-gray-600">{t('venue.details.location')}</div>
               </div>
             </div>
-          </CardContent>
-        </Card>
 
-        {/* Venue Coordinator */}
-        {venue.owner && (
-          <Card className="mb-8">
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <User className="h-5 w-5 mr-2" />
-                {t('venue.details.coordinator')}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center space-x-4">
-                <Avatar className="h-12 w-12">
-                  <AvatarImage src={venue.owner.profileImageUrl || undefined} />
-                  <AvatarFallback>
-                    {venue.owner.firstName?.charAt(0)}{venue.owner.lastName?.charAt(0)}
-                  </AvatarFallback>
-                </Avatar>
-                <div>
-                  <h4 className="font-medium text-lg" data-testid="text-coordinator-name">
-                    {venue.owner.firstName} {venue.owner.lastName}
-                  </h4>
-                  <p className="text-sm text-gray-600" data-testid="text-coordinator-email">
-                    {venue.owner.email}
-                  </p>
+            {/* Venue Coordinator Information */}
+            {venue.owner && (
+              <div className="border-t pt-6">
+                <h4 className="font-semibold text-lg mb-4 flex items-center">
+                  <User className="h-5 w-5 mr-2" />
+                  {t('venue.details.coordinator')}
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <p className="text-sm text-gray-600 mb-1">{t('venue.details.coordinatorName')}</p>
+                    <p className="font-medium" data-testid="text-coordinator-name">
+                      {venue.owner.firstName} {venue.owner.lastName}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600 mb-1">{t('venue.details.coordinatorEmail')}</p>
+                    <p className="font-medium" data-testid="text-coordinator-email">
+                      {venue.owner.email}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600 mb-1">{t('venue.details.coordinatorPhone')}</p>
+                    <p className="font-medium" data-testid="text-coordinator-phone">
+                      {venue.owner.phone || t('venue.details.notAvailable')}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </CardContent>
-          </Card>
-        )}
+            )}
+          </CardContent>
+        </Card>
 
         {/* Events at this Venue */}
         <Card>

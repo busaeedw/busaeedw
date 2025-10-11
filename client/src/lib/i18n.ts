@@ -256,6 +256,10 @@ const translations = {
     'venue.details.noEvents': 'No events found at this venue yet.',
     'venue.details.free': 'Free',
     'venue.details.coordinator': 'Venue Coordinator',
+    'venue.details.coordinatorName': 'Name',
+    'venue.details.coordinatorEmail': 'Email',
+    'venue.details.coordinatorPhone': 'Mobile Number',
+    'venue.details.notAvailable': 'Not Available',
 
     // Dashboard
     'dashboard.quickActions': 'Quick Actions',
@@ -709,6 +713,10 @@ const translations = {
     'venue.details.noEvents': 'لم يتم العثور على فعاليات في هذا المكان بعد.',
     'venue.details.free': 'مجاني',
     'venue.details.coordinator': 'منسق المكان',
+    'venue.details.coordinatorName': 'الاسم',
+    'venue.details.coordinatorEmail': 'البريد الإلكتروني',
+    'venue.details.coordinatorPhone': 'رقم الجوال',
+    'venue.details.notAvailable': 'غير متوفر',
 
     // Dashboard
     'dashboard.quickActions': 'الإجراءات السريعة',
