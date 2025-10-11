@@ -238,8 +238,21 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getEvent(id: string): Promise<Event | undefined> {
-    const [event] = await db.select().from(events).where(eq(events.id, id));
-    return event;
+    const [result] = await db
+      .select({
+        event: events,
+        organizer: organizers,
+      })
+      .from(events)
+      .leftJoin(organizers, eq(events.organizerId, organizers.id))
+      .where(eq(events.id, id));
+    
+    if (!result) return undefined;
+    
+    return {
+      ...result.event,
+      organizer: result.organizer || undefined,
+    } as any;
   }
 
   async getEvents(filters?: {
