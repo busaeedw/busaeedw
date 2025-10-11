@@ -1,19 +1,29 @@
 import { useParams } from "wouter";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, MapPin, Building2, Star } from "lucide-react";
+import { ArrowLeft, MapPin, Building2, Star, User } from "lucide-react";
 import { Link } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useLanguage } from "@/hooks/useLanguage";
-import type { VenueAggregate, Event } from "@shared/schema";
+import type { Venue, VenueAggregate, Event, User as UserType } from "@shared/schema";
+
+type VenueWithOwner = (Venue | VenueAggregate) & {
+  owner?: UserType;
+  name?: string;
+  nameAr?: string | null;
+  venue?: string;
+  venue_ar?: string | null;
+  event_count?: number;
+};
 
 export default function VenueDetails() {
   const { id } = useParams<{ id: string }>();
   const { language, t } = useLanguage();
 
-  const { data: venue, isLoading: venueLoading, error: venueError } = useQuery<VenueAggregate>({
+  const { data: venue, isLoading: venueLoading, error: venueError } = useQuery<VenueWithOwner>({
     queryKey: [`/api/venues/${id}`],
     enabled: !!id,
   });
@@ -73,7 +83,7 @@ export default function VenueDetails() {
             <div className="flex items-start justify-between">
               <div>
                 <CardTitle className="text-3xl text-saudi-green mb-2" data-testid="text-venue-name">
-                  {language === 'ar' && venue.venue_ar ? venue.venue_ar : venue.venue}
+                  {language === 'ar' && venue.nameAr ? venue.nameAr : venue.name || venue.venue}
                 </CardTitle>
                 <div className="flex items-center text-gray-600 mb-4">
                   <MapPin className="h-5 w-5 mr-2" />
@@ -110,12 +120,42 @@ export default function VenueDetails() {
           </CardContent>
         </Card>
 
+        {/* Venue Coordinator */}
+        {venue.owner && (
+          <Card className="mb-8">
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <User className="h-5 w-5 mr-2" />
+                {t('venue.details.coordinator')}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center space-x-4">
+                <Avatar className="h-12 w-12">
+                  <AvatarImage src={venue.owner.profileImageUrl || undefined} />
+                  <AvatarFallback>
+                    {venue.owner.firstName?.charAt(0)}{venue.owner.lastName?.charAt(0)}
+                  </AvatarFallback>
+                </Avatar>
+                <div>
+                  <h4 className="font-medium text-lg" data-testid="text-coordinator-name">
+                    {venue.owner.firstName} {venue.owner.lastName}
+                  </h4>
+                  <p className="text-sm text-gray-600" data-testid="text-coordinator-email">
+                    {venue.owner.email}
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Events at this Venue */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center">
               <Building2 className="h-5 w-5 mr-2" />
-              {t('venue.details.eventsAt')} {language === 'ar' && venue.venue_ar ? venue.venue_ar : venue.venue}
+              {t('venue.details.eventsAt')} {language === 'ar' && venue.nameAr ? venue.nameAr : venue.name || venue.venue}
             </CardTitle>
           </CardHeader>
           <CardContent>

@@ -533,8 +533,21 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getVenue(id: string): Promise<Venue | undefined> {
-    const [venue] = await db.select().from(venues).where(eq(venues.id, id));
-    return venue;
+    const [result] = await db
+      .select({
+        venue: venues,
+        owner: users,
+      })
+      .from(venues)
+      .leftJoin(users, eq(venues.userId, users.id))
+      .where(eq(venues.id, id));
+    
+    if (!result) return undefined;
+    
+    return {
+      ...result.venue,
+      owner: result.owner || undefined,
+    } as any;
   }
 
   async getVenues(filters?: {

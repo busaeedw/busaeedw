@@ -59,6 +59,7 @@ export const passwordResetTokens = pgTable("password_reset_tokens", {
 // Venues table
 export const venues = pgTable("venues", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").references(() => users.id, { onDelete: "cascade" }),
   name: varchar("name").notNull(),
   nameAr: varchar("name_ar"),
   city: varchar("city").notNull(),
@@ -81,6 +82,7 @@ export const venues = pgTable("venues", {
 }, (table) => [
   index("venues_name_city_location_idx").on(table.name, table.city, table.location),
   index("venues_type_city_idx").on(table.venueType, table.city),
+  index("venues_user_id_idx").on(table.userId),
 ]);
 
 // Events table
@@ -224,7 +226,11 @@ export const organizersRelations = relations(organizers, ({ many }) => ({
   reviews: many(reviews),
 }));
 
-export const venuesRelations = relations(venues, ({ many }) => ({
+export const venuesRelations = relations(venues, ({ one, many }) => ({
+  owner: one(users, {
+    fields: [venues.userId],
+    references: [users.id],
+  }),
   events: many(events),
 }));
 

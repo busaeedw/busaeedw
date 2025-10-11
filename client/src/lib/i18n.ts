@@ -255,6 +255,7 @@ const translations = {
     'venue.details.eventsAt': 'Events at',
     'venue.details.noEvents': 'No events found at this venue yet.',
     'venue.details.free': 'Free',
+    'venue.details.coordinator': 'Venue Coordinator',
 
     // Dashboard
     'dashboard.quickActions': 'Quick Actions',
@@ -707,6 +708,7 @@ const translations = {
     'venue.details.eventsAt': 'الفعاليات في',
     'venue.details.noEvents': 'لم يتم العثور على فعاليات في هذا المكان بعد.',
     'venue.details.free': 'مجاني',
+    'venue.details.coordinator': 'منسق المكان',
 
     // Dashboard
     'dashboard.quickActions': 'الإجراءات السريعة',
