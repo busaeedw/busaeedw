@@ -254,23 +254,23 @@ export default function Dashboard() {
       <div className="grid md:grid-cols-3 gap-6 mb-8">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Registered Events</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('dashboard.attendee.registeredEvents')}</CardTitle>
             <CalendarCheck className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{userRegistrations?.length || 0}</div>
-            <p className="text-xs text-muted-foreground">Upcoming events</p>
+            <p className="text-xs text-muted-foreground">{t('dashboard.attendee.upcomingEvents')}</p>
           </CardContent>
         </Card>
         
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Events Attended</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('dashboard.attendee.eventsAttended')}</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">0</div>
-            <p className="text-xs text-muted-foreground">Past events</p>
+            <p className="text-xs text-muted-foreground">{t('dashboard.attendee.pastEvents')}</p>
           </CardContent>
         </Card>
         
@@ -289,7 +289,7 @@ export default function Dashboard() {
       <div className="grid md:grid-cols-2 gap-8">
         <Card>
           <CardHeader>
-            <CardTitle>Upcoming Events</CardTitle>
+            <CardTitle>{t('dashboard.attendee.upcomingEventsTitle')}</CardTitle>
           </CardHeader>
           <CardContent>
             {registrationsLoading ? (
@@ -423,7 +423,7 @@ export default function Dashboard() {
                           {venue.city} • {venue.location}
                         </p>
                         <Badge variant="outline" data-testid={`venue-events-${venue.id}`}>
-                          {venue.eventCount} {t('dashboard.venueManager.eventsInYear', { year: new Date().getFullYear() })}
+                          {venue.eventCount} {t('dashboard.venueManager.eventsInYear').replace('{{year}}', new Date().getFullYear().toString())}
                         </Badge>
                       </div>
                       <Button asChild size="sm" variant="outline" data-testid={`button-view-venue-${venue.id}`}>

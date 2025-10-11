@@ -294,6 +294,11 @@ const translations = {
     'dashboard.venueManager.managedVenues': 'Managed Venues',
     'dashboard.venueManager.eventsInYear': 'events in {{year}}',
     'dashboard.venueManager.noVenues': 'No venues assigned',
+    'dashboard.attendee.registeredEvents': 'Registered Events',
+    'dashboard.attendee.upcomingEvents': 'Upcoming events',
+    'dashboard.attendee.eventsAttended': 'Events Attended',
+    'dashboard.attendee.pastEvents': 'Past events',
+    'dashboard.attendee.upcomingEventsTitle': 'Upcoming Events',
 
     // Profile
     'profile.title': 'Profile',
@@ -758,6 +763,11 @@ const translations = {
     'dashboard.venueManager.managedVenues': 'القاعات المُدارة',
     'dashboard.venueManager.eventsInYear': 'فعاليات في {{year}}',
     'dashboard.venueManager.noVenues': 'لا توجد قاعات مخصصة',
+    'dashboard.attendee.registeredEvents': 'الفعاليات المسجلة',
+    'dashboard.attendee.upcomingEvents': 'الفعاليات القادمة',
+    'dashboard.attendee.eventsAttended': 'الفعاليات المُحضرة',
+    'dashboard.attendee.pastEvents': 'الفعاليات السابقة',
+    'dashboard.attendee.upcomingEventsTitle': 'الفعاليات القادمة',
 
     // Profile
     'profile.title': 'الملف الشخصي',
