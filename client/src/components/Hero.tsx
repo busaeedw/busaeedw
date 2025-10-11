@@ -1,6 +1,7 @@
 import { useLanguage } from '@/hooks/useLanguage';
 import { Button } from '@/components/ui/button';
 import { MapPin, Calendar } from 'lucide-react';
+import heroImage from '@assets/stock_images/saudi_arabia_cultura_0f49bca6.jpg';
 
 export function Hero() {
   const { t } = useLanguage();
@@ -45,7 +46,7 @@ export function Hero() {
           
           <div className="mt-10 lg:mt-0">
             <img
-              src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"
+              src={heroImage}
               alt="Modern event venue in Saudi Arabia"
               className="rounded-2xl shadow-2xl w-full h-auto"
             />
