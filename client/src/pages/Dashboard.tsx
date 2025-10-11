@@ -21,10 +21,12 @@ import {
   Edit,
   Home,
   Search,
-  Building2
+  Building2,
+  Briefcase,
+  Calendar
 } from 'lucide-react';
 import { isUnauthorizedError } from '@/lib/authUtils';
-import { type Event, type EventRegistration, type Message } from '@shared/schema';
+import { type Event, type EventRegistration, type Message, type ServiceBooking } from '@shared/schema';
 
 type VenueWithStats = {
   id: string;
@@ -33,6 +35,10 @@ type VenueWithStats = {
   city: string;
   location: string;
   eventCount: number;
+};
+
+type WeeklyEngagement = ServiceBooking & {
+  event: Event;
 };
 
 export default function Dashboard() {
@@ -82,9 +88,21 @@ export default function Dashboard() {
     retry: false,
   });
 
+  const { data: weeklyEngagements, isLoading: engagementsLoading, error: engagementsError } = useQuery<WeeklyEngagement[]>({
+    queryKey: ['/api/service-provider/weekly-engagements'],
+    enabled: isAuthenticated && user?.role === 'service_provider',
+    retry: false,
+  });
+
+  const { data: upcomingEvents, isLoading: upcomingEventsLoading, error: upcomingEventsError } = useQuery<Event[]>({
+    queryKey: ['/api/service-provider/upcoming-events'],
+    enabled: isAuthenticated && user?.role === 'service_provider',
+    retry: false,
+  });
+
   // Handle unauthorized errors
   useEffect(() => {
-    const errors = [eventsError, registrationsError, conversationsError, venuesError].filter(Boolean);
+    const errors = [eventsError, registrationsError, conversationsError, venuesError, engagementsError, upcomingEventsError].filter(Boolean);
     errors.forEach(error => {
       if (error && isUnauthorizedError(error)) {
         toast({
@@ -97,7 +115,7 @@ export default function Dashboard() {
         }, 500);
       }
     });
-  }, [eventsError, registrationsError, conversationsError, venuesError, toast]);
+  }, [eventsError, registrationsError, conversationsError, venuesError, engagementsError, upcomingEventsError, toast]);
 
   if (isLoading) {
     return (
@@ -488,6 +506,131 @@ export default function Dashboard() {
     );
   };
 
+  const renderServiceProviderDashboard = () => (
+    <>
+      <div className="grid md:grid-cols-3 gap-6 mb-8">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">This Week's Engagements</CardTitle>
+            <Briefcase className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{weeklyEngagements?.length || 0}</div>
+            <p className="text-xs text-muted-foreground">Confirmed bookings this week</p>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Available Events</CardTitle>
+            <Calendar className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{upcomingEvents?.length || 0}</div>
+            <p className="text-xs text-muted-foreground">Events to apply for</p>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">{t('dashboard.messages')}</CardTitle>
+            <MessageSquare className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{conversations?.length || 0}</div>
+            <p className="text-xs text-muted-foreground">{t('dashboard.activeConversations')}</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="grid md:grid-cols-2 gap-8">
+        <Card>
+          <CardHeader>
+            <CardTitle>This Week's Engagements</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {engagementsLoading ? (
+              <LoadingSkeleton lines={3} />
+            ) : weeklyEngagements && weeklyEngagements.length > 0 ? (
+              <div className="space-y-4">
+                {weeklyEngagements.map((engagement) => (
+                  <div key={engagement.id} className="flex items-center justify-between p-4 border rounded-lg" data-testid={`engagement-card-${engagement.id}`}>
+                    <div className="flex-1">
+                      <h3 className="font-medium" data-testid={`engagement-event-title-${engagement.id}`}>
+                        {language === 'ar' && engagement.event.titleAr ? engagement.event.titleAr : engagement.event.title}
+                      </h3>
+                      <p className="text-sm text-muted-foreground">
+                        {new Date(engagement.event.startDate).toLocaleDateString()} • {engagement.event.city}
+                      </p>
+                      <Badge variant={engagement.status === 'confirmed' ? 'default' : 'secondary'} data-testid={`engagement-status-${engagement.id}`}>
+                        {engagement.status}
+                      </Badge>
+                    </div>
+                    <Button asChild size="sm" variant="outline" data-testid={`button-view-event-${engagement.event.id}`}>
+                      <Link href={`/events/${engagement.event.id}`}>
+                        <Eye className="h-4 w-4" />
+                      </Link>
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <Briefcase className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                <p className="text-muted-foreground mb-4">No engagements this week</p>
+                <Button asChild>
+                  <Link href="/events">Browse Events</Link>
+                </Button>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Upcoming Events to Apply For</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {upcomingEventsLoading ? (
+              <LoadingSkeleton lines={3} />
+            ) : upcomingEvents && upcomingEvents.length > 0 ? (
+              <div className="space-y-4">
+                {upcomingEvents.slice(0, 5).map((event) => (
+                  <div key={event.id} className="flex items-center justify-between p-4 border rounded-lg" data-testid={`upcoming-event-card-${event.id}`}>
+                    <div className="flex-1">
+                      <h3 className="font-medium" data-testid={`upcoming-event-title-${event.id}`}>
+                        {language === 'ar' && event.titleAr ? event.titleAr : event.title}
+                      </h3>
+                      <p className="text-sm text-muted-foreground">
+                        {new Date(event.startDate).toLocaleDateString()} • {event.city}
+                      </p>
+                      <Badge variant="outline" data-testid={`upcoming-event-category-${event.id}`}>
+                        {event.category}
+                      </Badge>
+                    </div>
+                    <Button asChild size="sm" variant="outline" data-testid={`button-view-upcoming-event-${event.id}`}>
+                      <Link href={`/events/${event.id}`}>
+                        <Eye className="h-4 w-4" />
+                      </Link>
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <Calendar className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                <p className="text-muted-foreground mb-4">No upcoming events available</p>
+                <Button asChild>
+                  <Link href="/events">Browse All Events</Link>
+                </Button>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    </>
+  );
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
@@ -511,14 +654,7 @@ export default function Dashboard() {
             </Button>
           </div>
         )}
-        {user?.role === 'service_provider' && (
-          <div className="text-center py-8">
-            <p className="text-muted-foreground mb-4">{t('dashboard.serviceProviderComingSoon')}</p>
-            <Button asChild>
-              <Link href="/service-providers">{t('dashboard.viewServiceProviders')}</Link>
-            </Button>
-          </div>
-        )}
+        {user?.role === 'service_provider' && renderServiceProviderDashboard()}
       </main>
       <Footer />
     </div>
