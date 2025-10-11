@@ -51,13 +51,20 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Updates (October 2025)
 
-### Service Provider Dashboard Full Arabic Support (October 11, 2025)
-Successfully implemented complete bilingual support for the service provider dashboard:
+### Service Provider Dashboard Updates (October 11, 2025)
+Successfully implemented complete bilingual support and streamlined UI for the service provider dashboard:
+
+**UI Simplification:**
+- Removed three metric cards from top of dashboard (Weekly Engagements count, Available Events count, Messages count)
+- Streamlined dashboard to focus on actionable content with two main sections:
+  - "This Week's Engagements" - List view of confirmed bookings with event details
+  - "Upcoming Events to Apply For" - List view of available events to apply for
+- Cleaner, more focused interface for service providers
 
 **Service Provider Dashboard Translations:**
 - Added comprehensive Arabic translations for all service provider dashboard text
 - Translations include: weekly engagements, available events, booking confirmations, and navigation elements
-- All metrics cards, section headings, and empty state messages now fully support Arabic/English switching
+- All section headings and empty state messages fully support Arabic/English switching
 - Proper RTL layout implementation for Arabic language display
 
 **Authentication Role Preservation Fix:**
@@ -68,10 +75,10 @@ Successfully implemented complete bilingual support for the service provider das
 
 **Translation Keys Added:**
 - `dashboard.serviceProvider.weeklyEngagements`: "This Week's Engagements" / "عقود هذا الأسبوع"
-- `dashboard.serviceProvider.confirmedBookings`: "Confirmed bookings this week" / "الحجوزات المؤكدة لهذا الأسبوع"
-- `dashboard.serviceProvider.availableEvents`: "Available Events" / "الفعاليات المتاحة"
-- `dashboard.serviceProvider.eventsToApply`: "Events to apply for" / "فعاليات للتقديم عليها"
-- And 5 additional service provider-specific translation keys
+- `dashboard.serviceProvider.upcomingEventsToApply`: "Upcoming Events to Apply For" / "الفعاليات القادمة للتقديم عليها"
+- `dashboard.serviceProvider.noEngagements`: "No engagements this week" / "لا توجد عقود هذا الأسبوع"
+- `dashboard.serviceProvider.browseEvents`: "Browse Events" / "تصفح الفعاليات"
+- And additional service provider-specific translation keys
 
 **Technical Implementation:**
 - All hardcoded English text replaced with `t()` translation function calls
