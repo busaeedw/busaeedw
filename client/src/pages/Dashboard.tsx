@@ -40,9 +40,12 @@ export default function Dashboard() {
   const { t, language } = useLanguage();
   const { toast } = useToast();
 
-  // Redirect to login if not authenticated
+  // Redirect to login if not authenticated (but not if user just logged out)
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
+    const urlParams = new URLSearchParams(window.location.search);
+    const isLogoutRedirect = urlParams.get('logout') === 'success';
+    
+    if (!isLoading && !isAuthenticated && !isLogoutRedirect) {
       toast({
         title: t('common.unauthorized'),
         description: t('common.unauthorized.desc'),
