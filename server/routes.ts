@@ -715,15 +715,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/service-provider/weekly-engagements', unifiedAuth, async (req: any, res) => {
     try {
       const userId = req.authUserId;
+      console.log("📅 Weekly engagements request - userId:", userId);
       
       const serviceProvider = await storage.getServiceProviderByUserId(userId);
       if (!serviceProvider) {
+        console.log("❌ Service provider profile not found for userId:", userId);
         return res.status(404).json({ message: "Service provider profile not found" });
       }
+
+      console.log("✓ Service provider found:", serviceProvider.id, serviceProvider.businessName);
 
       const bookings = await storage.getServiceBookings({
         serviceProviderId: serviceProvider.id,
       });
+
+      console.log("📋 Total bookings found:", bookings.length);
 
       const now = new Date();
       const startOfWeek = new Date(now);
@@ -734,22 +740,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
       endOfWeek.setDate(startOfWeek.getDate() + 7);
       endOfWeek.setHours(23, 59, 59, 999);
 
+      console.log("📅 Week range:", startOfWeek.toISOString(), "to", endOfWeek.toISOString());
+
       const weeklyEngagements = [];
       for (const booking of bookings) {
+        console.log("🔍 Checking booking:", booking.id, "status:", booking.status);
         if (booking.status === 'confirmed' || booking.status === 'completed') {
           const event = await storage.getEvent(booking.eventId);
           if (event) {
             const eventDate = new Date(event.startDate);
+            console.log("📆 Event date:", eventDate.toISOString(), "title:", event.title);
+            console.log("⏰ Date check - eventDate >= startOfWeek:", eventDate >= startOfWeek, "eventDate <= endOfWeek:", eventDate <= endOfWeek);
             if (eventDate >= startOfWeek && eventDate <= endOfWeek) {
               weeklyEngagements.push({
                 ...booking,
                 event,
               });
+              console.log("✅ Added to weekly engagements");
+            } else {
+              console.log("❌ Event outside week range");
             }
+          } else {
+            console.log("⚠️ Event not found for booking:", booking.eventId);
           }
+        } else {
+          console.log("⏭️ Skipping booking - wrong status");
         }
       }
 
+      console.log("📊 Weekly engagements count:", weeklyEngagements.length);
       res.json(weeklyEngagements);
     } catch (error) {
       console.error("Error fetching weekly engagements:", error);

@@ -503,7 +503,7 @@ export class DatabaseStorage implements IStorage {
     serviceProviderId?: string;
     organizerId?: string;
   }): Promise<ServiceBooking[]> {
-    let query = db.select().from(serviceBookings);
+    let query = db.select().from(serviceBookings).$dynamic();
 
     const conditions = [];
     if (filters?.eventId) {
