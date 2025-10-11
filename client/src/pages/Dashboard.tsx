@@ -511,23 +511,23 @@ export default function Dashboard() {
       <div className="grid md:grid-cols-3 gap-6 mb-8">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">This Week's Engagements</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('dashboard.serviceProvider.weeklyEngagements')}</CardTitle>
             <Briefcase className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{weeklyEngagements?.length || 0}</div>
-            <p className="text-xs text-muted-foreground">Confirmed bookings this week</p>
+            <p className="text-xs text-muted-foreground">{t('dashboard.serviceProvider.confirmedBookings')}</p>
           </CardContent>
         </Card>
         
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Available Events</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('dashboard.serviceProvider.availableEvents')}</CardTitle>
             <Calendar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{upcomingEvents?.length || 0}</div>
-            <p className="text-xs text-muted-foreground">Events to apply for</p>
+            <p className="text-xs text-muted-foreground">{t('dashboard.serviceProvider.eventsToApply')}</p>
           </CardContent>
         </Card>
         
@@ -546,7 +546,7 @@ export default function Dashboard() {
       <div className="grid md:grid-cols-2 gap-8">
         <Card>
           <CardHeader>
-            <CardTitle>This Week's Engagements</CardTitle>
+            <CardTitle>{t('dashboard.serviceProvider.weeklyEngagements')}</CardTitle>
           </CardHeader>
           <CardContent>
             {engagementsLoading ? (
@@ -577,9 +577,9 @@ export default function Dashboard() {
             ) : (
               <div className="text-center py-8">
                 <Briefcase className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <p className="text-muted-foreground mb-4">No engagements this week</p>
+                <p className="text-muted-foreground mb-4">{t('dashboard.serviceProvider.noEngagements')}</p>
                 <Button asChild>
-                  <Link href="/events">Browse Events</Link>
+                  <Link href="/events">{t('dashboard.serviceProvider.browseEvents')}</Link>
                 </Button>
               </div>
             )}
@@ -588,7 +588,7 @@ export default function Dashboard() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Upcoming Events to Apply For</CardTitle>
+            <CardTitle>{t('dashboard.serviceProvider.upcomingEventsToApply')}</CardTitle>
           </CardHeader>
           <CardContent>
             {upcomingEventsLoading ? (
@@ -619,9 +619,9 @@ export default function Dashboard() {
             ) : (
               <div className="text-center py-8">
                 <Calendar className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <p className="text-muted-foreground mb-4">No upcoming events available</p>
+                <p className="text-muted-foreground mb-4">{t('dashboard.serviceProvider.noUpcomingEvents')}</p>
                 <Button asChild>
-                  <Link href="/events">Browse All Events</Link>
+                  <Link href="/events">{t('dashboard.serviceProvider.browseAllEvents')}</Link>
                 </Button>
               </div>
             )}

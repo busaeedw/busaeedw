@@ -49,6 +49,36 @@ Preferred communication style: Simple, everyday language.
 - **Review & Rating**: Bidirectional review system for events and service providers
 - **Admin Dashboard**: Administrative oversight and management tools
 
+## Recent Updates (October 2025)
+
+### Service Provider Dashboard Full Arabic Support (October 11, 2025)
+Successfully implemented complete bilingual support for the service provider dashboard:
+
+**Service Provider Dashboard Translations:**
+- Added comprehensive Arabic translations for all service provider dashboard text
+- Translations include: weekly engagements, available events, booking confirmations, and navigation elements
+- All metrics cards, section headings, and empty state messages now fully support Arabic/English switching
+- Proper RTL layout implementation for Arabic language display
+
+**Authentication Role Preservation Fix:**
+- Fixed critical bug where service provider roles were being overwritten to 'attendee' on OIDC login
+- Updated `upsertUser()` function to preserve existing user roles from database
+- Pattern matching for role detection now only applies to new users
+- Existing service providers maintain their role across login sessions
+
+**Translation Keys Added:**
+- `dashboard.serviceProvider.weeklyEngagements`: "This Week's Engagements" / "عقود هذا الأسبوع"
+- `dashboard.serviceProvider.confirmedBookings`: "Confirmed bookings this week" / "الحجوزات المؤكدة لهذا الأسبوع"
+- `dashboard.serviceProvider.availableEvents`: "Available Events" / "الفعاليات المتاحة"
+- `dashboard.serviceProvider.eventsToApply`: "Events to apply for" / "فعاليات للتقديم عليها"
+- And 5 additional service provider-specific translation keys
+
+**Technical Implementation:**
+- All hardcoded English text replaced with `t()` translation function calls
+- Language preference persists across page navigations via localStorage
+- Dashboard correctly renders role-specific content based on authenticated user role
+- End-to-end testing confirms Arabic display and RTL layout functionality
+
 ## Recent Updates (September 2025)
 
 ### Complete Bilingual Error Handling Implementation (September 22, 2025)

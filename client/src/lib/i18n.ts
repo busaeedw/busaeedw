@@ -299,6 +299,15 @@ const translations = {
     'dashboard.attendee.eventsAttended': 'Events Attended',
     'dashboard.attendee.pastEvents': 'Past events',
     'dashboard.attendee.upcomingEventsTitle': 'Upcoming Events',
+    'dashboard.serviceProvider.weeklyEngagements': 'This Week\'s Engagements',
+    'dashboard.serviceProvider.confirmedBookings': 'Confirmed bookings this week',
+    'dashboard.serviceProvider.availableEvents': 'Available Events',
+    'dashboard.serviceProvider.eventsToApply': 'Events to apply for',
+    'dashboard.serviceProvider.upcomingEventsToApply': 'Upcoming Events to Apply For',
+    'dashboard.serviceProvider.noEngagements': 'No engagements this week',
+    'dashboard.serviceProvider.browseEvents': 'Browse Events',
+    'dashboard.serviceProvider.noUpcomingEvents': 'No upcoming events available',
+    'dashboard.serviceProvider.browseAllEvents': 'Browse All Events',
 
     // Profile
     'profile.title': 'Profile',
@@ -768,6 +777,15 @@ const translations = {
     'dashboard.attendee.eventsAttended': 'الفعاليات المُحضرة',
     'dashboard.attendee.pastEvents': 'الفعاليات السابقة',
     'dashboard.attendee.upcomingEventsTitle': 'الفعاليات القادمة',
+    'dashboard.serviceProvider.weeklyEngagements': 'عقود هذا الأسبوع',
+    'dashboard.serviceProvider.confirmedBookings': 'الحجوزات المؤكدة لهذا الأسبوع',
+    'dashboard.serviceProvider.availableEvents': 'الفعاليات المتاحة',
+    'dashboard.serviceProvider.eventsToApply': 'فعاليات للتقديم عليها',
+    'dashboard.serviceProvider.upcomingEventsToApply': 'الفعاليات القادمة للتقديم عليها',
+    'dashboard.serviceProvider.noEngagements': 'لا توجد عقود هذا الأسبوع',
+    'dashboard.serviceProvider.browseEvents': 'تصفح الفعاليات',
+    'dashboard.serviceProvider.noUpcomingEvents': 'لا توجد فعاليات قادمة متاحة',
+    'dashboard.serviceProvider.browseAllEvents': 'تصفح جميع الفعاليات',
 
     // Profile
     'profile.title': 'الملف الشخصي',

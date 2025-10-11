@@ -57,16 +57,24 @@ function updateUserSession(
 async function upsertUser(
   claims: any,
 ) {
-  // Determine role based on user ID pattern (for testing purposes)
-  let role = "attendee"; // default role
   const userId = claims["sub"];
   
-  if (userId.includes("organizer")) {
-    role = "organizer";
-  } else if (userId.includes("admin")) {
-    role = "admin";
-  } else if (userId.includes("service_provider")) {
-    role = "service_provider";
+  // Check if user already exists to preserve their role
+  const existingUser = await storage.getUser(userId);
+  
+  // Determine role based on user ID pattern (for testing purposes)
+  // Only use pattern matching for new users; preserve existing user roles
+  let role = existingUser?.role || "attendee"; // use existing role or default to attendee
+  
+  if (!existingUser) {
+    // Only do pattern matching for new users
+    if (userId.includes("organizer")) {
+      role = "organizer";
+    } else if (userId.includes("admin")) {
+      role = "admin";
+    } else if (userId.includes("service_provider")) {
+      role = "service_provider";
+    }
   }
 
   await storage.upsertUser({
