@@ -608,6 +608,28 @@ export class DatabaseStorage implements IStorage {
     await db.delete(venues).where(eq(venues.id, id));
   }
 
+  async getUserVenuesWithStats(userId: string): Promise<any[]> {
+    const currentYear = new Date().getFullYear();
+    const yearStart = new Date(`${currentYear}-01-01`);
+    const yearEnd = new Date(`${currentYear}-12-31T23:59:59`);
+
+    const userVenues = await db
+      .select({
+        id: venues.id,
+        name: venues.name,
+        nameAr: venues.nameAr,
+        city: venues.city,
+        location: venues.location,
+        eventCount: sql<number>`count(CASE WHEN ${events.startDate} >= ${yearStart} AND ${events.startDate} <= ${yearEnd} THEN 1 END)`.as('event_count'),
+      })
+      .from(venues)
+      .leftJoin(events, eq(venues.id, events.venueId))
+      .where(eq(venues.userId, userId))
+      .groupBy(venues.id, venues.name, venues.nameAr, venues.city, venues.location);
+
+    return userVenues;
+  }
+
   // Organizer operations
   async createOrganizer(organizer: InsertOrganizer): Promise<Organizer> {
     const [createdOrganizer] = await db.insert(organizers).values(organizer).returning();

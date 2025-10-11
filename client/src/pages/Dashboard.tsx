@@ -20,10 +20,20 @@ import {
   Eye,
   Edit,
   Home,
-  Search
+  Search,
+  Building2
 } from 'lucide-react';
 import { isUnauthorizedError } from '@/lib/authUtils';
 import { type Event, type EventRegistration, type Message } from '@shared/schema';
+
+type VenueWithStats = {
+  id: string;
+  name: string;
+  nameAr?: string | null;
+  city: string;
+  location: string;
+  eventCount: number;
+};
 
 export default function Dashboard() {
   const { user, isAuthenticated, isLoading } = useAuth();
@@ -63,9 +73,15 @@ export default function Dashboard() {
     retry: false,
   });
 
+  const { data: userVenues, isLoading: venuesLoading, error: venuesError } = useQuery<VenueWithStats[]>({
+    queryKey: ['/api/user/venues'],
+    enabled: isAuthenticated && user?.role === 'venues',
+    retry: false,
+  });
+
   // Handle unauthorized errors
   useEffect(() => {
-    const errors = [eventsError, registrationsError, conversationsError].filter(Boolean);
+    const errors = [eventsError, registrationsError, conversationsError, venuesError].filter(Boolean);
     errors.forEach(error => {
       if (error && isUnauthorizedError(error)) {
         toast({
@@ -78,7 +94,7 @@ export default function Dashboard() {
         }, 500);
       }
     });
-  }, [eventsError, registrationsError, conversationsError, toast]);
+  }, [eventsError, registrationsError, conversationsError, venuesError, toast]);
 
   if (isLoading) {
     return (
@@ -347,6 +363,128 @@ export default function Dashboard() {
     </>
   );
 
+  const renderVenueDashboard = () => {
+    const totalEvents = userVenues?.reduce((sum, venue) => sum + venue.eventCount, 0) || 0;
+
+    return (
+      <>
+        <div className="grid md:grid-cols-3 gap-6 mb-8">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">{t('dashboard.venueManager.myVenues')}</CardTitle>
+              <Building2 className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{userVenues?.length || 0}</div>
+              <p className="text-xs text-muted-foreground">{t('dashboard.venueManager.totalVenues')}</p>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">{t('dashboard.venueManager.eventsThisYear')}</CardTitle>
+              <CalendarCheck className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{totalEvents}</div>
+              <p className="text-xs text-muted-foreground">{t('dashboard.venueManager.acrossAllVenues')}</p>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">{t('dashboard.messages')}</CardTitle>
+              <MessageSquare className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{conversations?.length || 0}</div>
+              <p className="text-xs text-muted-foreground">{t('dashboard.activeConversations')}</p>
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-8">
+          <Card>
+            <CardHeader>
+              <CardTitle>{t('dashboard.venueManager.managedVenues')}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {venuesLoading ? (
+                <LoadingSkeleton lines={3} />
+              ) : userVenues && userVenues.length > 0 ? (
+                <div className="space-y-4">
+                  {userVenues.map((venue) => (
+                    <div key={venue.id} className="flex items-center justify-between p-4 border rounded-lg" data-testid={`venue-card-${venue.id}`}>
+                      <div className="flex-1">
+                        <h3 className="font-medium" data-testid={`venue-name-${venue.id}`}>
+                          {language === 'ar' && venue.nameAr ? venue.nameAr : venue.name}
+                        </h3>
+                        <p className="text-sm text-muted-foreground">
+                          {venue.city} • {venue.location}
+                        </p>
+                        <Badge variant="outline" data-testid={`venue-events-${venue.id}`}>
+                          {venue.eventCount} {t('dashboard.venueManager.eventsInYear', { year: new Date().getFullYear() })}
+                        </Badge>
+                      </div>
+                      <Button asChild size="sm" variant="outline" data-testid={`button-view-venue-${venue.id}`}>
+                        <Link href={`/venues/${venue.id}`}>
+                          <Eye className="h-4 w-4" />
+                        </Link>
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <Building2 className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                  <p className="text-muted-foreground mb-4">{t('dashboard.venueManager.noVenues')}</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>{t('dashboard.quickActions')}</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <Button asChild className="w-full justify-start" variant="outline" data-testid="button-homepage">
+                <Link href="/">
+                  <Home className="h-4 w-4 mr-2" />
+                  {t('dashboard.goToHomepage')}
+                </Link>
+              </Button>
+              <Button asChild className="w-full justify-start" variant="outline" data-testid="button-search-venues">
+                <Link href="/venues">
+                  <Search className="h-4 w-4 mr-2" />
+                  {t('dashboard.searchVenues')}
+                </Link>
+              </Button>
+              <Button asChild className="w-full justify-start" variant="outline">
+                <Link href="/events">
+                  <CalendarCheck className="h-4 w-4 mr-2" />
+                  {t('dashboard.browseEvents')}
+                </Link>
+              </Button>
+              <Button asChild className="w-full justify-start" variant="outline">
+                <Link href="/messages">
+                  <MessageSquare className="h-4 w-4 mr-2" />
+                  {t('dashboard.viewMessages')}
+                </Link>
+              </Button>
+              <Button asChild className="w-full justify-start" variant="outline">
+                <Link href="/profile">
+                  <Settings className="h-4 w-4 mr-2" />
+                  {t('dashboard.profileSettings')}
+                </Link>
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </>
+    );
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
@@ -362,6 +500,7 @@ export default function Dashboard() {
 
         {user?.role === 'organizer' && renderOrganizerDashboard()}
         {user?.role === 'attendee' && renderAttendeeDashboard()}
+        {user?.role === 'venues' && renderVenueDashboard()}
         {user?.role === 'admin' && (
           <div className="text-center py-8">
             <Button asChild>

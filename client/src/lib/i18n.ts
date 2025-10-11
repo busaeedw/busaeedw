@@ -287,6 +287,13 @@ const translations = {
     'dashboard.goToAdminDashboard': 'Go to Admin Dashboard',
     'dashboard.serviceProviderComingSoon': 'Service Provider features coming soon',
     'dashboard.viewServiceProviders': 'View Service Providers',
+    'dashboard.venueManager.myVenues': 'My Venues',
+    'dashboard.venueManager.totalVenues': 'Total venues managed',
+    'dashboard.venueManager.eventsThisYear': 'Events This Year',
+    'dashboard.venueManager.acrossAllVenues': 'Across all venues',
+    'dashboard.venueManager.managedVenues': 'Managed Venues',
+    'dashboard.venueManager.eventsInYear': 'events in {{year}}',
+    'dashboard.venueManager.noVenues': 'No venues assigned',
 
     // Profile
     'profile.title': 'Profile',
@@ -744,6 +751,13 @@ const translations = {
     'dashboard.goToAdminDashboard': 'الذهاب إلى لوحة تحكم الإدارة',
     'dashboard.serviceProviderComingSoon': 'مميزات مقدم الخدمات ستتوفر قريباً',
     'dashboard.viewServiceProviders': 'عرض مقدمي الخدمات',
+    'dashboard.venueManager.myVenues': 'قاعاتي',
+    'dashboard.venueManager.totalVenues': 'إجمالي القاعات المُدارة',
+    'dashboard.venueManager.eventsThisYear': 'الفعاليات هذا العام',
+    'dashboard.venueManager.acrossAllVenues': 'عبر جميع القاعات',
+    'dashboard.venueManager.managedVenues': 'القاعات المُدارة',
+    'dashboard.venueManager.eventsInYear': 'فعاليات في {{year}}',
+    'dashboard.venueManager.noVenues': 'لا توجد قاعات مخصصة',
 
     // Profile
     'profile.title': 'الملف الشخصي',

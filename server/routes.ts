@@ -481,6 +481,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get('/api/user/venues', unifiedAuth, async (req: any, res) => {
+    try {
+      const userId = req.authUserId;
+      const venuesWithStats = await storage.getUserVenuesWithStats(userId);
+      res.json(venuesWithStats);
+    } catch (error) {
+      console.error("Error fetching user venues:", error);
+      res.status(500).json({ message: "Failed to fetch user venues" });
+    }
+  });
+
   app.get('/api/user/registrations', unifiedAuth, async (req: any, res) => {
     try {
       const userId = req.authUserId;
