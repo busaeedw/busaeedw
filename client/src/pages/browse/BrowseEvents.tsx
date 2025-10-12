@@ -1,5 +1,6 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useLanguage } from '@/hooks/useLanguage';
+import { useAuth } from '@/hooks/useAuth';
 import { Header } from '@/components/Header';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -7,17 +8,36 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { LoadingSkeleton } from '@/components/ui/loading';
-import { Calendar, Search, Filter, MapPin, Users, Clock } from 'lucide-react';
+import { Calendar, Search, Filter, MapPin, Users, Clock, Pencil, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'wouter';
 import { type Event } from '@shared/schema';
+import { apiRequest } from '@/lib/queryClient';
+import { useToast } from '@/hooks/use-toast';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 
 export default function BrowseEvents() {
   const { t, language } = useLanguage();
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedCity, setSelectedCity] = useState('all');
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [eventToDelete, setEventToDelete] = useState<Event | null>(null);
+
+  const isAdmin = user?.role === 'admin';
 
   // Build query parameters for events API
   const buildQueryString = () => {
@@ -89,6 +109,39 @@ export default function BrowseEvents() {
       });
     } catch {
       return t('events.time.tbd');
+    }
+  };
+
+  const deleteMutation = useMutation({
+    mutationFn: async (eventId: string) => {
+      await apiRequest('DELETE', `/api/events/${eventId}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/events'] });
+      toast({
+        title: t('common.success'),
+        description: 'Event deleted successfully',
+      });
+      setDeleteDialogOpen(false);
+      setEventToDelete(null);
+    },
+    onError: (error: Error) => {
+      toast({
+        title: t('common.error'),
+        description: error.message || 'Failed to delete event',
+        variant: 'destructive',
+      });
+    },
+  });
+
+  const handleDeleteClick = (event: Event) => {
+    setEventToDelete(event);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = () => {
+    if (eventToDelete) {
+      deleteMutation.mutate(eventToDelete.id);
     }
   };
 
@@ -240,17 +293,46 @@ export default function BrowseEvents() {
                       </div>
                     </div>
 
-                    {/* Action Button */}
-                    <Button 
-                      className="w-full" 
-                      variant="outline"
-                      data-testid={`view-event-${event.id}`}
-                      asChild
-                    >
-                      <Link href={`/events/${event.id}`}>
-                        {t('events.cta.view')}
-                      </Link>
-                    </Button>
+                    {/* Action Buttons */}
+                    <div className="space-y-2">
+                      <Button 
+                        className="w-full" 
+                        variant="outline"
+                        data-testid={`view-event-${event.id}`}
+                        asChild
+                      >
+                        <Link href={`/events/${event.id}`}>
+                          {t('events.cta.view')}
+                        </Link>
+                      </Button>
+                      
+                      {isAdmin && (
+                        <div className="flex gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="flex-1"
+                            data-testid={`edit-event-${event.id}`}
+                            asChild
+                          >
+                            <Link href={`/events/${event.id}/edit`}>
+                              <Pencil className="h-4 w-4 mr-1" />
+                              {t('common.edit')}
+                            </Link>
+                          </Button>
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            className="flex-1"
+                            onClick={() => handleDeleteClick(event)}
+                            data-testid={`delete-event-${event.id}`}
+                          >
+                            <Trash2 className="h-4 w-4 mr-1" />
+                            {t('common.delete')}
+                          </Button>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </Card>
               ))}
@@ -267,6 +349,27 @@ export default function BrowseEvents() {
           </>
         )}
       </main>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t('common.confirm.delete')}</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete "{eventToDelete && (language === 'ar' && eventToDelete.titleAr ? eventToDelete.titleAr : eventToDelete?.title)}"? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteConfirm}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {deleteMutation.isPending ? t('common.deleting') : t('common.delete')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
