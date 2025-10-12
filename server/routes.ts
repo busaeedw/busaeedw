@@ -11,6 +11,7 @@ import {
   insertServiceBookingSchema,
   insertVenueSchema,
   insertOrganizerSchema,
+  insertUserSchema,
   registerUserSchema,
   loginSchema,
   forgotPasswordSchema,
@@ -559,6 +560,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.patch('/api/users/:id', unifiedAuth, async (req: any, res) => {
+    try {
+      const currentUserId = req.authUserId;
+      const targetUserId = req.params.id;
+      const currentUser = await storage.getUser(currentUserId);
+
+      if (!currentUser || currentUser.role !== 'admin') {
+        return res.status(403).json({ message: "Only admins can update users" });
+      }
+
+      const updateData = insertUserSchema.partial().parse(req.body);
+      const updatedUser = await storage.updateUser(targetUserId, updateData);
+      res.json(updatedUser);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid user data", errors: error.errors });
+      }
+      console.error("Error updating user:", error);
+      res.status(500).json({ message: "Failed to update user" });
+    }
+  });
+
+  app.delete('/api/users/:id', unifiedAuth, async (req: any, res) => {
+    try {
+      const currentUserId = req.authUserId;
+      const targetUserId = req.params.id;
+      const currentUser = await storage.getUser(currentUserId);
+
+      if (!currentUser || currentUser.role !== 'admin') {
+        return res.status(403).json({ message: "Only admins can delete users" });
+      }
+
+      if (currentUserId === targetUserId) {
+        return res.status(400).json({ message: "Cannot delete your own account" });
+      }
+
+      await storage.deleteUser(targetUserId);
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      res.status(500).json({ message: "Failed to delete user" });
+    }
+  });
+
   // Service provider routes
   app.get('/api/service-providers', async (req, res) => {
     try {
@@ -609,6 +654,56 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       console.error("Error creating service provider:", error);
       res.status(500).json({ message: "Failed to create service provider" });
+    }
+  });
+
+  app.patch('/api/service-providers/:id', unifiedAuth, async (req: any, res) => {
+    try {
+      const userId = req.authUserId;
+      const providerId = req.params.id;
+      const user = await storage.getUser(userId);
+      const provider = await storage.getServiceProvider(providerId);
+
+      if (!provider) {
+        return res.status(404).json({ message: "Service provider not found" });
+      }
+
+      if (provider.userId !== userId && user?.role !== "admin") {
+        return res.status(403).json({ message: "Unauthorized" });
+      }
+
+      const updateData = insertServiceProviderSchema.partial().parse(req.body);
+      const updatedProvider = await storage.updateServiceProvider(providerId, updateData);
+      res.json(updatedProvider);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid provider data", errors: error.errors });
+      }
+      console.error("Error updating service provider:", error);
+      res.status(500).json({ message: "Failed to update service provider" });
+    }
+  });
+
+  app.delete('/api/service-providers/:id', unifiedAuth, async (req: any, res) => {
+    try {
+      const userId = req.authUserId;
+      const providerId = req.params.id;
+      const user = await storage.getUser(userId);
+      const provider = await storage.getServiceProvider(providerId);
+
+      if (!provider) {
+        return res.status(404).json({ message: "Service provider not found" });
+      }
+
+      if (user?.role !== "admin") {
+        return res.status(403).json({ message: "Only admins can delete service providers" });
+      }
+
+      await storage.deleteServiceProvider(providerId);
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error deleting service provider:", error);
+      res.status(500).json({ message: "Failed to delete service provider" });
     }
   });
 

@@ -232,6 +232,19 @@ export class DatabaseStorage implements IStorage {
     return user;
   }
 
+  async updateUser(id: string, updates: Partial<UpsertUser>): Promise<User> {
+    const [user] = await db
+      .update(users)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(users.id, id))
+      .returning();
+    return user;
+  }
+
+  async deleteUser(id: string): Promise<void> {
+    await db.delete(users).where(eq(users.id, id));
+  }
+
   // Event operations
   async createEvent(event: InsertEvent): Promise<Event> {
     const [createdEvent] = await db.insert(events).values(event).returning();
@@ -401,6 +414,10 @@ export class DatabaseStorage implements IStorage {
       .where(eq(serviceProviders.id, id))
       .returning();
     return provider;
+  }
+
+  async deleteServiceProvider(id: string): Promise<void> {
+    await db.delete(serviceProviders).where(eq(serviceProviders.id, id));
   }
 
   // Review operations
