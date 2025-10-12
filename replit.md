@@ -51,7 +51,15 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Updates (October 2025)
 
-### Service Provider Dashboard Updates (October 11, 2025)
+### Service Provider Dashboard Updates (October 12, 2025)
+
+**Logout Error Fix (October 12, 2025):**
+- Fixed issue where users saw "Unauthorized" error toast after logging out
+- Implemented sessionStorage flag to track intentional logout actions
+- All protected pages now check for logout flag before showing unauthorized errors
+- Users now experience smooth logout flow with only success message, no error toasts
+
+**UI Simplification and Bilingual Support (October 11, 2025):**
 Successfully implemented complete bilingual support and streamlined UI for the service provider dashboard:
 
 **UI Simplification:**

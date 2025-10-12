@@ -63,7 +63,14 @@ export default function EventCreate() {
 
   // Redirect to login if not authenticated
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
+    const isLoggingOut = sessionStorage.getItem('isLoggingOut') === 'true';
+    
+    // Clear the logout flag if it exists
+    if (isLoggingOut) {
+      sessionStorage.removeItem('isLoggingOut');
+    }
+    
+    if (!isLoading && !isAuthenticated && !isLoggingOut) {
       toast({
         title: t('common.unauthorized'),
         description: t('common.unauthorized.desc'),

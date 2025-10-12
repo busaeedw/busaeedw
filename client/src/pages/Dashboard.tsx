@@ -50,8 +50,14 @@ export default function Dashboard() {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const isLogoutRedirect = urlParams.get('logout') === 'success';
+    const isLoggingOut = sessionStorage.getItem('isLoggingOut') === 'true';
     
-    if (!isLoading && !isAuthenticated && !isLogoutRedirect) {
+    // Clear the logout flag if it exists
+    if (isLoggingOut) {
+      sessionStorage.removeItem('isLoggingOut');
+    }
+    
+    if (!isLoading && !isAuthenticated && !isLogoutRedirect && !isLoggingOut) {
       toast({
         title: t('common.unauthorized'),
         description: t('common.unauthorized.desc'),

@@ -31,6 +31,9 @@ export function Header() {
       return response;
     },
     onSuccess: (data: any) => {
+      // Set flag to prevent unauthorized toast during logout
+      sessionStorage.setItem('isLoggingOut', 'true');
+      
       toast({
         title: t('common.logout.success.title'),
         description: t('common.logout.success.description'),
