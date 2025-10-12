@@ -32,7 +32,8 @@ export function Header() {
     },
     onSuccess: (data: any) => {
       // Set flag to prevent unauthorized toast during logout
-      sessionStorage.setItem('isLoggingOut', 'true');
+      // Using localStorage instead of sessionStorage because it persists across OIDC redirects
+      localStorage.setItem('isLoggingOut', 'true');
       
       toast({
         title: t('common.logout.success.title'),

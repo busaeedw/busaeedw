@@ -55,9 +55,10 @@ Preferred communication style: Simple, everyday language.
 
 **Logout Error Fix (October 12, 2025):**
 - Fixed issue where users saw "Unauthorized" error toast after logging out
-- Implemented sessionStorage flag to track intentional logout actions
+- Implemented localStorage flag to track intentional logout actions (persists across OIDC redirects)
 - All protected pages now check for logout flag before showing unauthorized errors
 - Users now experience smooth logout flow with only success message, no error toasts
+- Updated from sessionStorage to localStorage to handle external OIDC provider navigation
 
 **UI Simplification and Bilingual Support (October 11, 2025):**
 Successfully implemented complete bilingual support and streamlined UI for the service provider dashboard:

@@ -63,11 +63,11 @@ export default function EventCreate() {
 
   // Redirect to login if not authenticated
   useEffect(() => {
-    const isLoggingOut = sessionStorage.getItem('isLoggingOut') === 'true';
+    const isLoggingOut = localStorage.getItem('isLoggingOut') === 'true';
     
     // Clear the logout flag if it exists
     if (isLoggingOut) {
-      sessionStorage.removeItem('isLoggingOut');
+      localStorage.removeItem('isLoggingOut');
     }
     
     if (!isLoading && !isAuthenticated && !isLoggingOut) {

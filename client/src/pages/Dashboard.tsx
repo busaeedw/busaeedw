@@ -50,11 +50,11 @@ export default function Dashboard() {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const isLogoutRedirect = urlParams.get('logout') === 'success';
-    const isLoggingOut = sessionStorage.getItem('isLoggingOut') === 'true';
+    const isLoggingOut = localStorage.getItem('isLoggingOut') === 'true';
     
     // Clear the logout flag if it exists
     if (isLoggingOut) {
-      sessionStorage.removeItem('isLoggingOut');
+      localStorage.removeItem('isLoggingOut');
     }
     
     if (!isLoading && !isAuthenticated && !isLogoutRedirect && !isLoggingOut) {
