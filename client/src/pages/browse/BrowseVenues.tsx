@@ -1,21 +1,74 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useLanguage } from '@/hooks/useLanguage';
+import { useAuth } from '@/hooks/useAuth';
 import { Header } from '@/components/Header';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { MapPin, Search, Filter } from 'lucide-react';
+import { MapPin, Search, Filter, Pencil, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { type VenueAggregate } from '@shared/schema';
+import { apiRequest } from '@/lib/queryClient';
+import { useToast } from '@/hooks/use-toast';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 export default function BrowseVenues() {
   const { t, language } = useLanguage();
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [searchQuery, setSearchQuery] = useState('');
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [venueToDelete, setVenueToDelete] = useState<VenueAggregate | null>(null);
+
+  const isAdmin = user?.role === 'admin';
   
   const { data: venues = [], isLoading } = useQuery<VenueAggregate[]>({
     queryKey: ['/api/venues'],
   });
+
+  const deleteMutation = useMutation({
+    mutationFn: async (venueId: string) => {
+      await apiRequest(`/api/venues/${venueId}`, { method: 'DELETE' });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/venues'] });
+      toast({
+        title: t('common.success'),
+        description: 'Venue deleted successfully',
+      });
+      setDeleteDialogOpen(false);
+      setVenueToDelete(null);
+    },
+    onError: (error: Error) => {
+      toast({
+        title: t('common.error'),
+        description: error.message || 'Failed to delete venue',
+        variant: 'destructive',
+      });
+    },
+  });
+
+  const handleDeleteClick = (venue: VenueAggregate) => {
+    setVenueToDelete(venue);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = () => {
+    if (venueToDelete) {
+      deleteMutation.mutate(venueToDelete.id);
+    }
+  };
 
   const filteredVenues = venues.filter(venue => {
     const venueName = language === 'ar' && venue.venue_ar ? venue.venue_ar : venue.venue;
@@ -98,6 +151,19 @@ export default function BrowseVenues() {
                       {t('venues.button.view')}
                     </Button>
                   </div>
+
+                  {isAdmin && (
+                    <div className="flex gap-2 mt-2">
+                      <Button variant="outline" size="sm" className="flex-1" data-testid={`edit-item-${venue.id}`}>
+                        <Pencil className="h-4 w-4 mr-1" />
+                        Edit
+                      </Button>
+                      <Button variant="destructive" size="sm" className="flex-1" onClick={() => handleDeleteClick(venue)} data-testid={`delete-item-${venue.id}`}>
+                        <Trash2 className="h-4 w-4 mr-1" />
+                        Delete
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </Card>
             ))}
@@ -108,6 +174,26 @@ export default function BrowseVenues() {
           <p>{t('venues.total')} {filteredVenues.length}</p>
         </div>
       </main>
+
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t('common.confirm.delete')}</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete "{venueToDelete && (language === 'ar' && venueToDelete.venue_ar ? venueToDelete.venue_ar : venueToDelete?.venue)}"? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteConfirm}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {deleteMutation.isPending ? t('common.deleting') : t('common.delete')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

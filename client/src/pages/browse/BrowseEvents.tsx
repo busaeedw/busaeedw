@@ -114,7 +114,7 @@ export default function BrowseEvents() {
 
   const deleteMutation = useMutation({
     mutationFn: async (eventId: string) => {
-      await apiRequest('DELETE', `/api/events/${eventId}`);
+      await apiRequest(`/api/events/${eventId}`, { method: 'DELETE' });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/events'] });

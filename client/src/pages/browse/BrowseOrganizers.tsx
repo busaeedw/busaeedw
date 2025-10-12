@@ -1,14 +1,27 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useLanguage } from '@/hooks/useLanguage';
+import { useAuth } from '@/hooks/useAuth';
 import { Header } from '@/components/Header';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { User, Search, Filter, Calendar, MapPin } from 'lucide-react';
+import { User, Search, Filter, Calendar, MapPin, Pencil, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'wouter';
+import { apiRequest } from '@/lib/queryClient';
+import { useToast } from '@/hooks/use-toast';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 interface Organizer {
   id: string;
@@ -42,12 +55,52 @@ interface Organizer {
 
 export default function BrowseOrganizers() {
   const { t } = useLanguage();
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [searchQuery, setSearchQuery] = useState('');
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [organizerToDelete, setOrganizerToDelete] = useState<Organizer | null>(null);
+
+  const isAdmin = user?.role === 'admin';
 
   // Query for organizers using new API
   const { data: allOrganizers = [], isLoading } = useQuery<Organizer[]>({
     queryKey: ['/api/organizers'],
   });
+
+  const deleteMutation = useMutation({
+    mutationFn: async (organizerId: string) => {
+      await apiRequest(`/api/organizers/${organizerId}`, { method: 'DELETE' });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/organizers'] });
+      toast({
+        title: t('common.success'),
+        description: 'Organizer deleted successfully',
+      });
+      setDeleteDialogOpen(false);
+      setOrganizerToDelete(null);
+    },
+    onError: (error: Error) => {
+      toast({
+        title: t('common.error'),
+        description: error.message || 'Failed to delete organizer',
+        variant: 'destructive',
+      });
+    },
+  });
+
+  const handleDeleteClick = (organizer: Organizer) => {
+    setOrganizerToDelete(organizer);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = () => {
+    if (organizerToDelete) {
+      deleteMutation.mutate(organizerToDelete.id);
+    }
+  };
 
   // Apply search filter
   const organizers = allOrganizers.filter(organizer =>
@@ -167,6 +220,19 @@ export default function BrowseOrganizers() {
                     Contact
                   </Button>
                 </div>
+
+                {isAdmin && (
+                  <div className="flex gap-2 mt-2">
+                    <Button variant="outline" size="sm" className="flex-1" data-testid={`edit-item-${organizer.id}`}>
+                      <Pencil className="h-4 w-4 mr-1" />
+                      Edit
+                    </Button>
+                    <Button variant="destructive" size="sm" className="flex-1" onClick={() => handleDeleteClick(organizer)} data-testid={`delete-item-${organizer.id}`}>
+                      <Trash2 className="h-4 w-4 mr-1" />
+                      Delete
+                    </Button>
+                  </div>
+                )}
                 </Card>
               </Link>
             ))}
@@ -177,6 +243,26 @@ export default function BrowseOrganizers() {
           <p>{t('organizers.total.text')} {organizers.length}</p>
         </div>
       </main>
+
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t('common.confirm.delete')}</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete "{organizerToDelete && (organizerToDelete.businessName || `${organizerToDelete.firstName} ${organizerToDelete.lastName}`)}"? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteConfirm}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {deleteMutation.isPending ? t('common.deleting') : t('common.delete')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
