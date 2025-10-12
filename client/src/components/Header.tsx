@@ -262,6 +262,53 @@ export function Header() {
                     </Link>
                   );
                 })}
+                
+                {/* Browse Section */}
+                <div className="border-t pt-4">
+                  <p className="text-sm font-semibold text-gray-500 mb-2">{t('nav.browse')}</p>
+                  <div className="space-y-2">
+                    <Link
+                      href="/browse/events"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="block text-lg font-medium text-gray-900 hover:text-saudi-green"
+                      data-testid="mobile-browse-events"
+                    >
+                      {language === 'ar' ? 'الفعاليات' : 'Events'}
+                    </Link>
+                    <Link
+                      href="/browse/venues"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="block text-lg font-medium text-gray-900 hover:text-saudi-green"
+                      data-testid="mobile-browse-venues"
+                    >
+                      {t('nav.browse.venues')}
+                    </Link>
+                    <Link
+                      href="/browse/organizers"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="block text-lg font-medium text-gray-900 hover:text-saudi-green"
+                      data-testid="mobile-browse-organizers"
+                    >
+                      {t('nav.browse.organizers')}
+                    </Link>
+                    <Link
+                      href="/browse/providers"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="block text-lg font-medium text-gray-900 hover:text-saudi-green"
+                      data-testid="mobile-browse-providers"
+                    >
+                      {t('nav.browse.providers')}
+                    </Link>
+                    <Link
+                      href="/browse/users"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="block text-lg font-medium text-gray-900 hover:text-saudi-green"
+                      data-testid="mobile-browse-users"
+                    >
+                      {t('nav.browse.users')}
+                    </Link>
+                  </div>
+                </div>
                 {!isLoading && (
                   <>
                     {isAuthenticated && user ? (
