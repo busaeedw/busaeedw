@@ -339,10 +339,10 @@ const translations = {
     'admin.quick.verify.providers': 'Verify Providers',
     'admin.quick.view.analytics': 'View Analytics',
     'admin.create.event': 'Add Event',
-    'admin.create.venue': 'Add Venue',
-    'admin.create.organizer': 'Add Organizer',
-    'admin.create.provider': 'Add Provider',
-    'admin.create.user': 'Add User',
+    'admin.create.venue': 'Manage Venues',
+    'admin.create.organizer': 'Manage Organizers',
+    'admin.create.provider': 'Manage Providers',
+    'admin.create.user': 'Manage Users',
 
     // Event Create
     'event.create.title': 'Create Event',
@@ -822,10 +822,10 @@ const translations = {
     'admin.quick.verify.providers': 'التحقق من المقدمين',
     'admin.quick.view.analytics': 'عرض التحليلات',
     'admin.create.event': 'إضافة فعالية',
-    'admin.create.venue': 'إضافة مكان',
-    'admin.create.organizer': 'إضافة منظم',
-    'admin.create.provider': 'إضافة مقدم خدمة',
-    'admin.create.user': 'إضافة مستخدم',
+    'admin.create.venue': 'إدارة الأماكن',
+    'admin.create.organizer': 'إدارة المنظمين',
+    'admin.create.provider': 'إدارة مقدمي الخدمات',
+    'admin.create.user': 'إدارة المستخدمين',
 
     // Event Create
     'event.create.title': 'إنشاء فعالية',

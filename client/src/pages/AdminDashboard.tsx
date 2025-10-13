@@ -154,7 +154,7 @@ export default function AdminDashboard() {
               </Button>
 
               <Button
-                onClick={() => setLocation('/venues/create')}
+                onClick={() => setLocation('/browse/venues')}
                 className="h-24 flex flex-col items-center justify-center gap-2 bg-green-600 hover:bg-green-700"
                 data-testid="create-venue-button"
               >
@@ -163,7 +163,7 @@ export default function AdminDashboard() {
               </Button>
 
               <Button
-                onClick={() => setLocation('/organizers/create')}
+                onClick={() => setLocation('/browse/organizers')}
                 className="h-24 flex flex-col items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700"
                 data-testid="create-organizer-button"
               >
@@ -172,7 +172,7 @@ export default function AdminDashboard() {
               </Button>
 
               <Button
-                onClick={() => setLocation('/service-providers/create')}
+                onClick={() => setLocation('/browse/providers')}
                 className="h-24 flex flex-col items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700"
                 data-testid="create-service-provider-button"
               >
@@ -181,7 +181,7 @@ export default function AdminDashboard() {
               </Button>
 
               <Button
-                onClick={() => setLocation('/users/create')}
+                onClick={() => setLocation('/browse/users')}
                 className="h-24 flex flex-col items-center justify-center gap-2 bg-orange-600 hover:bg-orange-700"
                 data-testid="create-user-button"
               >
