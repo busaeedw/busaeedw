@@ -34,14 +34,25 @@ export default function Login() {
       });
       return response;
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       toast({
         title: t('auth.login.success.title'),
         description: t('auth.login.success.description'),
       });
       // Invalidate the auth user query to fetch the logged-in user
-      queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
-      setLocation("/");
+      await queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+      
+      // Fetch the user data to check role
+      const userData = await queryClient.fetchQuery({
+        queryKey: ["/api/auth/user"],
+      });
+      
+      // Redirect admin users to admin dashboard, others to regular dashboard
+      if (userData && (userData as any).role === 'admin') {
+        setLocation("/admin");
+      } else {
+        setLocation("/");
+      }
     },
     onError: (error: any) => {
       toast({

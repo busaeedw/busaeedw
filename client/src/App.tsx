@@ -8,6 +8,7 @@ import { useAuth } from "@/hooks/useAuth";
 import NotFound from "@/pages/not-found";
 import Landing from "@/pages/Landing";
 import Dashboard from "@/pages/Dashboard";
+import RoleBasedHome from "@/components/RoleBasedHome";
 import EventList from "@/pages/EventList";
 import EventCreate from "@/pages/EventCreate";
 import EventDetails from "@/pages/EventDetails";
@@ -70,7 +71,7 @@ function Router() {
         <Route path="/" component={Landing} />
       ) : (
         <>
-          <Route path="/" component={Dashboard} />
+          <Route path="/" component={RoleBasedHome} />
           <Route path="/dashboard" component={Dashboard} />
         </>
       )}
