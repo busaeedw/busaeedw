@@ -30,6 +30,9 @@ import Login from "@/pages/Login";
 import ForgotPassword from "@/pages/ForgotPassword";
 import ResetPassword from "@/pages/ResetPassword";
 import Profile from "@/pages/Profile";
+import Sponsors from "@/pages/Sponsors";
+import SponsorForm from "@/pages/SponsorForm";
+import SponsorDetails from "@/pages/SponsorDetails";
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -53,6 +56,10 @@ function Router() {
       <Route path="/venues" component={VenueList} />
       <Route path="/venues/:id/edit" component={VenueEdit} />
       <Route path="/venues/:id" component={VenueDetails} />
+      <Route path="/sponsors" component={Sponsors} />
+      <Route path="/sponsors/create" component={SponsorForm} />
+      <Route path="/sponsors/:id/edit" component={SponsorForm} />
+      <Route path="/sponsors/:id" component={SponsorDetails} />
 
       {/* Protected routes - components handle their own auth logic */}
       <Route path="/admin" component={AdminDashboard} />
