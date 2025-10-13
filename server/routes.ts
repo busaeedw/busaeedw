@@ -17,6 +17,8 @@ import {
   forgotPasswordSchema,
   resetPasswordSchema,
   directResetPasswordSchema,
+  insertSponsorSchema,
+  insertEventSponsorSchema,
 } from "@shared/schema";
 import { z } from "zod";
 import bcrypt from "bcrypt";
@@ -92,7 +94,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Only admins can change user roles" });
       }
       
-      if (!["admin", "organizer", "attendee", "services", "venue"].includes(role)) {
+      if (!["admin", "organizer", "attendee", "services", "venue", "sponsor"].includes(role)) {
         return res.status(400).json({ message: "Invalid role" });
       }
 
@@ -1185,6 +1187,218 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error seeding organizers:", error);
       res.status(500).json({ message: "Failed to seed organizers" });
+    }
+  });
+
+  // Sponsor routes
+  
+  // Get all sponsors (public)
+  app.get('/api/sponsors', async (req, res) => {
+    try {
+      const filters = {
+        city: req.query.city as string,
+        search: req.query.search as string,
+        isFeatured: req.query.isFeatured === 'true' ? true : undefined,
+        limit: req.query.limit ? parseInt(req.query.limit as string) : undefined,
+        offset: req.query.offset ? parseInt(req.query.offset as string) : undefined,
+      };
+      
+      const sponsors = await storage.getSponsors(filters);
+      res.json(sponsors);
+    } catch (error) {
+      console.error("Error fetching sponsors:", error);
+      res.status(500).json({ message: "Failed to fetch sponsors" });
+    }
+  });
+
+  // Get single sponsor (public)
+  app.get('/api/sponsors/:id', async (req, res) => {
+    try {
+      const sponsor = await storage.getSponsor(req.params.id);
+      if (!sponsor) {
+        return res.status(404).json({ message: "Sponsor not found" });
+      }
+      res.json(sponsor);
+    } catch (error) {
+      console.error("Error fetching sponsor:", error);
+      res.status(500).json({ message: "Failed to fetch sponsor" });
+    }
+  });
+
+  // Create sponsor (admin or sponsor user)
+  app.post('/api/sponsors', unifiedAuth, async (req: any, res) => {
+    try {
+      const userId = req.authUserId;
+      const user = await storage.getUser(userId);
+      
+      // Only admins and sponsor users can create sponsors
+      if (!user || (user.role !== 'admin' && user.role !== 'sponsor')) {
+        return res.status(403).json({ message: "Only admins and sponsor users can create sponsors" });
+      }
+
+      const validation = insertSponsorSchema.safeParse(req.body);
+      if (!validation.success) {
+        return res.status(400).json({ message: "Invalid sponsor data", errors: validation.error.issues });
+      }
+
+      // If sponsor user, auto-associate with their user account
+      const sponsorData = validation.data;
+      if (user.role === 'sponsor' && !sponsorData.userId) {
+        sponsorData.userId = userId;
+      }
+
+      const sponsor = await storage.createSponsor(sponsorData);
+      res.status(201).json(sponsor);
+    } catch (error) {
+      console.error("Error creating sponsor:", error);
+      res.status(500).json({ message: "Failed to create sponsor" });
+    }
+  });
+
+  // Update sponsor (admin or sponsor owner)
+  app.patch('/api/sponsors/:id', unifiedAuth, async (req: any, res) => {
+    try {
+      const userId = req.authUserId;
+      const user = await storage.getUser(userId);
+      const sponsor = await storage.getSponsor(req.params.id);
+      
+      if (!sponsor) {
+        return res.status(404).json({ message: "Sponsor not found" });
+      }
+
+      // Only admins or sponsor owners can update
+      if (!user || (user.role !== 'admin' && sponsor.userId !== userId)) {
+        return res.status(403).json({ message: "You don't have permission to update this sponsor" });
+      }
+
+      const validation = insertSponsorSchema.partial().safeParse(req.body);
+      if (!validation.success) {
+        return res.status(400).json({ message: "Invalid sponsor data", errors: validation.error.issues });
+      }
+
+      const updatedSponsor = await storage.updateSponsor(req.params.id, validation.data);
+      res.json(updatedSponsor);
+    } catch (error) {
+      console.error("Error updating sponsor:", error);
+      res.status(500).json({ message: "Failed to update sponsor" });
+    }
+  });
+
+  // Delete sponsor (admin only)
+  app.delete('/api/sponsors/:id', unifiedAuth, async (req: any, res) => {
+    try {
+      const userId = req.authUserId;
+      const user = await storage.getUser(userId);
+      
+      if (!user || user.role !== 'admin') {
+        return res.status(403).json({ message: "Only admins can delete sponsors" });
+      }
+
+      await storage.deleteSponsor(req.params.id);
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error deleting sponsor:", error);
+      res.status(500).json({ message: "Failed to delete sponsor" });
+    }
+  });
+
+  // Event-Sponsor association routes
+
+  // Get event sponsors (public)
+  app.get('/api/events/:eventId/sponsors', async (req, res) => {
+    try {
+      const eventSponsors = await storage.getEventSponsors(req.params.eventId);
+      res.json(eventSponsors);
+    } catch (error) {
+      console.error("Error fetching event sponsors:", error);
+      res.status(500).json({ message: "Failed to fetch event sponsors" });
+    }
+  });
+
+  // Attach sponsor to event (admin or event organizer)
+  app.post('/api/events/:eventId/sponsors', unifiedAuth, async (req: any, res) => {
+    try {
+      const userId = req.authUserId;
+      const user = await storage.getUser(userId);
+      const event = await storage.getEvent(req.params.eventId);
+      
+      if (!event) {
+        return res.status(404).json({ message: "Event not found" });
+      }
+
+      // Only admins or event organizers can attach sponsors
+      if (!user || (user.role !== 'admin' && event.organizerId !== userId)) {
+        return res.status(403).json({ message: "Only admins or event organizers can manage event sponsors" });
+      }
+
+      const validation = insertEventSponsorSchema.safeParse({
+        ...req.body,
+        eventId: req.params.eventId,
+      });
+      
+      if (!validation.success) {
+        return res.status(400).json({ message: "Invalid event sponsor data", errors: validation.error.issues });
+      }
+
+      const eventSponsor = await storage.attachSponsorToEvent(validation.data);
+      res.status(201).json(eventSponsor);
+    } catch (error) {
+      console.error("Error attaching sponsor to event:", error);
+      res.status(500).json({ message: "Failed to attach sponsor to event" });
+    }
+  });
+
+  // Update event sponsor tier (admin or event organizer)
+  app.patch('/api/events/:eventId/sponsors/:sponsorId', unifiedAuth, async (req: any, res) => {
+    try {
+      const userId = req.authUserId;
+      const user = await storage.getUser(userId);
+      const event = await storage.getEvent(req.params.eventId);
+      
+      if (!event) {
+        return res.status(404).json({ message: "Event not found" });
+      }
+
+      // Only admins or event organizers can update sponsor tiers
+      if (!user || (user.role !== 'admin' && event.organizerId !== userId)) {
+        return res.status(403).json({ message: "Only admins or event organizers can manage event sponsors" });
+      }
+
+      const { tier, displayOrder } = req.body;
+      const eventSponsor = await storage.updateEventSponsorTier(
+        req.params.eventId,
+        req.params.sponsorId,
+        tier,
+        displayOrder
+      );
+      res.json(eventSponsor);
+    } catch (error) {
+      console.error("Error updating event sponsor:", error);
+      res.status(500).json({ message: "Failed to update event sponsor" });
+    }
+  });
+
+  // Detach sponsor from event (admin or event organizer)
+  app.delete('/api/events/:eventId/sponsors/:sponsorId', unifiedAuth, async (req: any, res) => {
+    try {
+      const userId = req.authUserId;
+      const user = await storage.getUser(userId);
+      const event = await storage.getEvent(req.params.eventId);
+      
+      if (!event) {
+        return res.status(404).json({ message: "Event not found" });
+      }
+
+      // Only admins or event organizers can detach sponsors
+      if (!user || (user.role !== 'admin' && event.organizerId !== userId)) {
+        return res.status(403).json({ message: "Only admins or event organizers can manage event sponsors" });
+      }
+
+      await storage.detachSponsorFromEvent(req.params.eventId, req.params.sponsorId);
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error detaching sponsor from event:", error);
+      res.status(500).json({ message: "Failed to detach sponsor from event" });
     }
   });
 
