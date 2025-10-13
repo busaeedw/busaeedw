@@ -14,6 +14,7 @@ import { LoadingSpinner, LoadingSkeleton } from '@/components/ui/loading';
 import { apiRequest } from '@/lib/queryClient';
 import { Calendar, MapPin, Users, Clock, Star, MessageSquare, Share2, Pencil, Trash2 } from 'lucide-react';
 import { isUnauthorizedError } from '@/lib/authUtils';
+import { EventSponsorManager } from '@/components/EventSponsorManager';
 import { type Event, type VenueAggregate, type Organizer, type Review, type EventRegistration, type User } from '@shared/schema';
 import {
   AlertDialog,
@@ -312,6 +313,9 @@ export default function EventDetails() {
                 )}
               </CardContent>
             </Card>
+
+            {/* Event Sponsors */}
+            <EventSponsorManager eventId={id!} isOrganizer={false} />
 
             {/* Reviews */}
             <Card>
