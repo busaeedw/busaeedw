@@ -173,6 +173,40 @@ export const serviceBookings = pgTable("service_bookings", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Sponsors table
+export const sponsors = pgTable("sponsors", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").references(() => users.id, { onDelete: "set null" }), // Optional - for sponsor users to manage their profile
+  name: varchar("name").notNull(),
+  nameAr: varchar("name_ar"),
+  logoUrl: varchar("logo_url"),
+  website: varchar("website"),
+  description: text("description"),
+  descriptionAr: text("description_ar"),
+  contactEmail: varchar("contact_email"),
+  contactPhone: varchar("contact_phone"),
+  city: varchar("city"),
+  isFeatured: boolean("is_featured").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => [
+  index("sponsors_user_id_idx").on(table.userId),
+  index("sponsors_featured_idx").on(table.isFeatured),
+]);
+
+// Event Sponsors junction table (many-to-many)
+export const eventSponsors = pgTable("event_sponsors", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  eventId: varchar("event_id").notNull().references(() => events.id, { onDelete: "cascade" }),
+  sponsorId: varchar("sponsor_id").notNull().references(() => sponsors.id, { onDelete: "cascade" }),
+  tier: varchar("tier").default("standard"), // platinum, gold, silver, bronze, standard
+  displayOrder: integer("display_order").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => [
+  index("event_sponsors_event_id_idx").on(table.eventId),
+  index("event_sponsors_sponsor_id_idx").on(table.sponsorId),
+]);
+
 // Organizers table - dedicated table for event organizers
 export const organizers = pgTable("organizers", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
@@ -215,6 +249,10 @@ export const usersRelations = relations(users, ({ many, one }) => ({
     fields: [users.id],
     references: [serviceProviders.userId],
   }),
+  sponsor: one(sponsors, {
+    fields: [users.id],
+    references: [sponsors.userId],
+  }),
   sentMessages: many(messages, { relationName: "sentMessages" }),
   receivedMessages: many(messages, { relationName: "receivedMessages" }),
   reviews: many(reviews),
@@ -246,6 +284,7 @@ export const eventsRelations = relations(events, ({ one, many }) => ({
   registrations: many(eventRegistrations),
   reviews: many(reviews),
   serviceBookings: many(serviceBookings),
+  eventSponsors: many(eventSponsors),
 }));
 
 export const eventRegistrationsRelations = relations(eventRegistrations, ({ one }) => ({
@@ -303,6 +342,25 @@ export const serviceBookingsRelations = relations(serviceBookings, ({ one }) => 
   }),
 }));
 
+export const sponsorsRelations = relations(sponsors, ({ one, many }) => ({
+  user: one(users, {
+    fields: [sponsors.userId],
+    references: [users.id],
+  }),
+  eventSponsors: many(eventSponsors),
+}));
+
+export const eventSponsorsRelations = relations(eventSponsors, ({ one }) => ({
+  event: one(events, {
+    fields: [eventSponsors.eventId],
+    references: [events.id],
+  }),
+  sponsor: one(sponsors, {
+    fields: [eventSponsors.sponsorId],
+    references: [sponsors.id],
+  }),
+}));
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).omit({
   id: true,
@@ -317,7 +375,7 @@ export const registerUserSchema = createInsertSchema(users, {
   firstName: z.string().min(2, "First name must be at least 2 characters").max(50, "First name must be less than 50 characters"),
   lastName: z.string().min(2, "Last name must be at least 2 characters").max(50, "Last name must be less than 50 characters"),
   password: z.string().min(8, "Password must be at least 8 characters"),
-  role: z.enum(["attendee", "organizer", "venue", "services", "admin"]).default("attendee"),
+  role: z.enum(["attendee", "organizer", "venue", "services", "sponsor", "admin"]).default("attendee"),
 }).omit({
   id: true,
   createdAt: true,
@@ -406,6 +464,17 @@ export const insertPasswordResetTokenSchema = createInsertSchema(passwordResetTo
   createdAt: true,
 });
 
+export const insertSponsorSchema = createInsertSchema(sponsors).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertEventSponsorSchema = createInsertSchema(eventSponsors).omit({
+  id: true,
+  createdAt: true,
+});
+
 // Venue aggregate schema for venues endpoint
 export const venueAggregateSchema = z.object({
   id: z.string(),
@@ -444,3 +513,7 @@ export type InsertVenue = z.infer<typeof insertVenueSchema>;
 export type VenueAggregate = z.infer<typeof venueAggregateSchema>;
 export type Organizer = typeof organizers.$inferSelect;
 export type InsertOrganizer = z.infer<typeof insertOrganizerSchema>;
+export type Sponsor = typeof sponsors.$inferSelect;
+export type InsertSponsor = z.infer<typeof insertSponsorSchema>;
+export type EventSponsor = typeof eventSponsors.$inferSelect;
+export type InsertEventSponsor = z.infer<typeof insertEventSponsorSchema>;
