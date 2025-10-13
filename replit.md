@@ -76,3 +76,34 @@ Preferred communication style: Simple, everyday language.
 - `class-variance-authority`
 - `zod`
 - `memoizee`
+
+## Recent Updates (October 2025)
+
+### Admin User Auto-Redirect to Admin Dashboard (October 13, 2025)
+
+**Implemented Role-Based Login Redirect:**
+Admin users are now automatically redirected to the admin dashboard upon login, providing direct access to administrative controls.
+
+**Implementation Details:**
+
+**Login Flow (`client/src/pages/Login.tsx`):**
+- After successful login, the app fetches user data to check the role
+- Admin users (role === 'admin') are redirected to `/admin`
+- Non-admin users are redirected to `/` (regular dashboard)
+
+**Root Path Handling (`client/src/components/RoleBasedHome.tsx`):**
+- New component that intercepts root path access
+- Checks authenticated user's role
+- Redirects admin users to `/admin` automatically
+- Shows regular dashboard for other users
+
+**Routing Updates (`client/src/App.tsx`):**
+- Root path (`/`) now uses `RoleBasedHome` component
+- Admin users accessing root path are redirected to admin dashboard
+- Non-admin users see regular dashboard as before
+
+**Benefits:**
+- Admin users get immediate access to admin controls after login
+- Improved user experience with role-appropriate landing pages
+- Maintains backward compatibility for non-admin users
+- Consistent redirect behavior across login and direct URL access
