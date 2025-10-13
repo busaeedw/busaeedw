@@ -9,6 +9,8 @@ import {
   venues,
   organizers,
   passwordResetTokens,
+  sponsors,
+  eventSponsors,
   type User,
   type UpsertUser,
   type Event,
@@ -29,6 +31,10 @@ import {
   type InsertOrganizer,
   type PasswordResetToken,
   type InsertPasswordResetToken,
+  type Sponsor,
+  type InsertSponsor,
+  type EventSponsor,
+  type InsertEventSponsor,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and, or, ilike, sql } from "drizzle-orm";
@@ -122,6 +128,26 @@ export interface IStorage {
   }): Promise<Organizer[]>;
   updateOrganizer(id: string, updates: Partial<InsertOrganizer>): Promise<Organizer>;
   deleteOrganizer(id: string): Promise<void>;
+  
+  // Sponsor operations
+  createSponsor(sponsor: InsertSponsor): Promise<Sponsor>;
+  getSponsor(id: string): Promise<Sponsor | undefined>;
+  getSponsorByUserId(userId: string): Promise<Sponsor | undefined>;
+  getSponsors(filters?: {
+    city?: string;
+    search?: string;
+    isFeatured?: boolean;
+    limit?: number;
+    offset?: number;
+  }): Promise<Sponsor[]>;
+  updateSponsor(id: string, updates: Partial<InsertSponsor>): Promise<Sponsor>;
+  deleteSponsor(id: string): Promise<void>;
+  
+  // Event-Sponsor association operations
+  attachSponsorToEvent(eventSponsor: InsertEventSponsor): Promise<EventSponsor>;
+  getEventSponsors(eventId: string): Promise<(EventSponsor & { sponsor: Sponsor })[]>;
+  detachSponsorFromEvent(eventId: string, sponsorId: string): Promise<void>;
+  updateEventSponsorTier(eventId: string, sponsorId: string, tier: string, displayOrder?: number): Promise<EventSponsor>;
   
   // Analytics
   getEventStats(): Promise<{ totalEvents: number; totalAttendees: number; totalProviders: number }>;
@@ -820,6 +846,144 @@ export class DatabaseStorage implements IStorage {
     // For express-session with PostgreSQL store, we would need to delete sessions
     // This is a placeholder - actual implementation would depend on session store
     console.log(`Invalidating sessions for user ${userId}`);
+  }
+
+  // Sponsor operations
+  async createSponsor(sponsorData: InsertSponsor): Promise<Sponsor> {
+    const [sponsor] = await db
+      .insert(sponsors)
+      .values(sponsorData)
+      .returning();
+    return sponsor;
+  }
+
+  async getSponsor(id: string): Promise<Sponsor | undefined> {
+    const [sponsor] = await db
+      .select()
+      .from(sponsors)
+      .where(eq(sponsors.id, id));
+    return sponsor;
+  }
+
+  async getSponsorByUserId(userId: string): Promise<Sponsor | undefined> {
+    const [sponsor] = await db
+      .select()
+      .from(sponsors)
+      .where(eq(sponsors.userId, userId));
+    return sponsor;
+  }
+
+  async getSponsors(filters?: {
+    city?: string;
+    search?: string;
+    isFeatured?: boolean;
+    limit?: number;
+    offset?: number;
+  }): Promise<Sponsor[]> {
+    let query = db.select().from(sponsors);
+
+    const conditions = [];
+    if (filters?.city) {
+      conditions.push(eq(sponsors.city, filters.city));
+    }
+    if (filters?.search) {
+      conditions.push(
+        or(
+          ilike(sponsors.name, `%${filters.search}%`),
+          ilike(sponsors.nameAr, `%${filters.search}%`),
+          ilike(sponsors.description, `%${filters.search}%`)
+        )!
+      );
+    }
+    if (filters?.isFeatured !== undefined) {
+      conditions.push(eq(sponsors.isFeatured, filters.isFeatured));
+    }
+
+    if (conditions.length > 0) {
+      query = query.where(and(...conditions)!) as typeof query;
+    }
+
+    query = query.orderBy(desc(sponsors.isFeatured), desc(sponsors.createdAt)) as typeof query;
+
+    if (filters?.limit) {
+      query = query.limit(filters.limit) as typeof query;
+    }
+    if (filters?.offset) {
+      query = query.offset(filters.offset) as typeof query;
+    }
+
+    return query;
+  }
+
+  async updateSponsor(id: string, updates: Partial<InsertSponsor>): Promise<Sponsor> {
+    const [sponsor] = await db
+      .update(sponsors)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(sponsors.id, id))
+      .returning();
+    return sponsor;
+  }
+
+  async deleteSponsor(id: string): Promise<void> {
+    await db.delete(sponsors).where(eq(sponsors.id, id));
+  }
+
+  // Event-Sponsor association operations
+  async attachSponsorToEvent(eventSponsorData: InsertEventSponsor): Promise<EventSponsor> {
+    const [eventSponsor] = await db
+      .insert(eventSponsors)
+      .values(eventSponsorData)
+      .returning();
+    return eventSponsor;
+  }
+
+  async getEventSponsors(eventId: string): Promise<(EventSponsor & { sponsor: Sponsor })[]> {
+    const results = await db
+      .select()
+      .from(eventSponsors)
+      .innerJoin(sponsors, eq(eventSponsors.sponsorId, sponsors.id))
+      .where(eq(eventSponsors.eventId, eventId))
+      .orderBy(eventSponsors.displayOrder, desc(eventSponsors.createdAt));
+
+    return results.map(row => ({
+      ...row.event_sponsors,
+      sponsor: row.sponsors,
+    }));
+  }
+
+  async detachSponsorFromEvent(eventId: string, sponsorId: string): Promise<void> {
+    await db
+      .delete(eventSponsors)
+      .where(
+        and(
+          eq(eventSponsors.eventId, eventId),
+          eq(eventSponsors.sponsorId, sponsorId)
+        )
+      );
+  }
+
+  async updateEventSponsorTier(
+    eventId: string,
+    sponsorId: string,
+    tier: string,
+    displayOrder?: number
+  ): Promise<EventSponsor> {
+    const updates: Partial<InsertEventSponsor> = { tier };
+    if (displayOrder !== undefined) {
+      updates.displayOrder = displayOrder;
+    }
+
+    const [eventSponsor] = await db
+      .update(eventSponsors)
+      .set(updates)
+      .where(
+        and(
+          eq(eventSponsors.eventId, eventId),
+          eq(eventSponsors.sponsorId, sponsorId)
+        )
+      )
+      .returning();
+    return eventSponsor;
   }
 }
 
