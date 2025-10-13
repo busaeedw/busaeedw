@@ -79,6 +79,22 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Updates (October 2025)
 
+### Website Logo Added to Header (October 13, 2025)
+
+**Implemented Custom Logo:**
+Added the website logo image to the header, replacing the text-based logo for a more professional appearance.
+
+**Implementation Details:**
+- Logo image imported from attached assets using `@assets` alias
+- Displayed in the Header component at 64px height with auto width
+- Logo maintains aspect ratio using `object-contain`
+- Logo is clickable and navigates to homepage
+- Logo appears on all pages throughout the application
+- Alt text set to "EventHub Logo" for accessibility
+
+**Files Modified:**
+- `client/src/components/Header.tsx`: Updated to display logo image
+
 ### Admin User Auto-Redirect to Admin Dashboard (October 13, 2025)
 
 **Implemented Role-Based Login Redirect:**
