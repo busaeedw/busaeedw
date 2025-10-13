@@ -220,3 +220,41 @@ Event organizers and admins can now attach sponsors to events through an integra
 
 **Future Enhancements:**
 - Complete internationalization (sponsor translations in i18n)
+
+### Admin Dashboard Button Update (October 13, 2025)
+
+**Changed "Add Event" to "Manage Events":**
+Updated the admin dashboard quick action button to navigate to the events management page instead of event creation.
+
+**Implementation Details:**
+- Button label changed from "Create Event" to "Manage Events"
+- Button now navigates to `/events` (event listing page) instead of `/events/create`
+- Icon changed to CalendarCheck for better visual representation
+- data-testid updated to `manage-events-button`
+
+**Files Modified:**
+- `client/src/pages/AdminDashboard.tsx`: Updated quick action button
+
+### Sample Data Population (October 13, 2025)
+
+**Added Real Events and Organizers:**
+Populated the database with 10 real upcoming events from 10times.com and their corresponding organizer profiles.
+
+**Events Added:**
+- Saudi Design Show (May 2025) - 10,000 attendees
+- Saudi Elenex 2025 (Oct 2025) - 20,000 attendees
+- Mobility Live Saudi Arabia 2025 (Oct 2025) - 10,000 attendees
+- Saudi Agriculture 2025 (Oct 2025) - 12,300 attendees
+- Red Hat Summit 2025 (Nov 2025) - 5,000 attendees
+- Seamless Saudi Arabia 2025 (Nov 2025) - 10,000 attendees
+- Saudi Food Expo 2025 (Nov 2025) - 45,000 attendees
+- BIGBOX KSA 2025 (Nov 2025) - 500 attendees
+- INDEX Saudi Arabia 2026 (Sep 2026) - 17,000 attendees
+- Saudi Event Show 2026 (Sep 2026) - 10,000 attendees
+
+**Features:**
+- All events include bilingual data (English/Arabic)
+- Event images with Saudi color themes
+- Complete venue information
+- Proper categorization and tags
+- Professional organizer profiles created

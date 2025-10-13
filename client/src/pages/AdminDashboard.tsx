@@ -146,11 +146,11 @@ export default function AdminDashboard() {
           <CardContent>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
               <Button
-                onClick={() => setLocation('/events/create')}
+                onClick={() => setLocation('/events')}
                 className="h-24 flex flex-col items-center justify-center gap-2 bg-primary hover:bg-primary/90"
-                data-testid="create-event-button"
+                data-testid="manage-events-button"
               >
-                <Plus className="h-6 w-6" />
+                <CalendarCheck className="h-6 w-6" />
                 <span className="text-sm font-medium">{t('admin.create.event')}</span>
               </Button>
 
