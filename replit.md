@@ -1,7 +1,7 @@
 # EventHub Saudi Arabia - Event Management Platform
 
 ## Overview
-EventHub is a comprehensive event management platform for Saudi Arabia, acting as a digital marketplace connecting event organizers, attendees, and service providers. It facilitates event creation, discovery, and management, alongside bookings for services like catering and photography. The platform supports multiple user roles (admin, organizer, attendee, service_provider), offers bilingual support (English/Arabic) with RTL layout, and is built as a full-stack web application tailored for the Saudi market.
+EventHub is a comprehensive event management platform for Saudi Arabia, acting as a digital marketplace connecting event organizers, attendees, service providers, and sponsors. It facilitates event creation, discovery, and management, alongside bookings for services like catering and photography, and event sponsorships. The platform supports multiple user roles (admin, organizer, attendee, service_provider, sponsor), offers bilingual support (English/Arabic) with RTL layout, and is built as a full-stack web application tailored for the Saudi market.
 
 ## User Preferences
 Preferred communication style: Simple, everyday language.
@@ -31,13 +31,14 @@ Preferred communication style: Simple, everyday language.
 ### Authentication & Authorization
 - **Provider**: Replit Auth (OpenID Connect)
 - **Session Handling**: Server-side, httpOnly cookies
-- **Role-Based Access**: Four roles (admin, organizer, attendee, service_provider) with route protection
+- **Role-Based Access**: Five roles (admin, organizer, attendee, service_provider, sponsor) with route protection
 - **User Management**: Automatic creation/updates via OIDC claims
 
 ### Core Features
 - **Event Management**: CRUD operations, categorization, search
 - **Registration**: Tracking, capacity management
 - **Service Provider Marketplace**: Profiles, reviews, booking
+- **Sponsorship Management**: Sponsor profiles, event-sponsor associations
 - **Messaging**: Real-time communication
 - **Review & Rating**: Bidirectional for events and providers
 - **Admin Dashboard**: Oversight and management tools
@@ -146,3 +147,49 @@ Admin users are now automatically redirected to the admin dashboard upon login, 
 - Improved user experience with role-appropriate landing pages
 - Maintains backward compatibility for non-admin users
 - Consistent redirect behavior across login and direct URL access
+
+### Event Sponsorship System (October 13, 2025)
+
+**Implemented Complete Event Sponsorship Feature:**
+Added a comprehensive sponsorship system to connect sponsors with events, enabling event organizers to showcase their sponsors and sponsors to increase brand visibility.
+
+**Database Schema:**
+- **sponsors table**: Stores sponsor information with bilingual support (name/nameAr, description/descriptionAr)
+  - Fields: id, name, nameAr, logoUrl, website, contactEmail, contactPhone, description, descriptionAr, city, isFeatured, userId
+  - Optional userId link allows sponsors with "sponsor" role to manage their own profiles
+- **eventSponsors table**: Many-to-many junction table linking events to sponsors
+  - Fields: eventId, sponsorId (composite primary key)
+- **sponsor role**: New user role added to system for sponsor account management
+
+**Authorization & Access Control:**
+- Admins can create/edit/delete any sponsor
+- Users with "sponsor" role can create/edit their own sponsor profiles
+- Organizers can attach/detach sponsors to their events
+- All users (including unauthenticated) can view sponsor listings and details
+
+**Frontend Features:**
+- **Sponsor List Page** (`/sponsors`): Browse all sponsors with search and city filter
+- **Sponsor Details Page** (`/sponsors/:id`): Public view of sponsor information with logo, website, contact details
+- **Sponsor Form** (`/sponsors/create`, `/sponsors/:id/edit`): Create/edit sponsor profiles (admin/sponsor only)
+- Query structure uses TanStack Query with structured keys for proper cache invalidation
+
+**API Endpoints:**
+- `GET /api/sponsors` - List sponsors with optional search and city filters
+- `GET /api/sponsors/:id` - Get sponsor details
+- `POST /api/sponsors` - Create sponsor (admin/sponsor only)
+- `PATCH /api/sponsors/:id` - Update sponsor (admin/sponsor only)
+- `DELETE /api/sponsors/:id` - Delete sponsor (admin only)
+
+**Files Modified:**
+- `shared/schema.ts`: Added sponsors and eventSponsors tables with relations
+- `server/storage.ts`: Added sponsor CRUD operations to IStorage interface
+- `server/routes.ts`: Added sponsor API endpoints with proper authorization
+- `client/src/pages/Sponsors.tsx`: Sponsor listing with search/filter
+- `client/src/pages/SponsorForm.tsx`: Sponsor create/edit form
+- `client/src/pages/SponsorDetails.tsx`: Public sponsor details view
+- `client/src/App.tsx`: Added sponsor routes
+
+**Future Enhancements:**
+- Event creation/editing UI for attaching sponsors
+- Display sponsors on event detail pages with logos
+- Complete internationalization (sponsor translations in i18n)

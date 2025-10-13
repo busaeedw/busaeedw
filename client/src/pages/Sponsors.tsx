@@ -9,12 +9,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { LoadingSkeleton } from '@/components/ui/loading';
 import { useQuery } from '@tanstack/react-query';
 import { useLanguage } from '@/hooks/useLanguage';
+import { useAuth } from '@/hooks/useAuth';
 import { Link } from 'wouter';
 import { Search, Plus, Building2, Globe, MapPin, Star } from 'lucide-react';
 import { type Sponsor } from '@shared/schema';
 
 export default function Sponsors() {
   const { t, language } = useLanguage();
+  const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCity, setSelectedCity] = useState('');
 
@@ -49,12 +51,14 @@ export default function Sponsors() {
             </h1>
             <p className="text-muted-foreground">{t('sponsors.subtitle')}</p>
           </div>
-          <Link href="/sponsors/create">
-            <Button data-testid="button-create-sponsor">
-              <Plus className="h-4 w-4 mr-2" />
-              {t('sponsors.create')}
-            </Button>
-          </Link>
+          {user && (user.role === 'admin' || user.role === 'sponsor') && (
+            <Link href="/sponsors/create">
+              <Button data-testid="button-create-sponsor">
+                <Plus className="h-4 w-4 mr-2" />
+                {t('sponsors.create')}
+              </Button>
+            </Link>
+          )}
         </div>
 
         <div className="bg-card p-6 rounded-lg shadow-sm mb-8">

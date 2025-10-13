@@ -44,7 +44,7 @@ export default function SponsorForm() {
 
   // Fetch sponsor data if editing
   const { data: sponsor, isLoading: sponsorLoading } = useQuery<Sponsor>({
-    queryKey: [`/api/sponsors/${id}`],
+    queryKey: ['/api/sponsors', id],
     enabled: isEditMode && isAuthenticated,
   });
 
@@ -151,7 +151,7 @@ export default function SponsorForm() {
         description: t('sponsors.update.success.desc'),
       });
       queryClient.invalidateQueries({ queryKey: ['/api/sponsors'] });
-      queryClient.invalidateQueries({ queryKey: [`/api/sponsors/${id}`] });
+      queryClient.invalidateQueries({ queryKey: ['/api/sponsors', id] });
       setLocation('/sponsors');
     },
     onError: () => {
