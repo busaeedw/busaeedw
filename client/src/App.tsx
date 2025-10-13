@@ -17,6 +17,7 @@ import Messages from "@/pages/Messages";
 import AdminDashboard from "@/pages/AdminDashboard";
 import VenueList from "@/pages/VenueList";
 import VenueDetails from "@/pages/VenueDetails";
+import VenueEdit from "@/pages/VenueEdit";
 import BrowseEvents from "@/pages/browse/BrowseEvents";
 import BrowseVenues from "@/pages/browse/BrowseVenues";
 import BrowseOrganizers from "@/pages/browse/BrowseOrganizers";
@@ -49,6 +50,7 @@ function Router() {
       <Route path="/service-providers/:id" component={ServiceProviderProfile} />
       <Route path="/service-providers" component={EventList} />
       <Route path="/venues" component={VenueList} />
+      <Route path="/venues/:id/edit" component={VenueEdit} />
       <Route path="/venues/:id" component={VenueDetails} />
 
       {/* Protected routes - components handle their own auth logic */}
