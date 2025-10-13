@@ -1,6 +1,7 @@
-import { useParams } from "wouter";
-import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, MapPin, Building2, Star, User } from "lucide-react";
+import { useState } from "react";
+import { useParams, useLocation } from "wouter";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { ArrowLeft, MapPin, Building2, Star, User, Pencil, Trash2 } from "lucide-react";
 import { Link } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,6 +9,19 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import type { Venue, VenueAggregate, Event, User as UserType } from "@shared/schema";
 
 type VenueWithOwner = (Venue | VenueAggregate) & {
@@ -21,7 +35,14 @@ type VenueWithOwner = (Venue | VenueAggregate) & {
 
 export default function VenueDetails() {
   const { id } = useParams<{ id: string }>();
+  const [, setLocation] = useLocation();
   const { language, t } = useLanguage();
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  
+  const isAdmin = user?.role === 'admin';
 
   const { data: venue, isLoading: venueLoading, error: venueError } = useQuery<VenueWithOwner>({
     queryKey: [`/api/venues/${id}`],
@@ -32,6 +53,35 @@ export default function VenueDetails() {
     queryKey: [`/api/events?venueId=${id}`],
     enabled: !!id,
   });
+
+  const deleteMutation = useMutation({
+    mutationFn: async () => {
+      await apiRequest(`/api/venues/${id}`, { method: 'DELETE' });
+    },
+    onSuccess: () => {
+      toast({
+        title: t('common.success'),
+        description: "Venue deleted successfully",
+      });
+      setLocation('/browse/venues');
+    },
+    onError: (error: Error) => {
+      toast({
+        title: t('common.error'),
+        description: error.message || "Failed to delete venue",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleDeleteClick = () => {
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = () => {
+    deleteMutation.mutate();
+    setDeleteDialogOpen(false);
+  };
 
   if (venueLoading) {
     return (
@@ -90,10 +140,34 @@ export default function VenueDetails() {
                   <span data-testid="text-venue-location">{venue.location}, {venue.city}</span>
                 </div>
               </div>
-              <Badge variant="outline" className="text-saudi-green border-saudi-green">
-                <Building2 className="h-4 w-4 mr-1" />
-                {t('venue.details.badge')}
-              </Badge>
+              <div className="flex flex-col gap-2 items-end">
+                <Badge variant="outline" className="text-saudi-green border-saudi-green">
+                  <Building2 className="h-4 w-4 mr-1" />
+                  {t('venue.details.badge')}
+                </Badge>
+                {isAdmin && (
+                  <div className="flex gap-2">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={() => setLocation(`/venues/${id}/edit`)}
+                      data-testid="edit-venue-button"
+                    >
+                      <Pencil className="h-4 w-4 mr-1" />
+                      Edit
+                    </Button>
+                    <Button 
+                      variant="destructive" 
+                      size="sm" 
+                      onClick={handleDeleteClick}
+                      data-testid="delete-venue-button"
+                    >
+                      <Trash2 className="h-4 w-4 mr-1" />
+                      Delete
+                    </Button>
+                  </div>
+                )}
+              </div>
             </div>
           </CardHeader>
           <CardContent>
@@ -216,6 +290,27 @@ export default function VenueDetails() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t('common.confirm.delete')}</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete "{venue && (language === 'ar' && venue.nameAr ? venue.nameAr : venue?.name || venue?.venue)}"? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteConfirm}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {deleteMutation.isPending ? t('common.deleting') : t('common.delete')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
