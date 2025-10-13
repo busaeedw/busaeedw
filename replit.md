@@ -79,6 +79,29 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Updates (October 2025)
 
+### Color Theme Updated to Match Saudi Events Website (October 13, 2025)
+
+**Implemented Official Saudi Events Color Palette:**
+Updated the entire application color theme to match the official Saudi events website (saudievents.sa) for consistent branding and visual identity.
+
+**New Color Palette:**
+- **Primary (Olive)**: `hsl(72 74% 27%)` - #667912 - Main brand color
+- **Secondary (Coral)**: `hsl(16 82% 61%)` - #fc743c - Accent buttons and highlights
+- **Accent (Gold)**: `hsl(46 74% 70%)` - #fad46b - Secondary accents and highlights
+- **Olive Light**: `hsl(75 36% 55%)` - #a3b368 - Used for primary in dark mode
+- **Mauve**: `hsl(350 27% 78%)` - #d7b9bd - Chart color
+
+**Implementation Details:**
+- Updated CSS custom properties in `client/src/index.css` for both light and dark modes
+- Updated Tailwind config color definitions in `tailwind.config.ts`
+- Added new color utility classes: `coral`, `olive` with variants
+- Dark mode uses complementary colors from the same palette with adjusted saturation/lightness
+- All UI components automatically inherit the new color scheme through CSS variables
+
+**Files Modified:**
+- `client/src/index.css`: Updated CSS variables for light and dark themes
+- `tailwind.config.ts`: Added coral, olive, and updated gold color variants
+
 ### Website Logo Added to Header (October 13, 2025)
 
 **Implemented Custom Logo:**
