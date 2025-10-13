@@ -51,6 +51,47 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Updates (October 2025)
 
+### Admin CRUD Controls on Detail Pages (October 13, 2025)
+
+**Event and Venue Detail Page Admin Controls:**
+Successfully implemented comprehensive admin CRUD functionality on Event Details and Venue Details pages:
+
+**Event Details Page (/events/:id):**
+- Added Edit and Delete buttons for admin users in the hero section
+- Edit button (data-testid="edit-event-button") navigates to /events/:id/edit page
+- Delete button (data-testid="delete-event-button") opens confirmation dialog
+- Buttons positioned after event badges with responsive layout
+- Only visible when authenticated user has role === 'admin'
+
+**Venue Details Page (/venues/:id):**
+- Added Edit and Delete buttons for admin users in the header section
+- Edit button (data-testid="edit-venue-button") navigates to /venues/:id/edit page
+- Delete button (data-testid="delete-venue-button") opens confirmation dialog
+- Buttons positioned next to venue badge with flex column layout
+- Only visible when authenticated user has role === 'admin'
+
+**Delete Confirmation Flow:**
+- AlertDialog component displays confirmation message with item name
+- Cancel button closes dialog without executing deletion
+- Delete button confirms and executes deletion via API (DELETE /api/events/:id or DELETE /api/venues/:id)
+- After successful deletion, user is redirected to respective browse page (/browse/events or /browse/venues)
+- Success/error toast notifications display operation results
+- Bilingual support for all dialog text and messages
+
+**Technical Implementation:**
+- Added useState for dialog state management
+- Implemented delete mutation using TanStack Query with proper error handling
+- Used useLocation hook for programmatic navigation after deletion
+- Integrated AlertDialog from shadcn/ui for consistent UX
+- Added Pencil and Trash2 icons from lucide-react
+- All admin controls follow existing authorization pattern (user?.role === 'admin')
+
+**Authorization:**
+- Admin controls only visible to authenticated admin users
+- Backend API validates admin role before allowing delete operations
+- Non-admin users see no Edit/Delete buttons on detail pages
+- Tested and verified admin authorization works correctly
+
 ### Service Provider Dashboard Updates (October 12, 2025)
 
 **Logout Error Fix (October 12, 2025):**
