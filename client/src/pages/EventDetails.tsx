@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import { useParams } from 'wouter';
+import { useEffect, useState } from 'react';
+import { useParams, useLocation } from 'wouter';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@/hooks/useAuth';
 import { useLanguage } from '@/hooks/useLanguage';
@@ -12,9 +12,19 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { LoadingSpinner, LoadingSkeleton } from '@/components/ui/loading';
 import { apiRequest } from '@/lib/queryClient';
-import { Calendar, MapPin, Users, Clock, Star, MessageSquare, Share2 } from 'lucide-react';
+import { Calendar, MapPin, Users, Clock, Star, MessageSquare, Share2, Pencil, Trash2 } from 'lucide-react';
 import { isUnauthorizedError } from '@/lib/authUtils';
 import { type Event, type VenueAggregate, type Organizer, type Review, type EventRegistration, type User } from '@shared/schema';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 type EventWithOrganizer = Event & {
   organizer?: Organizer;
@@ -30,10 +40,14 @@ type ReviewWithReviewer = Review & {
 
 export default function EventDetails() {
   const { id } = useParams();
+  const [, setLocation] = useLocation();
   const { user, isAuthenticated, isLoading: authLoading } = useAuth();
   const { t, language } = useLanguage();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  
+  const isAdmin = user?.role === 'admin';
 
   const { data: event, isLoading: eventLoading, error: eventError } = useQuery<EventWithOrganizer>({
     queryKey: ['/api/events', id],
@@ -88,6 +102,35 @@ export default function EventDetails() {
       });
     },
   });
+
+  const deleteMutation = useMutation({
+    mutationFn: async () => {
+      await apiRequest(`/api/events/${id}`, { method: 'DELETE' });
+    },
+    onSuccess: () => {
+      toast({
+        title: t('common.success'),
+        description: "Event deleted successfully",
+      });
+      setLocation('/browse/events');
+    },
+    onError: (error: Error) => {
+      toast({
+        title: t('common.error'),
+        description: error.message || "Failed to delete event",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleDeleteClick = () => {
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = () => {
+    deleteMutation.mutate();
+    setDeleteDialogOpen(false);
+  };
 
   const getCategoryColor = (category: string) => {
     const colors: Record<string, string> = {
@@ -152,13 +195,37 @@ export default function EventDetails() {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
             <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
-              <div className="flex items-center gap-4 mb-4">
-                <Badge className={getCategoryColor(event.category)}>
-                  {t(`events.filter.${event.category}`) || event.category}
-                </Badge>
-                <Badge variant={event.status === 'published' ? 'default' : 'secondary'}>
-                  {event.status}
-                </Badge>
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-4">
+                  <Badge className={getCategoryColor(event.category)}>
+                    {t(`events.filter.${event.category}`) || event.category}
+                  </Badge>
+                  <Badge variant={event.status === 'published' ? 'default' : 'secondary'}>
+                    {event.status}
+                  </Badge>
+                </div>
+                {isAdmin && (
+                  <div className="flex gap-2">
+                    <Button 
+                      variant="secondary" 
+                      size="sm" 
+                      onClick={() => setLocation(`/events/${id}/edit`)}
+                      data-testid="edit-event-button"
+                    >
+                      <Pencil className="h-4 w-4 mr-1" />
+                      Edit
+                    </Button>
+                    <Button 
+                      variant="destructive" 
+                      size="sm" 
+                      onClick={handleDeleteClick}
+                      data-testid="delete-event-button"
+                    >
+                      <Trash2 className="h-4 w-4 mr-1" />
+                      Delete
+                    </Button>
+                  </div>
+                )}
               </div>
               <h1 className="text-4xl font-bold mb-4" data-testid="event-detail-title">
                 {language === 'ar' && event.titleAr ? event.titleAr : event.title}
@@ -437,6 +504,27 @@ export default function EventDetails() {
         </div>
       </main>
       <Footer />
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t('common.confirm.delete')}</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete "{event && (language === 'ar' && event.titleAr ? event.titleAr : event?.title)}"? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteConfirm}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {deleteMutation.isPending ? t('common.deleting') : t('common.delete')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
