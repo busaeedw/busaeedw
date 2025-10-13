@@ -11,6 +11,7 @@ import Dashboard from "@/pages/Dashboard";
 import EventList from "@/pages/EventList";
 import EventCreate from "@/pages/EventCreate";
 import EventDetails from "@/pages/EventDetails";
+import EventEdit from "@/pages/EventEdit";
 import ServiceProviderProfile from "@/pages/ServiceProviderProfile";
 import Messages from "@/pages/Messages";
 import AdminDashboard from "@/pages/AdminDashboard";
@@ -38,29 +39,30 @@ function Router() {
       <Route path="/login" component={Login} />
       <Route path="/forgot-password" component={ForgotPassword} />
       <Route path="/reset-password" component={ResetPassword} />
-      
+
       {/* Public routes available to all users */}
       <Route path="/events" component={EventList} />
       <Route path="/events/create" component={EventCreate} />
+      <Route path="/events/:id/edit" component={EventEdit} />
       <Route path="/events/:id" component={EventDetails} />
       <Route path="/organizers/:id" component={OrganizerDetails} />
       <Route path="/service-providers/:id" component={ServiceProviderProfile} />
       <Route path="/service-providers" component={EventList} />
       <Route path="/venues" component={VenueList} />
       <Route path="/venues/:id" component={VenueDetails} />
-      
+
       {/* Protected routes - components handle their own auth logic */}
       <Route path="/admin" component={AdminDashboard} />
       <Route path="/messages" component={Messages} />
       <Route path="/profile" component={Profile} />
-      
+
       {/* Browse routes */}
       <Route path="/browse/events" component={BrowseEvents} />
       <Route path="/browse/venues" component={BrowseVenues} />
       <Route path="/browse/organizers" component={BrowseOrganizers} />
       <Route path="/browse/providers" component={BrowseProviders} />
       <Route path="/browse/users" component={BrowseUsers} />
-      
+
       {/* Home routes */}
       {isLoading || !isAuthenticated ? (
         <Route path="/" component={Landing} />
