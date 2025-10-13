@@ -189,7 +189,34 @@ Added a comprehensive sponsorship system to connect sponsors with events, enabli
 - `client/src/pages/SponsorDetails.tsx`: Public sponsor details view
 - `client/src/App.tsx`: Added sponsor routes
 
+**Event Sponsor Management (Completed October 13, 2025):**
+Event organizers and admins can now attach sponsors to events through an integrated management interface.
+
+**Implementation Details:**
+- **EventSponsorManager Component**: Reusable component for managing event-sponsor relationships
+  - Displays current sponsors with logos and names (bilingual support)
+  - Add sponsor dialog with searchable dropdown (filters already-attached sponsors)
+  - Remove sponsor functionality (only for authorized users)
+  - Real-time updates via TanStack Query cache invalidation
+- **Authorization**: 
+  - Admins can manage sponsors on ANY event
+  - Event organizers can manage sponsors on THEIR OWN events
+  - Auth loading handled properly to prevent flickering controls
+- **Integration Points**:
+  - Event Edit page: Sponsor management section below event form
+  - Event Details page: Sponsor display with optional management controls
+  - Admin Dashboard: Quick access button to create sponsors
+- **API Endpoints**:
+  - `POST /api/events/:eventId/sponsors` - Attach sponsor to event (admin/organizer only)
+  - `DELETE /api/events/:eventId/sponsors/:sponsorId` - Detach sponsor from event (admin/organizer only)
+  - `GET /api/events/:eventId/sponsors` - List sponsors for event (public)
+
+**Files Modified:**
+- `client/src/components/EventSponsorManager.tsx`: Sponsor management component
+- `client/src/pages/EventEdit.tsx`: Added sponsor management section
+- `client/src/pages/EventDetails.tsx`: Added sponsor display with management
+- `client/src/pages/AdminDashboard.tsx`: Added sponsor quick action
+- `server/routes.ts`: Added event sponsor endpoints
+
 **Future Enhancements:**
-- Event creation/editing UI for attaching sponsors
-- Display sponsors on event detail pages with logos
 - Complete internationalization (sponsor translations in i18n)
