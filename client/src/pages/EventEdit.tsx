@@ -17,6 +17,7 @@ import { LoadingSpinner } from '@/components/ui/loading';
 import { apiRequest } from '@/lib/queryClient';
 import { isUnauthorizedError } from '@/lib/authUtils';
 import { type Event } from '@shared/schema';
+import { EventSponsorManager } from '@/components/EventSponsorManager';
 
 type EventFormData = {
   title: string;
@@ -354,6 +355,11 @@ export default function EventEdit() {
             </Button>
           </div>
         </form>
+
+        {/* Sponsor Management Section */}
+        <div className="mt-8">
+          <EventSponsorManager eventId={id!} isOrganizer={true} />
+        </div>
       </main>
     </div>
   );
