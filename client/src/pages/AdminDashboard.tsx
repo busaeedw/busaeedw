@@ -13,7 +13,8 @@ import { useLocation } from 'wouter';
 import { 
   Users, 
   CalendarCheck, 
-  Building, 
+  Building,
+  Building2,
   TrendingUp,
   Eye,
   MoreHorizontal,
@@ -187,6 +188,15 @@ export default function AdminDashboard() {
               >
                 <UserPlus className="h-6 w-6" />
                 <span className="text-sm font-medium">{t('admin.create.user')}</span>
+              </Button>
+
+              <Button
+                onClick={() => setLocation('/sponsors')}
+                className="h-24 flex flex-col items-center justify-center gap-2 bg-coral hover:bg-coral/90"
+                data-testid="manage-sponsors-button"
+              >
+                <Building2 className="h-6 w-6" />
+                <span className="text-sm font-medium">Manage Sponsors</span>
               </Button>
             </div>
           </CardContent>
