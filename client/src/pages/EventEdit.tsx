@@ -357,9 +357,11 @@ export default function EventEdit() {
         </form>
 
         {/* Sponsor Management Section */}
-        <div className="mt-8">
-          <EventSponsorManager eventId={id!} isOrganizer={true} />
-        </div>
+        {!authLoading && (
+          <div className="mt-8">
+            <EventSponsorManager eventId={id!} canManage={!!(user && (user.role === 'admin' || event?.organizerId === user.id))} />
+          </div>
+        )}
       </main>
     </div>
   );

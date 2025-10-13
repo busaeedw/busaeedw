@@ -25,7 +25,7 @@ import { type Sponsor } from '@shared/schema';
 
 interface EventSponsorManagerProps {
   eventId: string;
-  isOrganizer?: boolean;
+  canManage?: boolean;
 }
 
 type EventSponsor = {
@@ -35,7 +35,7 @@ type EventSponsor = {
   sponsor: Sponsor;
 };
 
-export function EventSponsorManager({ eventId, isOrganizer = false }: EventSponsorManagerProps) {
+export function EventSponsorManager({ eventId, canManage = false }: EventSponsorManagerProps) {
   const { t, language } = useLanguage();
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -124,7 +124,7 @@ export function EventSponsorManager({ eventId, isOrganizer = false }: EventSpons
       <CardHeader>
         <div className="flex justify-between items-center">
           <CardTitle>Event Sponsors</CardTitle>
-          {isOrganizer && (
+          {canManage && (
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
                 <Button size="sm" data-testid="button-add-event-sponsor">
@@ -214,7 +214,7 @@ export function EventSponsorManager({ eventId, isOrganizer = false }: EventSpons
                     </Badge>
                   )}
                 </div>
-                {isOrganizer && (
+                {canManage && (
                   <Button
                     variant="ghost"
                     size="sm"

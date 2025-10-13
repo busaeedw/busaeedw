@@ -315,7 +315,9 @@ export default function EventDetails() {
             </Card>
 
             {/* Event Sponsors */}
-            <EventSponsorManager eventId={id!} isOrganizer={false} />
+            {!authLoading && (
+              <EventSponsorManager eventId={id!} canManage={!!(user && (user.role === 'admin' || event?.organizerId === user.id))} />
+            )}
 
             {/* Reviews */}
             <Card>
