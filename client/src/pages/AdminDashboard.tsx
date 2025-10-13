@@ -18,7 +18,11 @@ import {
   Eye,
   MoreHorizontal,
   CheckCircle,
-  XCircle
+  XCircle,
+  Plus,
+  MapPin,
+  Briefcase,
+  UserPlus
 } from 'lucide-react';
 import { isUnauthorizedError } from '@/lib/authUtils';
 
@@ -132,6 +136,61 @@ export default function AdminDashboard() {
           <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('admin.dashboard.title')}</h1>
           <p className="text-gray-600">{t('admin.dashboard.subtitle')}</p>
         </div>
+
+        {/* Quick Actions */}
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle className="text-lg">{t('admin.quick.actions')}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+              <Button
+                onClick={() => setLocation('/events/create')}
+                className="h-24 flex flex-col items-center justify-center gap-2 bg-primary hover:bg-primary/90"
+                data-testid="create-event-button"
+              >
+                <Plus className="h-6 w-6" />
+                <span className="text-sm font-medium">{t('admin.create.event')}</span>
+              </Button>
+
+              <Button
+                onClick={() => setLocation('/venues/create')}
+                className="h-24 flex flex-col items-center justify-center gap-2 bg-green-600 hover:bg-green-700"
+                data-testid="create-venue-button"
+              >
+                <MapPin className="h-6 w-6" />
+                <span className="text-sm font-medium">{t('admin.create.venue')}</span>
+              </Button>
+
+              <Button
+                onClick={() => setLocation('/organizers/create')}
+                className="h-24 flex flex-col items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700"
+                data-testid="create-organizer-button"
+              >
+                <Briefcase className="h-6 w-6" />
+                <span className="text-sm font-medium">{t('admin.create.organizer')}</span>
+              </Button>
+
+              <Button
+                onClick={() => setLocation('/service-providers/create')}
+                className="h-24 flex flex-col items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700"
+                data-testid="create-service-provider-button"
+              >
+                <Building className="h-6 w-6" />
+                <span className="text-sm font-medium">{t('admin.create.provider')}</span>
+              </Button>
+
+              <Button
+                onClick={() => setLocation('/users/create')}
+                className="h-24 flex flex-col items-center justify-center gap-2 bg-orange-600 hover:bg-orange-700"
+                data-testid="create-user-button"
+              >
+                <UserPlus className="h-6 w-6" />
+                <span className="text-sm font-medium">{t('admin.create.user')}</span>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Stats Overview */}
         <div className="grid md:grid-cols-4 gap-6 mb-8">

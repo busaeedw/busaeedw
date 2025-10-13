@@ -338,6 +338,11 @@ const translations = {
     'admin.quick.review.events': 'Review Events', 
     'admin.quick.verify.providers': 'Verify Providers',
     'admin.quick.view.analytics': 'View Analytics',
+    'admin.create.event': 'Add Event',
+    'admin.create.venue': 'Add Venue',
+    'admin.create.organizer': 'Add Organizer',
+    'admin.create.provider': 'Add Provider',
+    'admin.create.user': 'Add User',
 
     // Event Create
     'event.create.title': 'Create Event',
@@ -816,6 +821,11 @@ const translations = {
     'admin.quick.review.events': 'مراجعة الفعاليات',
     'admin.quick.verify.providers': 'التحقق من المقدمين',
     'admin.quick.view.analytics': 'عرض التحليلات',
+    'admin.create.event': 'إضافة فعالية',
+    'admin.create.venue': 'إضافة مكان',
+    'admin.create.organizer': 'إضافة منظم',
+    'admin.create.provider': 'إضافة مقدم خدمة',
+    'admin.create.user': 'إضافة مستخدم',
 
     // Event Create
     'event.create.title': 'إنشاء فعالية',
