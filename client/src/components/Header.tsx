@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
-import logoImage from '@assets/IMG_9901_1760320578585.jpeg';
+import logoImage from '@assets/IMG_9906_1760456346156.jpeg';
 
 export function Header() {
   const [location, setLocation] = useLocation();
@@ -91,13 +91,16 @@ export function Header() {
           <div className="flex items-center gap-8">
             <div className="flex-shrink-0">
               <Link href="/">
-                <div className="flex items-center">
+                <div className="flex items-center gap-3">
                   <img 
                     src={logoImage} 
                     alt="EventHub Logo" 
                     className="h-16 w-auto object-contain"
                     data-testid="logo-image"
                   />
+                  <h1 className="text-2xl font-bold text-saudi-green" data-testid="portal-title">
+                    EVENTHUB
+                  </h1>
                 </div>
               </Link>
               {/* Language Toggle below logo - Desktop & Mobile */}
