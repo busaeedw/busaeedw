@@ -160,6 +160,11 @@ export function Header() {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start" className="w-48">
                   <DropdownMenuItem asChild>
+                    <Link href="/sponsors" data-testid="browse-sponsors">
+                      {t('nav.browse.sponsors')}
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
                     <Link href="/browse/organizers" data-testid="browse-organizers">
                       {t('nav.browse.organizers')}
                     </Link>
