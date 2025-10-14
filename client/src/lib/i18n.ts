@@ -223,6 +223,12 @@ const translations = {
     'sponsors.update.success.desc': 'The sponsor has been updated successfully.',
     'sponsors.update.error': 'Failed to update sponsor',
     'sponsors.update.error.desc': 'An error occurred while updating the sponsor.',
+    'sponsors.upload': 'Upload Logo',
+    'sponsors.uploading': 'Uploading...',
+    'sponsors.upload.success': 'Logo uploaded successfully',
+    'sponsors.upload.success.desc': 'Your logo has been uploaded.',
+    'sponsors.upload.error': 'Upload failed',
+    'sponsors.upload.error.desc': 'Failed to upload logo. Please try again.',
 
     // Venue Browse Additional Keys
     'venues.browse.subtitle': 'Discover and explore available venues for your events',
@@ -738,6 +744,12 @@ const translations = {
     'sponsors.update.success.desc': 'تم تحديث الراعي بنجاح.',
     'sponsors.update.error': 'فشل تحديث الراعي',
     'sponsors.update.error.desc': 'حدث خطأ أثناء تحديث الراعي.',
+    'sponsors.upload': 'رفع الشعار',
+    'sponsors.uploading': 'جاري الرفع...',
+    'sponsors.upload.success': 'تم رفع الشعار بنجاح',
+    'sponsors.upload.success.desc': 'تم رفع شعارك.',
+    'sponsors.upload.error': 'فشل الرفع',
+    'sponsors.upload.error.desc': 'فشل رفع الشعار. يرجى المحاولة مرة أخرى.',
 
     // Venue Browse Additional Keys
     'venues.browse.subtitle': 'اكتشف واستكشف القاعات المتاحة لفعالياتك',
