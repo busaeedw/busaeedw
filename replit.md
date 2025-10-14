@@ -258,3 +258,40 @@ Populated the database with 10 real upcoming events from 10times.com and their c
 - Complete venue information
 - Proper categorization and tags
 - Professional organizer profiles created
+
+### Sponsor System Internationalization (October 14, 2025)
+
+**Completed Full Internationalization for Sponsor System:**
+Added comprehensive Arabic translations for all sponsor-related features and fixed critical bug in sponsor listing.
+
+**Internationalization Updates:**
+- Added sponsor translations to `client/src/lib/i18n.ts` for both English and Arabic
+- All sponsor form fields now have proper Arabic labels:
+  - Name fields: "الاسم (بالإنجليزية)" / "الاسم (بالعربية)"
+  - Contact fields: "البريد الإلكتروني للتواصل" / "رقم الهاتف للتواصل"
+  - Description fields: "الوصف (بالإنجليزية)" / "الوصف (بالعربية)"
+- Admin dashboard "Manage Sponsors" button: "ادارة الرعاة" (Arabic)
+- Success/error messages fully translated
+
+**Bug Fixes:**
+- **Fixed Sponsor Listing Bug**: Corrected query string construction in `client/src/pages/Sponsors.tsx`
+  - Issue: Query parameters were being appended as object to URL path causing 404 errors
+  - Solution: Properly construct query string using `buildQueryString()` and include in queryKey
+  - Now correctly fetches sponsors: `GET /api/sponsors?limit=20`
+
+**Translation Keys Added:**
+- `sponsors.title`, `sponsors.subtitle`, `sponsors.create`
+- `sponsors.form.name`, `sponsors.form.nameAr`, `sponsors.form.logoUrl`
+- `sponsors.form.website`, `sponsors.form.city`, `sponsors.form.contactEmail`
+- `sponsors.form.contactPhone`, `sponsors.form.description`, `sponsors.form.descriptionAr`
+- Success/error messages for create/update operations
+- `admin.create.sponsor` for admin dashboard button
+
+**Files Modified:**
+- `client/src/lib/i18n.ts`: Added 28 sponsor translation keys (English/Arabic)
+- `client/src/pages/Sponsors.tsx`: Fixed query string bug
+- `client/src/pages/AdminDashboard.tsx`: Updated button to use translation
+
+**API Verification:**
+- Sponsors API endpoint working correctly: `GET /api/sponsors` returns 10 sample sponsors
+- All sponsor data includes bilingual fields (name/nameAr, description/descriptionAr)

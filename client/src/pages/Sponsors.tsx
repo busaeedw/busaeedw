@@ -29,8 +29,9 @@ export default function Sponsors() {
     return queryString ? `?${queryString}` : '';
   };
 
+  const queryString = buildQueryString();
   const { data: sponsors, isLoading } = useQuery<Sponsor[]>({
-    queryKey: ['/api/sponsors', { search: searchQuery, city: selectedCity }],
+    queryKey: [`/api/sponsors${queryString}`],
   });
 
   const cities = [
