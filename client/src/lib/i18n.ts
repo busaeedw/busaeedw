@@ -429,6 +429,12 @@ const translations = {
     'event.create.pricing.maxattendees.placeholder': 'Unlimited',
     'event.create.pricing.image': 'Event Image URL',
     'event.create.pricing.image.placeholder': 'https://example.com/image.jpg',
+    'event.create.sponsors.title': 'Event Sponsors',
+    'event.create.sponsors.description': 'Select up to 3 sponsors for your event (optional)',
+    'event.create.sponsors.sponsor1': 'Sponsor 1',
+    'event.create.sponsors.sponsor2': 'Sponsor 2',
+    'event.create.sponsors.sponsor3': 'Sponsor 3',
+    'event.create.sponsors.placeholder': 'Select a sponsor',
     'event.create.button.create': 'Creating...',
 
     // Event Details
@@ -458,6 +464,7 @@ const translations = {
     'common.error': 'Error occurred',
     'common.save': 'Save',
     'common.cancel': 'Cancel',
+    'common.none': 'None',
     'common.logout.success.title': 'Logged out',
     'common.logout.success.description': 'You have been successfully logged out.',
     'common.logout.error.title': 'Logout failed',
@@ -948,6 +955,12 @@ const translations = {
     'event.create.pricing.maxattendees.placeholder': 'غير محدود',
     'event.create.pricing.image': 'رابط صورة الفعالية',
     'event.create.pricing.image.placeholder': 'https://example.com/image.jpg',
+    'event.create.sponsors.title': 'رعاة الفعالية',
+    'event.create.sponsors.description': 'اختر ما يصل إلى 3 رعاة لفعاليتك (اختياري)',
+    'event.create.sponsors.sponsor1': 'الراعي 1',
+    'event.create.sponsors.sponsor2': 'الراعي 2',
+    'event.create.sponsors.sponsor3': 'الراعي 3',
+    'event.create.sponsors.placeholder': 'اختر راعياً',
     'event.create.button.create': 'جاري الإنشاء...',
 
     // Event Details
@@ -977,6 +990,7 @@ const translations = {
     'common.error': 'حدث خطأ',
     'common.save': 'حفظ',
     'common.cancel': 'إلغاء',
+    'common.none': 'لا شيء',
     'common.logout.success.title': 'تم تسجيل الخروج',
     'common.logout.success.description': 'تم تسجيل خروجك بنجاح.',
     'common.logout.error.title': 'فشل تسجيل الخروج',
