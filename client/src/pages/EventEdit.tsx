@@ -54,7 +54,7 @@ export default function EventEdit() {
     enabled: !!id,
   });
 
-  const { data: venues = [] } = useQuery({
+  const { data: venues = [] } = useQuery<any[]>({
     queryKey: ['/api/venues'],
   });
 
