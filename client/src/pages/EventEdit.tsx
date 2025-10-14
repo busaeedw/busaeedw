@@ -96,10 +96,16 @@ export default function EventEdit() {
 
   const updateEventMutation = useMutation({
     mutationFn: async (data: EventFormData) => {
+      const eventData = {
+        ...data,
+        sponsor1Id: data.sponsor1Id || null,
+        sponsor2Id: data.sponsor2Id || null,
+        sponsor3Id: data.sponsor3Id || null,
+      };
       const response = await apiRequest(`/api/events/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+        body: JSON.stringify(eventData),
       });
       return response.json();
     },
@@ -361,12 +367,15 @@ export default function EventEdit() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="sponsor1Id">{t('event.create.sponsors.sponsor1')}</Label>
-                  <Select onValueChange={(value) => setValue('sponsor1Id', value)} value={watch('sponsor1Id') || ''}>
+                  <Select 
+                    onValueChange={(value) => setValue('sponsor1Id', value === 'none' ? undefined : value)} 
+                    value={watch('sponsor1Id') || 'none'}
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder={t('event.create.sponsors.placeholder')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">{t('common.none')}</SelectItem>
+                      <SelectItem value="none">{t('common.none')}</SelectItem>
                       {sponsors.map((sponsor) => (
                         <SelectItem key={sponsor.id} value={sponsor.id}>
                           {sponsor.name}
@@ -378,12 +387,15 @@ export default function EventEdit() {
 
                 <div className="space-y-2">
                   <Label htmlFor="sponsor2Id">{t('event.create.sponsors.sponsor2')}</Label>
-                  <Select onValueChange={(value) => setValue('sponsor2Id', value)} value={watch('sponsor2Id') || ''}>
+                  <Select 
+                    onValueChange={(value) => setValue('sponsor2Id', value === 'none' ? undefined : value)} 
+                    value={watch('sponsor2Id') || 'none'}
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder={t('event.create.sponsors.placeholder')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">{t('common.none')}</SelectItem>
+                      <SelectItem value="none">{t('common.none')}</SelectItem>
                       {sponsors.map((sponsor) => (
                         <SelectItem key={sponsor.id} value={sponsor.id}>
                           {sponsor.name}
@@ -395,12 +407,15 @@ export default function EventEdit() {
 
                 <div className="space-y-2">
                   <Label htmlFor="sponsor3Id">{t('event.create.sponsors.sponsor3')}</Label>
-                  <Select onValueChange={(value) => setValue('sponsor3Id', value)} value={watch('sponsor3Id') || ''}>
+                  <Select 
+                    onValueChange={(value) => setValue('sponsor3Id', value === 'none' ? undefined : value)} 
+                    value={watch('sponsor3Id') || 'none'}
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder={t('event.create.sponsors.placeholder')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">{t('common.none')}</SelectItem>
+                      <SelectItem value="none">{t('common.none')}</SelectItem>
                       {sponsors.map((sponsor) => (
                         <SelectItem key={sponsor.id} value={sponsor.id}>
                           {sponsor.name}

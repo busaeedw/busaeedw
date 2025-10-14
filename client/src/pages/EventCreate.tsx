@@ -115,9 +115,9 @@ export default function EventCreate() {
       city: '',
       venue: '',
       venueId: '',
-      sponsor1Id: '',
-      sponsor2Id: '',
-      sponsor3Id: '',
+      sponsor1Id: undefined,
+      sponsor2Id: undefined,
+      sponsor3Id: undefined,
       price: '0',
       currency: 'SAR',
       maxAttendees: undefined,
@@ -148,6 +148,9 @@ export default function EventCreate() {
         price: data.price.toString(),        // Send string, not number (for decimal precision)
         maxAttendees: data.maxAttendees && data.maxAttendees.trim() !== '' ? parseInt(data.maxAttendees) : null,
         venueId: data.venueId && data.venueId !== 'custom' ? data.venueId : null, // Set to null for custom venues
+        sponsor1Id: data.sponsor1Id || null,
+        sponsor2Id: data.sponsor2Id || null,
+        sponsor3Id: data.sponsor3Id || null,
       };
       const response = await apiRequest('/api/events', {
         method: 'POST',
@@ -599,14 +602,17 @@ export default function EventCreate() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>{t('event.create.sponsors.sponsor1')}</FormLabel>
-                        <Select onValueChange={field.onChange} value={field.value || ''}>
+                        <Select 
+                          onValueChange={(value) => field.onChange(value === 'none' ? undefined : value)} 
+                          value={field.value || 'none'}
+                        >
                           <FormControl>
                             <SelectTrigger data-testid="select-sponsor1">
                               <SelectValue placeholder={t('event.create.sponsors.placeholder')} />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="">{t('common.none')}</SelectItem>
+                            <SelectItem value="none">{t('common.none')}</SelectItem>
                             {sponsors.map((sponsor) => (
                               <SelectItem key={sponsor.id} value={sponsor.id}>
                                 {language === 'ar' && sponsor.nameAr ? sponsor.nameAr : sponsor.name}
@@ -625,14 +631,17 @@ export default function EventCreate() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>{t('event.create.sponsors.sponsor2')}</FormLabel>
-                        <Select onValueChange={field.onChange} value={field.value || ''}>
+                        <Select 
+                          onValueChange={(value) => field.onChange(value === 'none' ? undefined : value)} 
+                          value={field.value || 'none'}
+                        >
                           <FormControl>
                             <SelectTrigger data-testid="select-sponsor2">
                               <SelectValue placeholder={t('event.create.sponsors.placeholder')} />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="">{t('common.none')}</SelectItem>
+                            <SelectItem value="none">{t('common.none')}</SelectItem>
                             {sponsors.map((sponsor) => (
                               <SelectItem key={sponsor.id} value={sponsor.id}>
                                 {language === 'ar' && sponsor.nameAr ? sponsor.nameAr : sponsor.name}
@@ -651,14 +660,17 @@ export default function EventCreate() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>{t('event.create.sponsors.sponsor3')}</FormLabel>
-                        <Select onValueChange={field.onChange} value={field.value || ''}>
+                        <Select 
+                          onValueChange={(value) => field.onChange(value === 'none' ? undefined : value)} 
+                          value={field.value || 'none'}
+                        >
                           <FormControl>
                             <SelectTrigger data-testid="select-sponsor3">
                               <SelectValue placeholder={t('event.create.sponsors.placeholder')} />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="">{t('common.none')}</SelectItem>
+                            <SelectItem value="none">{t('common.none')}</SelectItem>
                             {sponsors.map((sponsor) => (
                               <SelectItem key={sponsor.id} value={sponsor.id}>
                                 {language === 'ar' && sponsor.nameAr ? sponsor.nameAr : sponsor.name}
