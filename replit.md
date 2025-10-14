@@ -77,3 +77,43 @@ Preferred communication style: Simple, everyday language.
 -   `class-variance-authority`
 -   `zod`
 -   `memoizee`
+## Recent Changes
+
+### Sponsor Logo Upload Functionality (October 14, 2025)
+
+**Implemented Manual Logo Upload Feature:**
+Added complete file upload functionality for sponsor logos in both admin dashboard and edit sponsor pages.
+
+**Backend Implementation:**
+- **File Upload Endpoint**: `POST /api/sponsors/upload-logo`
+  - Accepts: Images (jpeg, jpg, png, gif, webp, svg)
+  - Max Size: 5MB
+  - Storage: `attached_assets/sponsor_logos/`
+  - Returns: `{ logoUrl: "/assets/sponsor_logos/{filename}" }`
+- **Multer Configuration**: Handles file uploads with validation and automatic directory creation
+- **Static Serving**: Logos served via Express at `/assets/sponsor_logos/` path
+
+**Frontend Implementation:**
+- **Upload Button**: File picker for selecting and uploading logo images
+- **Logo Preview**: Real-time preview of uploaded/selected logos
+- **URL Input**: Alternative method to set logo via URL
+- **Clear Logo**: Remove uploaded logo functionality
+- **Loading States**: Visual feedback during upload process
+
+**Translation Support:**
+Added bilingual translations for upload functionality:
+- English: "Upload Logo", "Uploading...", success/error messages
+- Arabic: "رفع الشعار", "جاري الرفع...", success/error messages
+
+**Files Modified:**
+- `server/routes.ts`: Added file upload endpoint and multer configuration
+- `client/src/pages/SponsorForm.tsx`: Implemented upload UI with preview
+- `client/src/lib/i18n.ts`: Added upload-related translations (English/Arabic)
+- `package.json`: Added multer and @types/multer dependencies
+
+**Usage:**
+1. Admin/sponsor navigates to sponsor form (create or edit)
+2. Click "Upload Logo" button to select image file
+3. Logo uploads automatically and preview displays
+4. Save sponsor to persist logo URL in database
+5. Logo displays on sponsors listing and detail pages
