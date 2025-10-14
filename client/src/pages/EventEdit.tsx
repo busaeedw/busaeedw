@@ -31,6 +31,9 @@ type EventFormData = {
   city: string;
   venue?: string;
   venueId?: string;
+  sponsor1Id?: string;
+  sponsor2Id?: string;
+  sponsor3Id?: string;
   price: string;
   currency: string;
   maxAttendees?: number;
@@ -51,8 +54,13 @@ export default function EventEdit() {
     enabled: !!id,
   });
 
-  const { data: venues } = useQuery({
+  const { data: venues = [] } = useQuery({
     queryKey: ['/api/venues'],
+  });
+
+  // Load sponsors from API
+  const { data: sponsors = [] } = useQuery<any[]>({
+    queryKey: ['/api/sponsors'],
   });
 
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<EventFormData>({
@@ -75,11 +83,14 @@ export default function EventEdit() {
       setValue('city', event.city);
       setValue('venue', event.venue || '');
       setValue('venueId', event.venueId || '');
+      setValue('sponsor1Id', (event as any).sponsor1Id || '');
+      setValue('sponsor2Id', (event as any).sponsor2Id || '');
+      setValue('sponsor3Id', (event as any).sponsor3Id || '');
       setValue('price', event.price);
       setValue('currency', event.currency);
       setValue('maxAttendees', event.maxAttendees || undefined);
       setValue('imageUrl', event.imageUrl || '');
-      setValue('status', event.status);
+      setValue('status', event.status as 'draft' | 'published');
     }
   }, [event, setValue]);
 
@@ -335,6 +346,69 @@ export default function EventEdit() {
                     <SelectItem value="published">Published</SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>{t('event.create.sponsors.title')}</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-sm text-gray-600">
+                {t('event.create.sponsors.description')}
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="sponsor1Id">{t('event.create.sponsors.sponsor1')}</Label>
+                  <Select onValueChange={(value) => setValue('sponsor1Id', value)} value={watch('sponsor1Id') || ''}>
+                    <SelectTrigger>
+                      <SelectValue placeholder={t('event.create.sponsors.placeholder')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="">{t('common.none')}</SelectItem>
+                      {sponsors.map((sponsor) => (
+                        <SelectItem key={sponsor.id} value={sponsor.id}>
+                          {sponsor.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="sponsor2Id">{t('event.create.sponsors.sponsor2')}</Label>
+                  <Select onValueChange={(value) => setValue('sponsor2Id', value)} value={watch('sponsor2Id') || ''}>
+                    <SelectTrigger>
+                      <SelectValue placeholder={t('event.create.sponsors.placeholder')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="">{t('common.none')}</SelectItem>
+                      {sponsors.map((sponsor) => (
+                        <SelectItem key={sponsor.id} value={sponsor.id}>
+                          {sponsor.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="sponsor3Id">{t('event.create.sponsors.sponsor3')}</Label>
+                  <Select onValueChange={(value) => setValue('sponsor3Id', value)} value={watch('sponsor3Id') || ''}>
+                    <SelectTrigger>
+                      <SelectValue placeholder={t('event.create.sponsors.placeholder')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="">{t('common.none')}</SelectItem>
+                      {sponsors.map((sponsor) => (
+                        <SelectItem key={sponsor.id} value={sponsor.id}>
+                          {sponsor.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
             </CardContent>
           </Card>
