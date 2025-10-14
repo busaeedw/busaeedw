@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -17,6 +17,7 @@ import { apiRequest } from '@/lib/queryClient';
 import { type Sponsor } from '@shared/schema';
 import { z } from 'zod';
 import { useLocation, useParams } from 'wouter';
+import { Upload, X } from 'lucide-react';
 
 const sponsorFormSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -41,6 +42,8 @@ export default function SponsorForm() {
   const { toast } = useToast();
   const [, setLocation] = useLocation();
   const queryClient = useQueryClient();
+  const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const [isUploadingLogo, setIsUploadingLogo] = useState(false);
 
   // Fetch sponsor data if editing
   const { data: sponsor, isLoading: sponsorLoading } = useQuery<Sponsor>({
@@ -111,6 +114,10 @@ export default function SponsorForm() {
         city: sponsor.city || '',
         isFeatured: sponsor.isFeatured || false,
       });
+      // Set logo preview if exists
+      if (sponsor.logoUrl) {
+        setLogoPreview(sponsor.logoUrl);
+      }
     }
   }, [sponsor, isEditMode, form]);
 
@@ -162,6 +169,49 @@ export default function SponsorForm() {
       });
     },
   });
+
+  const handleLogoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setIsUploadingLogo(true);
+    try {
+      const formData = new FormData();
+      formData.append('logo', file);
+
+      const response = await fetch('/api/sponsors/upload-logo', {
+        method: 'POST',
+        body: formData,
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to upload logo');
+      }
+
+      const data = await response.json();
+      form.setValue('logoUrl', data.logoUrl);
+      setLogoPreview(data.logoUrl);
+      
+      toast({
+        title: t('sponsors.upload.success') || 'Logo uploaded successfully',
+        description: t('sponsors.upload.success.desc') || 'Your logo has been uploaded.',
+      });
+    } catch (error) {
+      toast({
+        title: t('sponsors.upload.error') || 'Upload failed',
+        description: t('sponsors.upload.error.desc') || 'Failed to upload logo. Please try again.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsUploadingLogo(false);
+    }
+  };
+
+  const clearLogo = () => {
+    form.setValue('logoUrl', '');
+    setLogoPreview(null);
+  };
 
   const onSubmit = (data: SponsorFormData) => {
     if (isEditMode) {
@@ -226,19 +276,71 @@ export default function SponsorForm() {
                   />
                 </div>
 
-                <FormField
-                  control={form.control}
-                  name="logoUrl"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t('sponsors.form.logoUrl')}</FormLabel>
-                      <FormControl>
-                        <Input {...field} value={field.value || ''} placeholder="https://example.com/logo.png" data-testid="input-sponsor-logoUrl" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
+                <div className="space-y-4">
+                  <FormLabel>{t('sponsors.form.logoUrl')}</FormLabel>
+                  
+                  {(logoPreview || form.watch('logoUrl')) && (
+                    <div className="relative inline-block">
+                      <img 
+                        src={logoPreview || form.watch('logoUrl') || ''} 
+                        alt="Logo preview" 
+                        className="h-24 w-auto object-contain border rounded-md"
+                        data-testid="img-logo-preview"
+                      />
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        size="icon"
+                        className="absolute -top-2 -right-2 h-6 w-6 rounded-full"
+                        onClick={clearLogo}
+                        data-testid="button-clear-logo"
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
                   )}
-                />
+                  
+                  <div className="flex items-center gap-4">
+                    <label className="cursor-pointer">
+                      <div className="flex items-center gap-2 px-4 py-2 border border-input rounded-md hover:bg-accent hover:text-accent-foreground transition-colors">
+                        <Upload className="h-4 w-4" />
+                        <span>{isUploadingLogo ? t('sponsors.uploading') || 'Uploading...' : t('sponsors.upload') || 'Upload Logo'}</span>
+                      </div>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleLogoUpload}
+                        disabled={isUploadingLogo}
+                        className="hidden"
+                        data-testid="input-logo-file"
+                      />
+                    </label>
+                    
+                    <FormField
+                      control={form.control}
+                      name="logoUrl"
+                      render={({ field }) => (
+                        <FormItem className="flex-1">
+                          <FormControl>
+                            <Input 
+                              {...field} 
+                              value={field.value || ''} 
+                              placeholder="Or enter logo URL" 
+                              data-testid="input-sponsor-logoUrl"
+                              onChange={(e) => {
+                                field.onChange(e);
+                                if (e.target.value) {
+                                  setLogoPreview(e.target.value);
+                                }
+                              }}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
 
                 <div className="grid md:grid-cols-2 gap-4">
                   <FormField
