@@ -138,3 +138,35 @@ Updated the homepage hero section to feature a centered, clean design:
 - Better emphasis on call-to-action buttons
 - Maintained gradient background and pattern overlay
 - Bilingual support remains intact
+
+### Event Sponsor Selection Bug Fix (October 14, 2025)
+
+**Issue:**
+When organizers tried to create or edit events, they encountered a Radix UI error: "A <Select.Item /> must have a value prop that is not an empty string."
+
+**Root Cause:**
+- Sponsor selection dropdowns used `<SelectItem value="">` for the "None" option, which Radix UI prohibits
+- Form defaults used empty strings for sponsor fields instead of undefined/null
+- Form submission didn't properly handle clearing sponsors (undefined values were dropped from JSON payload)
+
+**Solution Implemented:**
+1. **Select Components:** Changed "None" option to use value="none" (sentinel value) instead of empty string
+2. **Value Handling:** When "none" is selected, the onValueChange handler converts it to undefined in form state
+3. **Form Defaults:** EventCreate now initializes sponsor fields as undefined instead of empty strings
+4. **API Submission:** Both EventCreate and EventEdit mutations explicitly convert undefined sponsor values to null before JSON.stringify, ensuring null values are included in the API payload
+
+**Technical Details:**
+- EventCreate.tsx: Form defaults use `sponsor1Id: undefined` instead of `sponsor1Id: ''`
+- Both forms: Select value prop uses `field.value || 'none'` to display "None" when empty
+- Both forms: onValueChange converts "none" to undefined via `value === 'none' ? undefined : value`
+- Mutations: Explicitly set `sponsor1Id: data.sponsor1Id || null` to include null in JSON payload
+
+**User Experience:**
+- Users can now select up to 3 sponsors when creating/editing events
+- Users can clear sponsor selections by choosing "None" 
+- Optional sponsors properly save as null in the database
+- No Radix UI errors displayed
+
+**Files Modified:**
+- `client/src/pages/EventCreate.tsx`: Fixed form defaults and Select components
+- `client/src/pages/EventEdit.tsx`: Fixed Select components and PATCH mutation
