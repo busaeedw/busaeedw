@@ -117,3 +117,24 @@ Added bilingual translations for upload functionality:
 3. Logo uploads automatically and preview displays
 4. Save sponsor to persist logo URL in database
 5. Logo displays on sponsors listing and detail pages
+
+### Homepage Hero Section Update (October 14, 2025)
+
+**Centralized Layout:**
+Updated the homepage hero section to feature a centered, clean design:
+- Removed the large hero image (previously showed Saudi Arabia cultural venue)
+- Centralized all headers, titles, and buttons
+- Changed from two-column grid layout to single centered column
+- All text and CTAs now centered on all screen sizes
+
+**Changes:**
+- Removed heroImage import and img element
+- Changed `text-center lg:text-left` to `text-center`
+- Changed `justify-center lg:justify-start` to `justify-center`
+- Removed grid layout classes (`lg:grid lg:grid-cols-2 lg:gap-12`)
+
+**Visual Impact:**
+- Cleaner, more focused hero section
+- Better emphasis on call-to-action buttons
+- Maintained gradient background and pattern overlay
+- Bilingual support remains intact
