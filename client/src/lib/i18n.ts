@@ -343,6 +343,7 @@ const translations = {
     'admin.create.organizer': 'Manage Organizers',
     'admin.create.provider': 'Manage Providers',
     'admin.create.user': 'Manage Users',
+    'admin.create.sponsor': 'Manage Sponsors',
 
     // Event Create
     'event.create.title': 'Create Event',
@@ -826,6 +827,7 @@ const translations = {
     'admin.create.organizer': 'إدارة المنظمين',
     'admin.create.provider': 'إدارة مقدمي الخدمات',
     'admin.create.user': 'إدارة المستخدمين',
+    'admin.create.sponsor': 'ادارة الرعاة',
 
     // Event Create
     'event.create.title': 'إنشاء فعالية',

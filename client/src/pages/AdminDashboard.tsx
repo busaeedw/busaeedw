@@ -196,7 +196,7 @@ export default function AdminDashboard() {
                 data-testid="manage-sponsors-button"
               >
                 <Building2 className="h-6 w-6" />
-                <span className="text-sm font-medium">Manage Sponsors</span>
+                <span className="text-sm font-medium">{t('admin.create.sponsor')}</span>
               </Button>
             </div>
           </CardContent>
