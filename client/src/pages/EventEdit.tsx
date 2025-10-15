@@ -299,6 +299,7 @@ export default function EventEdit() {
                     <SelectItem value="cultural">{t('event.create.basic.category.cultural')}</SelectItem>
                     <SelectItem value="business">{t('event.create.basic.category.business')}</SelectItem>
                     <SelectItem value="entertainment">{t('event.create.basic.category.entertainment')}</SelectItem>
+                    <SelectItem value="family">{t('event.create.basic.category.family')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

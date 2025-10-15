@@ -309,6 +309,7 @@ export default function EventCreate() {
                             <SelectItem value="cultural">{t('event.create.basic.category.cultural')}</SelectItem>
                             <SelectItem value="technology">{t('event.create.basic.category.technology')}</SelectItem>
                             <SelectItem value="entertainment">{t('event.create.basic.category.entertainment')}</SelectItem>
+                            <SelectItem value="family">{t('event.create.basic.category.family')}</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />
