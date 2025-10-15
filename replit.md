@@ -235,3 +235,49 @@ Added translations for service provider selection:
 - OIDC authentication with role claims working correctly
 - Service provider selection persists to database
 - Auto-creation of organizer records prevents FK violations
+
+### Service Provider City Field (October 15, 2025)
+
+**Added City Field to Service Providers:**
+Service providers now have a dedicated city field to indicate where they operate, enabling city-based filtering in event creation/editing forms.
+
+**Database Schema Changes:**
+- Added `city` field to `service_providers` table
+  - Type: `varchar`, NOT NULL
+  - Default value: "Riyadh"
+- All existing service providers automatically set to "Riyadh" as their city
+
+**Event Form Updates:**
+- **EventCreate Form**: Fixed service provider filtering to use `provider.city` instead of `provider.user.city`
+  - Filters service providers based on selected event city (case-insensitive)
+  - Only shows providers from the same city as the event
+  - Shows all providers if no city selected
+- **EventEdit Form**: Added same city-based filtering logic
+  - Consistent behavior with EventCreate form
+  - Filters providers dynamically when city changes
+
+**Technical Implementation:**
+```javascript
+// Filtering logic in both EventCreate and EventEdit
+const selectedCity = form.watch("city");
+const serviceProviders = allServiceProviders.filter(provider => {
+  if (!selectedCity) return true;
+  return provider.city?.toLowerCase() === selectedCity.toLowerCase();
+});
+```
+
+**Files Modified:**
+- `shared/schema.ts`: Added `city` field to `serviceProviders` table with default "Riyadh"
+- `client/src/pages/EventCreate.tsx`: Fixed filtering to use `provider.city`
+- `client/src/pages/EventEdit.tsx`: Added city-based filtering logic
+
+**Usage:**
+1. Service providers now specify which city they operate in
+2. When creating/editing events, organizers select event city
+3. Service provider dropdowns automatically filter to show only providers from that city
+4. Ensures relevant service providers are matched with events in their service area
+
+**Testing:**
+- Verified city-based filtering works correctly in EventCreate form
+- Confirmed all existing service providers have "Riyadh" as default city
+- Service provider dropdowns show only city-matched providers
