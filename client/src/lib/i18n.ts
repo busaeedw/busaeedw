@@ -344,6 +344,15 @@ const translations = {
     'dashboard.serviceProvider.noUpcomingEvents': 'No upcoming events available',
     'dashboard.serviceProvider.browseAllEvents': 'Browse All Events',
 
+    // My Events Page
+    'myEvents.title': 'My Events',
+    'myEvents.subtitle': 'Manage and track all your created events',
+    'myEvents.view': 'View',
+    'myEvents.edit': 'Edit',
+    'myEvents.noEvents.title': 'No events created yet',
+    'myEvents.noEvents.subtitle': 'Start creating events to grow your audience and manage registrations',
+    'myEvents.createFirst': 'Create Your First Event',
+
     // Profile
     'profile.title': 'Profile',
     'profile.subtitle': 'Manage your account information and settings',
@@ -875,6 +884,15 @@ const translations = {
     'dashboard.serviceProvider.browseEvents': 'تصفح الفعاليات',
     'dashboard.serviceProvider.noUpcomingEvents': 'لا توجد فعاليات قادمة متاحة',
     'dashboard.serviceProvider.browseAllEvents': 'تصفح جميع الفعاليات',
+
+    // My Events Page
+    'myEvents.title': 'فعالياتي',
+    'myEvents.subtitle': 'إدارة وتتبع جميع الفعاليات التي أنشأتها',
+    'myEvents.view': 'عرض',
+    'myEvents.edit': 'تعديل',
+    'myEvents.noEvents.title': 'لم تنشئ أي فعاليات بعد',
+    'myEvents.noEvents.subtitle': 'ابدأ بإنشاء الفعاليات لتنمية جمهورك وإدارة التسجيلات',
+    'myEvents.createFirst': 'إنشاء فعاليتك الأولى',
 
     // Profile
     'profile.title': 'الملف الشخصي',
