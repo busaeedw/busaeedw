@@ -73,3 +73,48 @@ Preferred communication style: Simple, everyday language.
 -   `class-variance-authority`
 -   `zod`
 -   `memoizee`
+
+## Recent Updates
+
+### Service Provider Arabic Names (October 16, 2025)
+
+**Feature Overview:**
+Added full bilingual support for service provider business names throughout the platform. Service providers now have Arabic names that display automatically when users switch to Arabic language.
+
+**Implementation Details:**
+- **Database Schema**: Added `businessNameAr` field to `service_providers` table
+- **Data Population**: Updated all 40 existing service providers (20 in Jeddah, 20 in Dammam) with Arabic business names
+- **Display Logic**: Components automatically show Arabic names when `language === 'ar'` and fallback to English names when Arabic name unavailable
+
+**Components Updated:**
+1. **EventServiceProviderDisplay.tsx**:
+   - Displays Arabic business names on event details page
+   - Shows provider name based on selected language (English/Arabic)
+   
+2. **EventCreate.tsx**:
+   - Service provider dropdown selects show Arabic names in Arabic mode
+   - All three service provider selection fields updated
+   
+3. **EventEdit.tsx**:
+   - Service provider dropdown selects show Arabic names in Arabic mode
+   - Maintains consistency with EventCreate form
+
+**Example Translations:**
+- "Deluxe Catering Jeddah" → "تموين ديلوكس جدة"
+- "Eastern Province Catering" → "تموين المنطقة الشرقية"
+- "Royal Photography Studio" → "استوديو التصوير الملكي"
+- "Arabian Events Planner" → "منظم الفعاليات العربية"
+
+**Files Modified:**
+- `shared/schema.ts`: Added businessNameAr field to service providers schema
+- `client/src/components/EventServiceProviderDisplay.tsx`: Display Arabic names based on language
+- `client/src/pages/EventCreate.tsx`: Show Arabic names in service provider dropdowns
+- `client/src/pages/EventEdit.tsx`: Show Arabic names in service provider dropdowns
+
+**Testing Results:**
+- ✅ Event details page displays Arabic service provider names in Arabic mode
+- ✅ Event create form dropdowns show Arabic names in Arabic mode
+- ✅ Event edit form dropdowns show Arabic names in Arabic mode
+- ✅ English names display correctly when language is English
+- ✅ All 40 service providers updated with Arabic business names
+- ✅ Fallback to English name works when Arabic name not available
