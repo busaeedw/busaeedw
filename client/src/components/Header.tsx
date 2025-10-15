@@ -98,9 +98,14 @@ export function Header() {
                     className="h-16 w-auto object-contain"
                     data-testid="logo-image"
                   />
-                  <h1 className="text-2xl font-bold text-saudi-green" data-testid="portal-title">
-                    EVENTHUB
-                  </h1>
+                  <div className="flex flex-col">
+                    <h1 className="text-2xl font-bold text-saudi-green leading-tight" data-testid="portal-title">
+                      EventHub
+                    </h1>
+                    <p className="text-xs font-semibold leading-tight" style={{ color: '#fc743c' }}>
+                      المملكة العربية السعودية
+                    </p>
+                  </div>
                 </div>
               </Link>
               {/* Language Toggle below logo - Desktop & Mobile */}
