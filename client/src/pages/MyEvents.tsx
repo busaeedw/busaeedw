@@ -21,7 +21,7 @@ export default function MyEvents() {
 
   const { data: userEvents, isLoading: eventsLoading, error: eventsError } = useQuery<any[]>({
     queryKey: ['/api/user/events'],
-    enabled: isAuthenticated && user?.role === 'organizer',
+    enabled: isAuthenticated,
     retry: false,
   });
 
