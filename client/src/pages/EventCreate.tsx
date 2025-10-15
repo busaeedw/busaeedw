@@ -68,9 +68,17 @@ export default function EventCreate() {
   });
 
   // Load service providers from API
-  const { data: serviceProviders = [] } = useQuery<any[]>({
+  const { data: allServiceProviders = [] } = useQuery<any[]>({
     queryKey: ['/api/service-providers'],
     enabled: isAuthenticated,
+  });
+
+  // Filter service providers by selected city
+  const selectedCity = form.watch("city");
+  const serviceProviders = allServiceProviders.filter(provider => {
+    if (!selectedCity) return true; // Show all if no city selected
+    // Match city case-insensitively
+    return provider.user?.city?.toLowerCase() === selectedCity.toLowerCase();
   });
 
   // Redirect to login if not authenticated
@@ -606,6 +614,11 @@ export default function EventCreate() {
               <CardContent className="space-y-6">
                 <p className="text-sm text-gray-600">
                   {t('event.create.serviceproviders.description')}
+                  {selectedCity && serviceProviders.length === 0 && (
+                    <span className="block mt-2 text-amber-600">
+                      No service providers available in {selectedCity}. Please select a different city or skip this section.
+                    </span>
+                  )}
                 </p>
                 <div className="grid md:grid-cols-3 gap-6">
                   <FormField
@@ -617,10 +630,11 @@ export default function EventCreate() {
                         <Select 
                           onValueChange={(value) => field.onChange(value === 'none' ? undefined : value)} 
                           value={field.value || 'none'}
+                          disabled={!selectedCity || serviceProviders.length === 0}
                         >
                           <FormControl>
                             <SelectTrigger data-testid="select-service-provider1">
-                              <SelectValue placeholder={t('event.create.serviceproviders.placeholder')} />
+                              <SelectValue placeholder={!selectedCity ? "Select event city first" : t('event.create.serviceproviders.placeholder')} />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
@@ -646,10 +660,11 @@ export default function EventCreate() {
                         <Select 
                           onValueChange={(value) => field.onChange(value === 'none' ? undefined : value)} 
                           value={field.value || 'none'}
+                          disabled={!selectedCity || serviceProviders.length === 0}
                         >
                           <FormControl>
                             <SelectTrigger data-testid="select-service-provider2">
-                              <SelectValue placeholder={t('event.create.serviceproviders.placeholder')} />
+                              <SelectValue placeholder={!selectedCity ? "Select event city first" : t('event.create.serviceproviders.placeholder')} />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
@@ -675,10 +690,11 @@ export default function EventCreate() {
                         <Select 
                           onValueChange={(value) => field.onChange(value === 'none' ? undefined : value)} 
                           value={field.value || 'none'}
+                          disabled={!selectedCity || serviceProviders.length === 0}
                         >
                           <FormControl>
                             <SelectTrigger data-testid="select-service-provider3">
-                              <SelectValue placeholder={t('event.create.serviceproviders.placeholder')} />
+                              <SelectValue placeholder={!selectedCity ? "Select event city first" : t('event.create.serviceproviders.placeholder')} />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
