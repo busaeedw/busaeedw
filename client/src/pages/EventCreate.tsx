@@ -641,7 +641,7 @@ export default function EventCreate() {
                             <SelectItem value="none">{t('common.none')}</SelectItem>
                             {serviceProviders.map((provider) => (
                               <SelectItem key={provider.id} value={provider.id}>
-                                {provider.businessName}
+                                {language === 'ar' && provider.businessNameAr ? provider.businessNameAr : provider.businessName}
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -671,7 +671,7 @@ export default function EventCreate() {
                             <SelectItem value="none">{t('common.none')}</SelectItem>
                             {serviceProviders.map((provider) => (
                               <SelectItem key={provider.id} value={provider.id}>
-                                {provider.businessName}
+                                {language === 'ar' && provider.businessNameAr ? provider.businessNameAr : provider.businessName}
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -701,7 +701,7 @@ export default function EventCreate() {
                             <SelectItem value="none">{t('common.none')}</SelectItem>
                             {serviceProviders.map((provider) => (
                               <SelectItem key={provider.id} value={provider.id}>
-                                {provider.businessName}
+                                {language === 'ar' && provider.businessNameAr ? provider.businessNameAr : provider.businessName}
                               </SelectItem>
                             ))}
                           </SelectContent>

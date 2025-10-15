@@ -59,7 +59,7 @@ export default function EventEdit() {
   const { id } = useParams();
   const [, setLocation] = useLocation();
   const { user, isAuthenticated, isLoading: authLoading } = useAuth();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -510,7 +510,7 @@ export default function EventEdit() {
                       <SelectItem value="none">{t('common.none')}</SelectItem>
                       {serviceProviders.map((provider) => (
                         <SelectItem key={provider.id} value={provider.id}>
-                          {provider.businessName}
+                          {language === 'ar' && provider.businessNameAr ? provider.businessNameAr : provider.businessName}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -530,7 +530,7 @@ export default function EventEdit() {
                       <SelectItem value="none">{t('common.none')}</SelectItem>
                       {serviceProviders.map((provider) => (
                         <SelectItem key={provider.id} value={provider.id}>
-                          {provider.businessName}
+                          {language === 'ar' && provider.businessNameAr ? provider.businessNameAr : provider.businessName}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -550,7 +550,7 @@ export default function EventEdit() {
                       <SelectItem value="none">{t('common.none')}</SelectItem>
                       {serviceProviders.map((provider) => (
                         <SelectItem key={provider.id} value={provider.id}>
-                          {provider.businessName}
+                          {language === 'ar' && provider.businessNameAr ? provider.businessNameAr : provider.businessName}
                         </SelectItem>
                       ))}
                     </SelectContent>
