@@ -75,6 +75,38 @@ Preferred communication style: Simple, everyday language.
 -   `memoizee`
 ## Recent Updates
 
+### Dashboard Edit Button Fix (October 15, 2025)
+
+**Issue Fixed:**
+The Edit button in the organizer dashboard event cards was non-functional - clicking it produced no action.
+
+**Root Cause:**
+The Edit button was rendered as a plain Button component without proper navigation setup. It was missing the `asChild` prop and Link wrapper that would enable navigation to the edit page.
+
+**Implementation:**
+```tsx
+// Before (broken):
+<Button size="sm" variant="outline">
+  <Edit className="h-4 w-4" />
+</Button>
+
+// After (working):
+<Button asChild size="sm" variant="outline" data-testid={`button-edit-event-${event.id}`}>
+  <Link href={`/events/${event.id}/edit`}>
+    <Edit className="h-4 w-4" />
+  </Link>
+</Button>
+```
+
+**Files Modified:**
+- `client/src/pages/Dashboard.tsx`: Fixed Edit button in "Recent Events" section
+
+**Testing:**
+✅ Edit button navigates to event edit page
+✅ Edit form loads with pre-populated event data
+✅ URL updates correctly to `/events/{eventId}/edit`
+✅ All form fields display proper labels (English & Arabic)
+
 ### Edit Event Form Translation Fix (October 15, 2025)
 
 **Issue Fixed:**

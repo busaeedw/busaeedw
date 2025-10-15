@@ -212,8 +212,10 @@ export default function Dashboard() {
                           <Eye className="h-4 w-4" />
                         </Link>
                       </Button>
-                      <Button size="sm" variant="outline">
-                        <Edit className="h-4 w-4" />
+                      <Button asChild size="sm" variant="outline" data-testid={`button-edit-event-${event.id}`}>
+                        <Link href={`/events/${event.id}/edit`}>
+                          <Edit className="h-4 w-4" />
+                        </Link>
                       </Button>
                     </div>
                   </div>
