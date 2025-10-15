@@ -303,7 +303,12 @@ export class DatabaseStorage implements IStorage {
     limit?: number;
     offset?: number;
   }): Promise<Event[]> {
-    const conditions = [eq(events.status, "published")];
+    const conditions = [];
+
+    // Only filter by published status if not viewing organizer's own events
+    if (!filters?.organizerId) {
+      conditions.push(eq(events.status, "published"));
+    }
 
     if (filters?.category) {
       conditions.push(eq(events.category, filters.category));
