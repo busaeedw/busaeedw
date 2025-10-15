@@ -453,7 +453,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Unauthorized" });
       }
 
-      const updatedEvent = await storage.updateEvent(req.params.id, req.body);
+      // Convert date strings to Date objects and handle empty strings
+      const updates = { ...req.body };
+      if (updates.startDate && typeof updates.startDate === 'string') {
+        updates.startDate = new Date(updates.startDate);
+      }
+      if (updates.endDate && typeof updates.endDate === 'string') {
+        updates.endDate = new Date(updates.endDate);
+      }
+      // Convert empty strings to null for optional foreign key fields
+      if (updates.venueId === '') {
+        updates.venueId = null;
+      }
+      if (updates.sponsor1Id === '') {
+        updates.sponsor1Id = null;
+      }
+      if (updates.sponsor2Id === '') {
+        updates.sponsor2Id = null;
+      }
+      if (updates.sponsor3Id === '') {
+        updates.sponsor3Id = null;
+      }
+      if (updates.serviceProvider1Id === '') {
+        updates.serviceProvider1Id = null;
+      }
+      if (updates.serviceProvider2Id === '') {
+        updates.serviceProvider2Id = null;
+      }
+      if (updates.serviceProvider3Id === '') {
+        updates.serviceProvider3Id = null;
+      }
+
+      const updatedEvent = await storage.updateEvent(req.params.id, updates);
       res.json(updatedEvent);
     } catch (error) {
       console.error("Error updating event:", error);

@@ -75,6 +75,42 @@ Preferred communication style: Simple, everyday language.
 -   `memoizee`
 ## Recent Updates
 
+### Event Update 500 Error Fix (October 15, 2025)
+
+**Issue Fixed:**
+Event update was failing with 500 error due to two backend issues:
+1. TypeError: value.toISOString is not a function (date conversion)
+2. Foreign key constraint violation for venue_id (empty string handling)
+
+**Root Causes:**
+1. **Date Conversion**: The datetime-local inputs send ISO strings, and JSON.stringify() converts Date objects back to strings, so frontend conversion doesn't persist. Backend must convert strings to Date objects.
+2. **Empty String FKs**: Optional foreign key fields (venueId, sponsor IDs, service provider IDs) were being sent as empty strings "" instead of null, violating database constraints.
+
+**Implementation:**
+Added comprehensive data transformation in PATCH /api/events/:id endpoint:
+```typescript
+// Convert date strings to Date objects
+if (updates.startDate && typeof updates.startDate === 'string') {
+  updates.startDate = new Date(updates.startDate);
+}
+if (updates.endDate && typeof updates.endDate === 'string') {
+  updates.endDate = new Date(updates.endDate);
+}
+// Convert empty strings to null for optional foreign key fields
+if (updates.venueId === '') updates.venueId = null;
+// ... same for sponsor1Id, sponsor2Id, sponsor3Id, serviceProvider1Id, serviceProvider2Id, serviceProvider3Id
+```
+
+**Files Modified:**
+- `server/routes.ts`: Added date conversion and empty string → null transformation
+
+**Testing:**
+✅ Event updates successfully without 500 error
+✅ Date fields properly converted to Date objects
+✅ Empty foreign key fields convert to null (no constraint violations)
+✅ Success toast displays and user is redirected
+✅ Changes persist correctly in database
+
 ### Edit Event Save Button Translation Fix (October 15, 2025)
 
 **Issue Fixed:**

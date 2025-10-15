@@ -129,6 +129,8 @@ export default function EventEdit() {
     mutationFn: async (data: EventFormData) => {
       const eventData = {
         ...data,
+        startDate: new Date(data.startDate),
+        endDate: new Date(data.endDate),
         sponsor1Id: data.sponsor1Id || null,
         sponsor2Id: data.sponsor2Id || null,
         sponsor3Id: data.sponsor3Id || null,
