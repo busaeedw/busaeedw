@@ -12,6 +12,7 @@ interface EventServiceProviderDisplayProps {
 type ServiceProvider = {
   id: string;
   businessName: string;
+  businessNameAr: string | null;
   category: string;
   city: string;
   services: string[];
@@ -76,7 +77,9 @@ export function EventServiceProviderDisplay({ event }: EventServiceProviderDispl
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                      <p className="font-medium truncate">{provider.businessName}</p>
+                      <p className="font-medium truncate">
+                        {language === 'ar' && provider.businessNameAr ? provider.businessNameAr : provider.businessName}
+                      </p>
                       {provider.verified && (
                         <Badge variant="secondary" className="text-xs">
                           {t('common.verified')}
