@@ -136,6 +136,28 @@ export default function Login() {
             </form>
           </Form>
 
+          {/* Divider */}
+          <div className="relative my-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-300"></div>
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-2 bg-white text-gray-500">or</span>
+            </div>
+          </div>
+
+          {/* OIDC Login Button */}
+          <a href="/api/login" className="block w-full">
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full"
+              data-testid="button-oidc-login"
+            >
+              Sign in with Replit
+            </Button>
+          </a>
+
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
               {t('auth.login.footer')}{" "}

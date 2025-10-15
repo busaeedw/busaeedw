@@ -62,18 +62,27 @@ async function upsertUser(
   // Check if user already exists to preserve their role
   const existingUser = await storage.getUser(userId);
   
-  // Determine role based on user ID pattern (for testing purposes)
-  // Only use pattern matching for new users; preserve existing user roles
+  // Determine role for new users
   let role = existingUser?.role || "attendee"; // use existing role or default to attendee
   
   if (!existingUser) {
-    // Only do pattern matching for new users
-    if (userId.includes("organizer")) {
+    // Priority 1: Check for roles claim from test harness or custom OIDC provider
+    if (claims["roles"] && Array.isArray(claims["roles"]) && claims["roles"].length > 0) {
+      role = claims["roles"][0]; // Use first role from array
+    }
+    // Priority 2: Check for single role claim
+    else if (claims["role"] && typeof claims["role"] === "string") {
+      role = claims["role"];
+    }
+    // Priority 3: Pattern matching in user ID (for testing purposes)
+    else if (userId.includes("organizer") || userId.startsWith("org-")) {
       role = "organizer";
     } else if (userId.includes("admin")) {
       role = "admin";
-    } else if (userId.includes("service_provider")) {
+    } else if (userId.includes("service_provider") || userId.startsWith("sp-")) {
       role = "service_provider";
+    } else if (userId.startsWith("sponsor-")) {
+      role = "sponsor";
     }
   }
 
