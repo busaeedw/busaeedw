@@ -252,10 +252,10 @@ export default function Dashboard() {
                 {t('dashboard.createNewEvent')}
               </Link>
             </Button>
-            <Button asChild className="w-full justify-start" variant="outline">
-              <Link href="/events">
+            <Button asChild className="w-full justify-start" variant="outline" data-testid="button-my-events">
+              <Link href="/organizer/my-events">
                 <CalendarCheck className="h-4 w-4 mr-2" />
-                {t('dashboard.manageEvents')}
+                {t('dashboard.myEvents')}
               </Link>
             </Button>
             <Button asChild className="w-full justify-start" variant="outline">
