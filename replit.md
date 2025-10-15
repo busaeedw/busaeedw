@@ -75,6 +75,58 @@ Preferred communication style: Simple, everyday language.
 -   `memoizee`
 ## Recent Updates
 
+### Edit Event Form Translation Fix (October 15, 2025)
+
+**Issue Fixed:**
+Edit event form was displaying translation key procedure calls (e.g., "event.create.basicinfo") instead of proper field labels in both English and Arabic.
+
+**Root Cause:**
+EventEdit.tsx was using incorrect translation keys that didn't match the keys defined in i18n.ts. For example:
+- Used: `event.create.basicInfo` → Should be: `event.create.basic.title`
+- Used: `event.create.title` → Should be: `event.create.basic.event.title`
+- Used: `event.create.dateTime` → Should be: `event.create.datetime.title`
+- Used: `event.create.ticketing` → Should be: `event.create.pricing.title`
+
+**Implementation:**
+- Updated all translation keys in EventEdit.tsx to match i18n.ts structure
+- Fixed Basic Information section keys (event.create.basic.*)
+- Fixed Date & Location section keys (event.create.datetime.*)
+- Fixed Pricing & Capacity section keys (event.create.pricing.*)
+- Added category and city translations for proper localization
+- Added missing delete confirmation translations for both English and Arabic
+
+**Files Modified:**
+- `client/src/pages/EventEdit.tsx`: Updated all translation keys
+- `client/src/lib/i18n.ts`: Added delete confirmation translations
+
+**Testing:**
+✅ Form displays proper English labels ("Basic Information", "Event Title *", etc.)
+✅ Form displays proper Arabic labels ("المعلومات الأساسية", "عنوان الفعالية *", etc.)
+✅ Language toggle works correctly between English and Arabic
+✅ All form sections show localized labels instead of translation keys
+
+### OIDC Authentication Enhancement (October 15, 2025)
+
+**Issue Fixed:**
+OIDC login was failing when claims included `name` field instead of separate `first_name` and `last_name` fields, causing database constraint violations.
+
+**Implementation:**
+- Enhanced `upsertUser` function in `server/replitAuth.ts` to handle multiple name formats
+- Automatically splits `name` field into `firstName` and `lastName` when separate fields not provided
+- Added fallback defaults ("User", "") to prevent null constraint violations
+- Updated session storage to include direct user ID property for improved authentication
+- Enhanced auth middleware to check multiple authentication patterns (session, OIDC with ID, OIDC with claims)
+
+**Files Modified:**
+- `server/replitAuth.ts`: Enhanced name handling and session storage
+- `server/routes.ts`: Updated authentication middleware to support multiple patterns
+
+**Authentication Flow:**
+1. OIDC claims processed (supports `first_name`/`last_name` OR `name`)
+2. User created/updated in database with proper name splitting
+3. Session stores user ID directly for reliable auth checks
+4. Multiple auth check patterns ensure compatibility
+
 ### My Events Page for Organizers (October 15, 2025)
 
 **Feature Overview:**

@@ -86,11 +86,21 @@ async function upsertUser(
     }
   }
 
+  // Handle name field - split if first_name/last_name not provided
+  let firstName = claims["first_name"];
+  let lastName = claims["last_name"];
+  
+  if (!firstName && claims["name"]) {
+    const nameParts = claims["name"].split(" ");
+    firstName = nameParts[0] || "User";
+    lastName = nameParts.slice(1).join(" ") || "";
+  }
+
   await storage.upsertUser({
     id: claims["sub"],
     email: claims["email"],
-    firstName: claims["first_name"],
-    lastName: claims["last_name"],
+    firstName: firstName || "User",
+    lastName: lastName || "",
     profileImageUrl: claims["profile_image_url"],
     role: role,
   });
@@ -108,9 +118,12 @@ export async function setupAuth(app: Express) {
     tokens: client.TokenEndpointResponse & client.TokenEndpointResponseHelpers,
     verified: passport.AuthenticateCallback
   ) => {
-    const user = {};
+    const claims = tokens.claims();
+    const user: any = {
+      id: claims?.sub,
+    };
     updateUserSession(user, tokens);
-    await upsertUser(tokens.claims());
+    await upsertUser(claims);
     verified(null, user);
   };
 

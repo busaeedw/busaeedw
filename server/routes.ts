@@ -71,6 +71,9 @@ const unifiedAuth = async (req: any, res: any, next: any) => {
     userId = req.session.userId;
   }
   // Fall back to OIDC authentication
+  else if (req.user?.id) {
+    userId = req.user.id;
+  }
   else if (req.user?.claims?.sub) {
     userId = req.user.claims.sub;
   }
@@ -98,6 +101,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         userId = req.session.userId;
       }
       // Fall back to OIDC authentication
+      else if (req.user?.id) {
+        userId = req.user.id;
+      }
       else if (req.user?.claims?.sub) {
         userId = req.user.claims.sub;
       }

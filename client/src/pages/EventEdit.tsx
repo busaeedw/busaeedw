@@ -259,83 +259,76 @@ export default function EventEdit() {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>{t('event.create.basicInfo')}</CardTitle>
+              <CardTitle>{t('event.create.basic.title')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="title">{t('event.create.title')} (English) *</Label>
+                  <Label htmlFor="title">{t('event.create.basic.event.title')} (English) *</Label>
                   <Input id="title" {...register('title', { required: true })} />
                   {errors.title && <span className="text-sm text-red-500">This field is required</span>}
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="titleAr">{t('event.create.title')} (Arabic)</Label>
+                  <Label htmlFor="titleAr">{t('event.create.basic.event.title')} (Arabic)</Label>
                   <Input id="titleAr" {...register('titleAr')} />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="description">{t('event.create.description')} (English) *</Label>
+                <Label htmlFor="description">{t('event.create.basic.description')} (English) *</Label>
                 <Textarea id="description" {...register('description', { required: true })} rows={5} />
                 {errors.description && <span className="text-sm text-red-500">This field is required</span>}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="descriptionAr">{t('event.create.description')} (Arabic)</Label>
+                <Label htmlFor="descriptionAr">{t('event.create.basic.description')} (Arabic)</Label>
                 <Textarea id="descriptionAr" {...register('descriptionAr')} rows={5} />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="category">{t('event.create.category')} *</Label>
+                <Label htmlFor="category">{t('event.create.basic.category')} *</Label>
                 <Select onValueChange={(value) => setValue('category', value)} value={watch('category')}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select category" />
+                    <SelectValue placeholder={t('event.create.basic.category.placeholder')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="technology">{t('events.filter.technology')}</SelectItem>
-                    <SelectItem value="cultural">{t('events.filter.cultural')}</SelectItem>
-                    <SelectItem value="business">{t('events.filter.business')}</SelectItem>
-                    <SelectItem value="entertainment">{t('events.filter.entertainment')}</SelectItem>
+                    <SelectItem value="technology">{t('event.create.basic.category.technology')}</SelectItem>
+                    <SelectItem value="cultural">{t('event.create.basic.category.cultural')}</SelectItem>
+                    <SelectItem value="business">{t('event.create.basic.category.business')}</SelectItem>
+                    <SelectItem value="entertainment">{t('event.create.basic.category.entertainment')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="imageUrl">{t('event.create.imageUrl')}</Label>
-                <Input id="imageUrl" {...register('imageUrl')} placeholder="https://example.com/image.jpg" />
+                <Label htmlFor="imageUrl">{t('event.create.pricing.image')}</Label>
+                <Input id="imageUrl" {...register('imageUrl')} placeholder={t('event.create.pricing.image.placeholder')} />
               </div>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader>
-              <CardTitle>{t('event.create.dateTime')}</CardTitle>
+              <CardTitle>{t('event.create.datetime.title')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="startDate">{t('event.create.startDate')} *</Label>
+                  <Label htmlFor="startDate">{t('event.create.datetime.start')} *</Label>
                   <Input id="startDate" type="datetime-local" {...register('startDate', { required: true })} />
                   {errors.startDate && <span className="text-sm text-red-500">This field is required</span>}
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="endDate">{t('event.create.endDate')} *</Label>
+                  <Label htmlFor="endDate">{t('event.create.datetime.end')} *</Label>
                   <Input id="endDate" type="datetime-local" {...register('endDate', { required: true })} />
                   {errors.endDate && <span className="text-sm text-red-500">This field is required</span>}
                 </div>
               </div>
-            </CardContent>
-          </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>{t('event.create.location')}</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="venueId">{t('event.create.venue')}</Label>
+                <Label htmlFor="venueId">{t('event.create.datetime.venue')}</Label>
                 <Select onValueChange={(value) => setValue('venueId', value)} value={watch('venueId')}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select a venue" />
@@ -351,23 +344,23 @@ export default function EventEdit() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="location">{t('event.create.address')} *</Label>
-                <Input id="location" {...register('location', { required: true })} />
+                <Label htmlFor="location">{t('event.create.datetime.location')} *</Label>
+                <Input id="location" {...register('location', { required: true })} placeholder={t('event.create.datetime.location.placeholder')} />
                 {errors.location && <span className="text-sm text-red-500">This field is required</span>}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="city">{t('event.create.city')} *</Label>
+                <Label htmlFor="city">{t('event.create.datetime.city')} *</Label>
                 <Select onValueChange={(value) => setValue('city', value)} value={watch('city')}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select city" />
+                    <SelectValue placeholder={t('event.create.datetime.city.placeholder')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Riyadh">Riyadh</SelectItem>
-                    <SelectItem value="Jeddah">Jeddah</SelectItem>
-                    <SelectItem value="Dammam">Dammam</SelectItem>
-                    <SelectItem value="Mecca">Mecca</SelectItem>
-                    <SelectItem value="Medina">Medina</SelectItem>
+                    <SelectItem value="Riyadh">{t('event.create.datetime.city.riyadh')}</SelectItem>
+                    <SelectItem value="Jeddah">{t('event.create.datetime.city.jeddah')}</SelectItem>
+                    <SelectItem value="Dammam">{t('event.create.datetime.city.dammam')}</SelectItem>
+                    <SelectItem value="Mecca">{t('event.create.datetime.city.mecca')}</SelectItem>
+                    <SelectItem value="Medina">{t('event.create.datetime.city.medina')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -376,44 +369,44 @@ export default function EventEdit() {
 
           <Card>
             <CardHeader>
-              <CardTitle>{t('event.create.ticketing')}</CardTitle>
+              <CardTitle>{t('event.create.pricing.title')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="price">{t('event.create.price')} *</Label>
-                  <Input id="price" type="number" step="0.01" {...register('price', { required: true })} />
+                  <Label htmlFor="price">{t('event.create.pricing.price')} *</Label>
+                  <Input id="price" type="number" step="0.01" {...register('price', { required: true })} placeholder={t('event.create.pricing.price.placeholder')} />
                   {errors.price && <span className="text-sm text-red-500">This field is required</span>}
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="currency">{t('event.create.currency')}</Label>
+                  <Label htmlFor="currency">{t('event.create.pricing.currency')}</Label>
                   <Select onValueChange={(value) => setValue('currency', value)} value={watch('currency')}>
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="SAR">SAR</SelectItem>
-                      <SelectItem value="USD">USD</SelectItem>
+                      <SelectItem value="SAR">{t('event.create.pricing.currency.sar')}</SelectItem>
+                      <SelectItem value="USD">{t('event.create.pricing.currency.usd')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="maxAttendees">{t('event.create.maxAttendees')}</Label>
-                <Input id="maxAttendees" type="number" {...register('maxAttendees', { valueAsNumber: true })} />
+                <Label htmlFor="maxAttendees">{t('event.create.pricing.maxattendees')}</Label>
+                <Input id="maxAttendees" type="number" {...register('maxAttendees', { valueAsNumber: true })} placeholder={t('event.create.pricing.maxattendees.placeholder')} />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="status">Status *</Label>
+                <Label htmlFor="status">{t('event.create.basic.status')} *</Label>
                 <Select onValueChange={(value: 'draft' | 'published') => setValue('status', value)} value={watch('status')}>
                   <SelectTrigger>
-                    <SelectValue />
+                    <SelectValue placeholder={t('event.create.basic.status.placeholder')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="draft">Draft</SelectItem>
-                    <SelectItem value="published">Published</SelectItem>
+                    <SelectItem value="draft">{t('event.create.basic.status.draft')}</SelectItem>
+                    <SelectItem value="published">{t('event.create.basic.status.published')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
