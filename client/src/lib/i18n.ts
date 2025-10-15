@@ -435,6 +435,12 @@ const translations = {
     'event.create.sponsors.sponsor2': 'Sponsor 2',
     'event.create.sponsors.sponsor3': 'Sponsor 3',
     'event.create.sponsors.placeholder': 'Select a sponsor',
+    'event.create.serviceproviders.title': 'Service Providers',
+    'event.create.serviceproviders.description': 'Select up to 3 service providers for your event (optional)',
+    'event.create.serviceproviders.provider1': 'Service Provider 1',
+    'event.create.serviceproviders.provider2': 'Service Provider 2',
+    'event.create.serviceproviders.provider3': 'Service Provider 3',
+    'event.create.serviceproviders.placeholder': 'Select a service provider',
     'event.create.button.create': 'Creating...',
 
     // Event Details
@@ -961,6 +967,12 @@ const translations = {
     'event.create.sponsors.sponsor2': 'الراعي 2',
     'event.create.sponsors.sponsor3': 'الراعي 3',
     'event.create.sponsors.placeholder': 'اختر راعياً',
+    'event.create.serviceproviders.title': 'مزودو الخدمات',
+    'event.create.serviceproviders.description': 'اختر ما يصل إلى 3 مزودي خدمات لفعاليتك (اختياري)',
+    'event.create.serviceproviders.provider1': 'مزود الخدمة 1',
+    'event.create.serviceproviders.provider2': 'مزود الخدمة 2',
+    'event.create.serviceproviders.provider3': 'مزود الخدمة 3',
+    'event.create.serviceproviders.placeholder': 'اختر مزود خدمة',
     'event.create.button.create': 'جاري الإنشاء...',
 
     // Event Details

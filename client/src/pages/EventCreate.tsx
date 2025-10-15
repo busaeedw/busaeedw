@@ -67,6 +67,12 @@ export default function EventCreate() {
     enabled: isAuthenticated,
   });
 
+  // Load service providers from API
+  const { data: serviceProviders = [] } = useQuery<any[]>({
+    queryKey: ['/api/service-providers'],
+    enabled: isAuthenticated,
+  });
+
   // Redirect to login if not authenticated
   useEffect(() => {
     const isLoggingOut = localStorage.getItem('isLoggingOut') === 'true';
@@ -118,6 +124,9 @@ export default function EventCreate() {
       sponsor1Id: undefined,
       sponsor2Id: undefined,
       sponsor3Id: undefined,
+      serviceProvider1Id: undefined,
+      serviceProvider2Id: undefined,
+      serviceProvider3Id: undefined,
       price: '0',
       currency: 'SAR',
       maxAttendees: undefined,
@@ -151,6 +160,9 @@ export default function EventCreate() {
         sponsor1Id: data.sponsor1Id || null,
         sponsor2Id: data.sponsor2Id || null,
         sponsor3Id: data.sponsor3Id || null,
+        serviceProvider1Id: data.serviceProvider1Id || null,
+        serviceProvider2Id: data.serviceProvider2Id || null,
+        serviceProvider3Id: data.serviceProvider3Id || null,
       };
       const response = await apiRequest('/api/events', {
         method: 'POST',
@@ -674,6 +686,105 @@ export default function EventCreate() {
                             {sponsors.map((sponsor) => (
                               <SelectItem key={sponsor.id} value={sponsor.id}>
                                 {language === 'ar' && sponsor.nameAr ? sponsor.nameAr : sponsor.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>{t('event.create.serviceproviders.title')}</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <p className="text-sm text-gray-600">
+                  {t('event.create.serviceproviders.description')}
+                </p>
+                <div className="grid md:grid-cols-3 gap-6">
+                  <FormField
+                    control={form.control}
+                    name="serviceProvider1Id"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t('event.create.serviceproviders.provider1')}</FormLabel>
+                        <Select 
+                          onValueChange={(value) => field.onChange(value === 'none' ? undefined : value)} 
+                          value={field.value || 'none'}
+                        >
+                          <FormControl>
+                            <SelectTrigger data-testid="select-service-provider1">
+                              <SelectValue placeholder={t('event.create.serviceproviders.placeholder')} />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="none">{t('common.none')}</SelectItem>
+                            {serviceProviders.map((provider) => (
+                              <SelectItem key={provider.id} value={provider.id}>
+                                {provider.businessName}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="serviceProvider2Id"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t('event.create.serviceproviders.provider2')}</FormLabel>
+                        <Select 
+                          onValueChange={(value) => field.onChange(value === 'none' ? undefined : value)} 
+                          value={field.value || 'none'}
+                        >
+                          <FormControl>
+                            <SelectTrigger data-testid="select-service-provider2">
+                              <SelectValue placeholder={t('event.create.serviceproviders.placeholder')} />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="none">{t('common.none')}</SelectItem>
+                            {serviceProviders.map((provider) => (
+                              <SelectItem key={provider.id} value={provider.id}>
+                                {provider.businessName}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="serviceProvider3Id"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t('event.create.serviceproviders.provider3')}</FormLabel>
+                        <Select 
+                          onValueChange={(value) => field.onChange(value === 'none' ? undefined : value)} 
+                          value={field.value || 'none'}
+                        >
+                          <FormControl>
+                            <SelectTrigger data-testid="select-service-provider3">
+                              <SelectValue placeholder={t('event.create.serviceproviders.placeholder')} />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="none">{t('common.none')}</SelectItem>
+                            {serviceProviders.map((provider) => (
+                              <SelectItem key={provider.id} value={provider.id}>
+                                {provider.businessName}
                               </SelectItem>
                             ))}
                           </SelectContent>
