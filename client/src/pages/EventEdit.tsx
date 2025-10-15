@@ -579,7 +579,7 @@ export default function EventEdit() {
                     {t('common.saving')}
                   </>
                 ) : (
-                  t('common.saveChanges')
+                  t('common.update')
                 )}
               </Button>
             </div>

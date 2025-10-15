@@ -75,6 +75,30 @@ Preferred communication style: Simple, everyday language.
 -   `memoizee`
 ## Recent Updates
 
+### Edit Event Save Button Translation Fix (October 15, 2025)
+
+**Issue Fixed:**
+The save button in the edit event form was displaying the translation key "common.saveChanges" instead of the translated text "Update" or "تحديث".
+
+**Root Cause:**
+1. Button was using `t('common.saveChanges')` which doesn't exist in i18n.ts
+2. Loading state was using `t('common.saving')` which also didn't exist
+
+**Implementation:**
+- Added missing translation keys to i18n.ts:
+  - English: `common.saving: 'Saving...'`
+  - Arabic: `common.saving: 'جاري الحفظ...'`
+- Updated EventEdit.tsx button to use `t('common.update')` instead of `t('common.saveChanges')`
+
+**Files Modified:**
+- `client/src/lib/i18n.ts`: Added "common.saving" translations
+- `client/src/pages/EventEdit.tsx`: Changed button to use correct translation key
+
+**Testing:**
+✅ Button now displays "Update" in English (not "common.saveChanges")
+✅ Button displays "تحديث" in Arabic
+✅ Button shows "Saving..." / "جاري الحفظ..." when submitting
+
 ### Dashboard Edit Button Fix (October 15, 2025)
 
 **Issue Fixed:**
