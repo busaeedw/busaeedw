@@ -170,3 +170,68 @@ When organizers tried to create or edit events, they encountered a Radix UI erro
 **Files Modified:**
 - `client/src/pages/EventCreate.tsx`: Fixed form defaults and Select components
 - `client/src/pages/EventEdit.tsx`: Fixed Select components and PATCH mutation
+
+### Service Provider Selection Feature (October 15, 2025)
+
+**Implemented Service Provider Association for Events:**
+Organizers can now select up to 3 service providers when creating or editing events, similar to sponsor selection.
+
+**Database Schema Changes:**
+- Added three nullable foreign key columns to events table:
+  - `service_provider_1_id` → references service_providers table
+  - `service_provider_2_id` → references service_providers table
+  - `service_provider_3_id` → references service_providers table
+- All service provider associations are optional (nullable)
+
+**Frontend Implementation:**
+- **EventCreate Page**: Added 3 service provider selection dropdowns
+- **EventEdit Page**: Added 3 service provider selection dropdowns with pre-population
+- **Dropdown Logic**: Uses "none" sentinel value that converts to undefined in form state and null in API payload
+- **Data Fetching**: Service providers loaded from `/api/service-providers` endpoint
+- **Form Validation**: Uses same undefined → null conversion pattern as sponsor selection
+
+**Backend Implementation:**
+- **Auto-Create Organizer**: Fixed organizer record creation bug
+  - When user with 'organizer' role creates first event, system auto-creates organizer record
+  - Uses raw `db.insert(organizers).values({ id: userId, ...userData })` to set custom ID
+  - Prevents foreign key constraint violations
+- **Event Endpoints**: Support serviceProvider1Id, serviceProvider2Id, serviceProvider3Id in POST/PATCH
+
+**Authentication Enhancements:**
+- **OIDC Role Assignment**: Enhanced role claim handling in `upsertUser` function
+  - Priority 1: `roles` array claim (used by test harness)
+  - Priority 2: `role` string claim
+  - Priority 3: ID pattern matching ("org-" → organizer, "sp-" → service_provider, etc.)
+- **Login UI**: Added "Sign in with Replit" button to trigger OIDC flow
+  - Divider with "or" text separates local and OIDC login options
+  - Button redirects to `/api/login` endpoint
+  - Enables test automation with OIDC bypass
+
+**Bilingual Support:**
+Added translations for service provider selection:
+- English: "Service Provider 1/2/3", "Select service provider", "None"
+- Arabic: "مزود الخدمة 1/2/3", "اختر مزود الخدمة", "بدون"
+
+**Files Modified:**
+- `shared/schema.ts`: Added service provider FK columns to events table
+- `client/src/pages/EventCreate.tsx`: Added service provider dropdowns with undefined → null handling
+- `client/src/pages/EventEdit.tsx`: Added service provider dropdowns with undefined → null handling
+- `client/src/lib/i18n.ts`: Added service provider selection translations
+- `server/routes.ts`: 
+  - Added organizer auto-creation logic with custom ID
+  - Imported `db` and `organizers` for raw insert
+- `server/replitAuth.ts`: Enhanced `upsertUser` with multi-tier role claim handling
+- `client/src/pages/Login.tsx`: Added OIDC login button with data-testid="button-oidc-login"
+
+**Usage:**
+1. Organizer navigates to create/edit event page
+2. Fills in required event fields
+3. Optionally selects up to 3 service providers from dropdowns
+4. Saves event - service provider associations persist in database
+5. Service providers display on event detail pages
+
+**Testing:**
+- Verified end-to-end with Playwright test
+- OIDC authentication with role claims working correctly
+- Service provider selection persists to database
+- Auto-creation of organizer records prevents FK violations
