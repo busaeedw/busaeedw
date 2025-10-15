@@ -379,7 +379,7 @@ export default function EventDetails() {
                 <div className="text-center mb-6">
                   <div className="text-3xl font-bold text-saudi-green mb-2">
                     {event.price === '0.00' || Number(event.price) === 0 ? (
-                      'Free'
+                      t('events.free')
                     ) : (
                       `${event.currency} ${event.price}`
                     )}
@@ -422,7 +422,7 @@ export default function EventDetails() {
                       Registering...
                     </>
                   ) : event.status !== 'published' ? (
-                    'Event Not Available'
+                    t('events.status.unavailable')
                   ) : (
                     t('events.cta.register')
                   )}
