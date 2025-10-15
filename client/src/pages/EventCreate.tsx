@@ -73,14 +73,6 @@ export default function EventCreate() {
     enabled: isAuthenticated,
   });
 
-  // Filter service providers by selected city
-  const selectedCity = form.watch("city");
-  const serviceProviders = allServiceProviders.filter(provider => {
-    if (!selectedCity) return true; // Show all if no city selected
-    // Match city case-insensitively
-    return provider.user?.city?.toLowerCase() === selectedCity.toLowerCase();
-  });
-
   // Redirect to login if not authenticated
   useEffect(() => {
     const isLoggingOut = localStorage.getItem('isLoggingOut') === 'true';
@@ -142,6 +134,14 @@ export default function EventCreate() {
       status: 'draft',
       tags: [],
     },
+  });
+
+  // Filter service providers by selected city
+  const selectedCity = form.watch("city");
+  const serviceProviders = allServiceProviders.filter(provider => {
+    if (!selectedCity) return true; // Show all if no city selected
+    // Match city case-insensitively
+    return provider.user?.city?.toLowerCase() === selectedCity.toLowerCase();
   });
 
   // Reset venue selection when city changes
@@ -420,7 +420,6 @@ export default function EventCreate() {
                     control={form.control}
                     name="venueId"
                     render={({ field }) => {
-                      const selectedCity = form.watch("city");
                       const cityVenues = venues.filter(v => 
                         v.city.toLowerCase() === selectedCity?.toLowerCase()
                       );
