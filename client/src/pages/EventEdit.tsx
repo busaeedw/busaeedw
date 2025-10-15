@@ -67,7 +67,7 @@ export default function EventEdit() {
   });
 
   // Load service providers from API
-  const { data: serviceProviders = [] } = useQuery<any[]>({
+  const { data: allServiceProviders = [] } = useQuery<any[]>({
     queryKey: ['/api/service-providers'],
   });
 
@@ -76,6 +76,14 @@ export default function EventEdit() {
       currency: 'SAR',
       status: 'draft',
     },
+  });
+
+  // Filter service providers by selected city
+  const selectedCity = watch("city");
+  const serviceProviders = allServiceProviders.filter(provider => {
+    if (!selectedCity) return true; // Show all if no city selected
+    // Match city case-insensitively
+    return provider.city?.toLowerCase() === selectedCity.toLowerCase();
   });
 
   useEffect(() => {
