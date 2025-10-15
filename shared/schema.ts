@@ -133,6 +133,7 @@ export const serviceProviders = pgTable("service_providers", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
   businessName: varchar("business_name").notNull(),
+  businessNameAr: varchar("business_name_ar"),
   category: varchar("category").notNull(), // catering, photography, entertainment, planning
   city: varchar("city").notNull().default("Riyadh"), // City where service provider operates
   services: text("services").array(),
