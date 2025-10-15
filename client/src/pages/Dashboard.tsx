@@ -148,7 +148,9 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{userEvents?.length || 0}</div>
-            <p className="text-xs text-muted-foreground">{t('dashboard.totalEventsCreated')}</p>
+            <Link href="/organizer/my-events" className="text-xs text-muted-foreground hover:text-primary underline-offset-4 hover:underline transition-colors" data-testid="link-view-my-events">
+              {t('dashboard.totalEventsCreated')}
+            </Link>
           </CardContent>
         </Card>
         
