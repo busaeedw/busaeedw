@@ -106,7 +106,7 @@ export function Footer() {
 
         <div className="border-t border-gray-800 mt-8 pt-8 text-center">
           <p className="text-gray-400">
-            © 2024 EventHub Saudi Arabia.{' '}
+            © 2025 EventHub Saudi Arabia.{' '}
             {language === 'ar' ? 'جميع الحقوق محفوظة' : 'All rights reserved.'} |{' '}
             {language === 'ar'
               ? 'صنع بـ ❤️ في المملكة العربية السعودية'
