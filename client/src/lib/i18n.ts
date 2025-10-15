@@ -474,6 +474,8 @@ const translations = {
     'event.details.capacity': 'Capacity:',
     'event.details.contact': 'Contact',
     'event.details.share': 'Share',
+    'event.details.serviceProviders': 'Event Service Providers',
+    'event.details.noServiceProviders': 'No service providers associated with this event',
     'event.delete.confirmation': 'Are you sure you want to delete this event? This action cannot be undone.',
 
     // Common
@@ -511,6 +513,7 @@ const translations = {
     'common.unknown.venue': 'Unknown Venue',
     'common.unknown.location': 'Unknown Location',
     'common.unknown.city': 'Unknown City',
+    'common.verified': 'Verified',
 
     // Organizers
     'organizers.browse.subtitle': 'Connect with event organizers and explore their events',
@@ -1020,6 +1023,8 @@ const translations = {
     'event.details.capacity': 'السعة:',
     'event.details.contact': 'اتصال',
     'event.details.share': 'مشاركة',
+    'event.details.serviceProviders': 'مزودو خدمات الفعالية',
+    'event.details.noServiceProviders': 'لا يوجد مزودو خدمات مرتبطون بهذه الفعالية',
     'event.delete.confirmation': 'هل أنت متأكد من حذف هذه الفعالية؟ لا يمكن التراجع عن هذا الإجراء.',
 
     // Common
@@ -1057,6 +1062,7 @@ const translations = {
     'common.unknown.venue': 'مكان غير معروف',
     'common.unknown.location': 'موقع غير معروف',
     'common.unknown.city': 'مدينة غير معروفة',
+    'common.verified': 'موثق',
 
     // Organizers
     'organizers.browse.subtitle': 'تواصل مع منظمي الفعاليات واستكشف فعالياتهم',

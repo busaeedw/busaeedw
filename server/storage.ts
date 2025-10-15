@@ -37,7 +37,7 @@ import {
   type InsertEventSponsor,
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, desc, and, or, ilike, sql } from "drizzle-orm";
+import { eq, desc, and, or, ilike, sql, inArray } from "drizzle-orm";
 import { randomUUID } from "crypto";
 import bcrypt from "bcrypt";
 
@@ -80,6 +80,7 @@ export interface IStorage {
     limit?: number;
     offset?: number;
   }): Promise<ServiceProvider[]>;
+  getServiceProvidersByIds(ids: string[]): Promise<ServiceProvider[]>;
   updateServiceProvider(id: string, updates: Partial<InsertServiceProvider>): Promise<ServiceProvider>;
   
   // Review operations
@@ -436,6 +437,16 @@ export class DatabaseStorage implements IStorage {
     }
 
     return await query;
+  }
+
+  async getServiceProvidersByIds(ids: string[]): Promise<ServiceProvider[]> {
+    if (ids.length === 0) {
+      return [];
+    }
+    return await db
+      .select()
+      .from(serviceProviders)
+      .where(inArray(serviceProviders.id, ids));
   }
 
   async updateServiceProvider(id: string, updates: Partial<InsertServiceProvider>): Promise<ServiceProvider> {

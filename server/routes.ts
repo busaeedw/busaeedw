@@ -1514,6 +1514,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get event service providers (public)
+  app.get('/api/events/:eventId/service-providers', async (req, res) => {
+    try {
+      const event = await storage.getEvent(req.params.eventId);
+      
+      if (!event) {
+        return res.status(404).json({ message: "Event not found" });
+      }
+
+      const serviceProviderIds = [
+        event.serviceProvider1Id,
+        event.serviceProvider2Id,
+        event.serviceProvider3Id,
+      ].filter((id): id is string => id !== null && id !== undefined);
+
+      if (serviceProviderIds.length === 0) {
+        return res.json([]);
+      }
+
+      const serviceProviders = await storage.getServiceProvidersByIds(serviceProviderIds);
+      res.json(serviceProviders);
+    } catch (error) {
+      console.error("Error fetching event service providers:", error);
+      res.status(500).json({ message: "Failed to fetch event service providers" });
+    }
+  });
 
 
   const httpServer = createServer(app);
