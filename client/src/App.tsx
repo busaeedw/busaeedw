@@ -33,6 +33,7 @@ import Profile from "@/pages/Profile";
 import Sponsors from "@/pages/Sponsors";
 import SponsorForm from "@/pages/SponsorForm";
 import SponsorDetails from "@/pages/SponsorDetails";
+import MyEvents from "@/pages/MyEvents";
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -65,6 +66,7 @@ function Router() {
       <Route path="/admin" component={AdminDashboard} />
       <Route path="/messages" component={Messages} />
       <Route path="/profile" component={Profile} />
+      <Route path="/organizer/my-events" component={MyEvents} />
 
       {/* Browse routes */}
       <Route path="/browse/events" component={BrowseEvents} />
