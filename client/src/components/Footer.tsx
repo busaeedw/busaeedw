@@ -31,11 +31,11 @@ export function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           <div>
-            <div className="flex items-center mb-4">
-              <h3 className="text-2xl font-bold text-primary-400">EventHub</h3>
-              <span className="text-gold-400 ml-2 text-sm font-medium">
-                {language === 'ar' ? 'المملكة العربية السعودية' : 'Saudi Arabia'}
-              </span>
+            <div className="mb-4">
+              <h3 className="text-2xl font-bold text-primary-400 leading-tight">EventHub</h3>
+              <p className="text-sm font-semibold leading-tight" style={{ color: '#fc743c' }}>
+                المملكة العربية السعودية
+              </p>
             </div>
             <p className="text-gray-300 mb-6">
               {language === 'ar'
