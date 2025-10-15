@@ -134,6 +134,7 @@ export const serviceProviders = pgTable("service_providers", {
   userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
   businessName: varchar("business_name").notNull(),
   category: varchar("category").notNull(), // catering, photography, entertainment, planning
+  city: varchar("city").notNull().default("Riyadh"), // City where service provider operates
   services: text("services").array(),
   priceRange: varchar("price_range"),
   portfolio: text("portfolio").array(), // URLs to portfolio images
