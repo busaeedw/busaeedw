@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
-import { pool } from "./db";
+import { pool, db } from "./db";
 import { 
   insertEventSchema,
   insertServiceProviderSchema,
@@ -19,6 +19,7 @@ import {
   directResetPasswordSchema,
   insertSponsorSchema,
   insertEventSponsorSchema,
+  organizers,
 } from "@shared/schema";
 import { z } from "zod";
 import bcrypt from "bcrypt";
@@ -396,6 +397,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       if (!user || (user.role !== "organizer" && user.role !== "admin")) {
         return res.status(403).json({ message: "Only organizers can create events" });
+      }
+
+      // Check if organizer record exists, if not create one
+      let organizer = await storage.getOrganizer(userId);
+      if (!organizer) {
+        // Create organizer record from user data using raw insert to specify ID
+        const [createdOrganizer] = await db.insert(organizers).values({
+          id: userId,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          profileImageUrl: user.profileImageUrl || undefined,
+          bio: user.bio || undefined,
+          phone: user.phone || undefined,
+          city: user.city || undefined,
+          businessName: `${user.firstName} ${user.lastName} Events`,
+          businessNameAr: undefined,
+          category: 'planning',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        }).returning();
+        organizer = createdOrganizer;
       }
 
       const eventData = insertEventSchema.parse({ ...req.body, organizerId: userId });
