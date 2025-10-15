@@ -141,7 +141,7 @@ export default function EventCreate() {
   const serviceProviders = allServiceProviders.filter(provider => {
     if (!selectedCity) return true; // Show all if no city selected
     // Match city case-insensitively
-    return provider.user?.city?.toLowerCase() === selectedCity.toLowerCase();
+    return provider.city?.toLowerCase() === selectedCity.toLowerCase();
   });
 
   // Reset venue selection when city changes
