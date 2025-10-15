@@ -1,5 +1,5 @@
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, useLocation } from 'wouter';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
@@ -18,6 +18,17 @@ import { apiRequest } from '@/lib/queryClient';
 import { isUnauthorizedError } from '@/lib/authUtils';
 import { type Event } from '@shared/schema';
 import { EventSponsorManager } from '@/components/EventSponsorManager';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { Trash2 } from 'lucide-react';
 
 type EventFormData = {
   title: string;
@@ -51,6 +62,7 @@ export default function EventEdit() {
   const { t } = useLanguage();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   const { data: event, isLoading: eventLoading } = useQuery<Event>({
     queryKey: ['/api/events', id],
@@ -156,6 +168,36 @@ export default function EventEdit() {
       });
     },
   });
+
+  const deleteEventMutation = useMutation({
+    mutationFn: async () => {
+      const response = await apiRequest(`/api/events/${id}`, {
+        method: 'DELETE',
+      });
+      return response;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/events'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/user/events'] });
+      toast({
+        title: t('common.success'),
+        description: "Event deleted successfully",
+      });
+      setLocation('/organizer/my-events');
+    },
+    onError: (error: Error) => {
+      toast({
+        title: t('common.error'),
+        description: error.message || "Failed to delete event",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleDeleteEvent = () => {
+    deleteEventMutation.mutate();
+    setDeleteDialogOpen(false);
+  };
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
@@ -522,20 +564,32 @@ export default function EventEdit() {
             </CardContent>
           </Card>
 
-          <div className="flex justify-end space-x-4">
-            <Button type="button" variant="outline" onClick={() => setLocation(`/events/${id}`)}>
-              {t('common.cancel')}
+          <div className="flex justify-between items-center">
+            <Button 
+              type="button" 
+              variant="destructive" 
+              onClick={() => setDeleteDialogOpen(true)}
+              className="bg-red-600 hover:bg-red-700"
+              data-testid="button-delete-event"
+            >
+              <Trash2 className="h-4 w-4 mr-2" />
+              {t('common.delete')}
             </Button>
-            <Button type="submit" disabled={updateEventMutation.isPending}>
-              {updateEventMutation.isPending ? (
-                <>
-                  <LoadingSpinner size="sm" className="mr-2" />
-                  {t('common.saving')}
-                </>
-              ) : (
-                t('common.saveChanges')
-              )}
-            </Button>
+            <div className="flex space-x-4">
+              <Button type="button" variant="outline" onClick={() => setLocation(`/events/${id}`)}>
+                {t('common.cancel')}
+              </Button>
+              <Button type="submit" disabled={updateEventMutation.isPending}>
+                {updateEventMutation.isPending ? (
+                  <>
+                    <LoadingSpinner size="sm" className="mr-2" />
+                    {t('common.saving')}
+                  </>
+                ) : (
+                  t('common.saveChanges')
+                )}
+              </Button>
+            </div>
           </div>
         </form>
 
@@ -545,6 +599,35 @@ export default function EventEdit() {
             <EventSponsorManager eventId={id!} canManage={!!(user && (user.role === 'admin' || event?.organizerId === user.id))} />
           </div>
         )}
+
+        {/* Delete Confirmation Dialog */}
+        <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>{t('common.confirmDelete')}</AlertDialogTitle>
+              <AlertDialogDescription>
+                {t('event.delete.confirmation')}
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+              <AlertDialogAction 
+                onClick={handleDeleteEvent}
+                className="bg-red-600 hover:bg-red-700"
+                disabled={deleteEventMutation.isPending}
+              >
+                {deleteEventMutation.isPending ? (
+                  <>
+                    <LoadingSpinner size="sm" className="mr-2" />
+                    {t('common.deleting')}
+                  </>
+                ) : (
+                  t('common.delete')
+                )}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </main>
     </div>
   );

@@ -473,6 +473,7 @@ const translations = {
     'event.details.capacity': 'Capacity:',
     'event.details.contact': 'Contact',
     'event.details.share': 'Share',
+    'event.delete.confirmation': 'Are you sure you want to delete this event? This action cannot be undone.',
 
     // Common
     'common.loading': 'Loading...',
@@ -485,6 +486,8 @@ const translations = {
     'common.logout.error.title': 'Logout failed',
     'common.logout.error.description': 'Something went wrong. Please try again.',
     'common.delete': 'Delete',
+    'common.deleting': 'Deleting...',
+    'common.confirmDelete': 'Confirm Delete',
     'common.edit': 'Edit',
     'common.create': 'Create',
     'common.update': 'Update',
@@ -1014,6 +1017,7 @@ const translations = {
     'event.details.capacity': 'السعة:',
     'event.details.contact': 'اتصال',
     'event.details.share': 'مشاركة',
+    'event.delete.confirmation': 'هل أنت متأكد من حذف هذه الفعالية؟ لا يمكن التراجع عن هذا الإجراء.',
 
     // Common
     'common.loading': 'جاري التحميل...',
@@ -1026,6 +1030,8 @@ const translations = {
     'common.logout.error.title': 'فشل تسجيل الخروج',
     'common.logout.error.description': 'حدث خطأ ما. يرجى المحاولة مرة أخرى.',
     'common.delete': 'حذف',
+    'common.deleting': 'جاري الحذف...',
+    'common.confirmDelete': 'تأكيد الحذف',
     'common.edit': 'تحرير',
     'common.create': 'إنشاء',
     'common.update': 'تحديث',
