@@ -34,6 +34,9 @@ type EventFormData = {
   sponsor1Id?: string;
   sponsor2Id?: string;
   sponsor3Id?: string;
+  serviceProvider1Id?: string;
+  serviceProvider2Id?: string;
+  serviceProvider3Id?: string;
   price: string;
   currency: string;
   maxAttendees?: number;
@@ -63,6 +66,11 @@ export default function EventEdit() {
     queryKey: ['/api/sponsors'],
   });
 
+  // Load service providers from API
+  const { data: serviceProviders = [] } = useQuery<any[]>({
+    queryKey: ['/api/service-providers'],
+  });
+
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<EventFormData>({
     defaultValues: {
       currency: 'SAR',
@@ -86,6 +94,9 @@ export default function EventEdit() {
       setValue('sponsor1Id', (event as any).sponsor1Id || '');
       setValue('sponsor2Id', (event as any).sponsor2Id || '');
       setValue('sponsor3Id', (event as any).sponsor3Id || '');
+      setValue('serviceProvider1Id', (event as any).serviceProvider1Id || '');
+      setValue('serviceProvider2Id', (event as any).serviceProvider2Id || '');
+      setValue('serviceProvider3Id', (event as any).serviceProvider3Id || '');
       setValue('price', event.price);
       setValue('currency', event.currency);
       setValue('maxAttendees', event.maxAttendees || undefined);
@@ -101,6 +112,9 @@ export default function EventEdit() {
         sponsor1Id: data.sponsor1Id || null,
         sponsor2Id: data.sponsor2Id || null,
         sponsor3Id: data.sponsor3Id || null,
+        serviceProvider1Id: data.serviceProvider1Id || null,
+        serviceProvider2Id: data.serviceProvider2Id || null,
+        serviceProvider3Id: data.serviceProvider3Id || null,
       };
       const response = await apiRequest(`/api/events/${id}`, {
         method: 'PATCH',
@@ -419,6 +433,78 @@ export default function EventEdit() {
                       {sponsors.map((sponsor) => (
                         <SelectItem key={sponsor.id} value={sponsor.id}>
                           {sponsor.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>{t('event.create.serviceproviders.title')}</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-sm text-gray-600">
+                {t('event.create.serviceproviders.description')}
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="serviceProvider1Id">{t('event.create.serviceproviders.provider1')}</Label>
+                  <Select 
+                    onValueChange={(value) => setValue('serviceProvider1Id', value === 'none' ? undefined : value)} 
+                    value={watch('serviceProvider1Id') || 'none'}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder={t('event.create.serviceproviders.placeholder')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">{t('common.none')}</SelectItem>
+                      {serviceProviders.map((provider) => (
+                        <SelectItem key={provider.id} value={provider.id}>
+                          {provider.businessName}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="serviceProvider2Id">{t('event.create.serviceproviders.provider2')}</Label>
+                  <Select 
+                    onValueChange={(value) => setValue('serviceProvider2Id', value === 'none' ? undefined : value)} 
+                    value={watch('serviceProvider2Id') || 'none'}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder={t('event.create.serviceproviders.placeholder')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">{t('common.none')}</SelectItem>
+                      {serviceProviders.map((provider) => (
+                        <SelectItem key={provider.id} value={provider.id}>
+                          {provider.businessName}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="serviceProvider3Id">{t('event.create.serviceproviders.provider3')}</Label>
+                  <Select 
+                    onValueChange={(value) => setValue('serviceProvider3Id', value === 'none' ? undefined : value)} 
+                    value={watch('serviceProvider3Id') || 'none'}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder={t('event.create.serviceproviders.placeholder')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">{t('common.none')}</SelectItem>
+                      {serviceProviders.map((provider) => (
+                        <SelectItem key={provider.id} value={provider.id}>
+                          {provider.businessName}
                         </SelectItem>
                       ))}
                     </SelectContent>
