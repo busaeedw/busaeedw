@@ -376,20 +376,6 @@ export default function EventCreate() {
                   />
                 </div>
 
-                <FormField
-                  control={form.control}
-                  name="location"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t('event.create.datetime.location')}</FormLabel>
-                      <FormControl>
-                        <Input placeholder={t('event.create.datetime.location.placeholder')} {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
                 <div className="grid md:grid-cols-2 gap-6">
                   <FormField
                     control={form.control}
@@ -504,32 +490,46 @@ export default function EventCreate() {
                       );
                     }}
                   />
-
-                  <FormField
-                    control={form.control}
-                    name="venue"
-                    render={({ field }) => {
-                      const selectedVenueId = form.watch("venueId");
-                      const isVenueSelected = Boolean(selectedVenueId && selectedVenueId !== "" && selectedVenueId !== "custom");
-
-                      return (
-                        <FormItem>
-                          <FormLabel>{t('event.create.datetime.venue.name')}</FormLabel>
-                          <FormControl>
-                            <Input 
-                              placeholder={t('event.create.datetime.venue.name.placeholder')} 
-                              {...field} 
-                              value={field.value || ''} 
-                              disabled={isVenueSelected}
-                              data-testid="input-venue-name"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      );
-                    }}
-                  />
                 </div>
+
+                <FormField
+                  control={form.control}
+                  name="location"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('event.create.datetime.location')}</FormLabel>
+                      <FormControl>
+                        <Input placeholder={t('event.create.datetime.location.placeholder')} {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="venue"
+                  render={({ field }) => {
+                    const selectedVenueId = form.watch("venueId");
+                    const isVenueSelected = Boolean(selectedVenueId && selectedVenueId !== "" && selectedVenueId !== "custom");
+
+                    return (
+                      <FormItem>
+                        <FormLabel>{t('event.create.datetime.venue.name')}</FormLabel>
+                        <FormControl>
+                          <Input 
+                            placeholder={t('event.create.datetime.venue.name.placeholder')} 
+                            {...field} 
+                            value={field.value || ''} 
+                            disabled={isVenueSelected}
+                            data-testid="input-venue-name"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }}
+                />
               </CardContent>
             </Card>
 

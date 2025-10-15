@@ -330,6 +330,22 @@ export default function EventEdit() {
               </div>
 
               <div className="space-y-2">
+                <Label htmlFor="city">{t('event.create.datetime.city')} *</Label>
+                <Select onValueChange={(value) => setValue('city', value)} value={watch('city')}>
+                  <SelectTrigger>
+                    <SelectValue placeholder={t('event.create.datetime.city.placeholder')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Riyadh">{t('event.create.datetime.city.riyadh')}</SelectItem>
+                    <SelectItem value="Jeddah">{t('event.create.datetime.city.jeddah')}</SelectItem>
+                    <SelectItem value="Dammam">{t('event.create.datetime.city.dammam')}</SelectItem>
+                    <SelectItem value="Mecca">{t('event.create.datetime.city.mecca')}</SelectItem>
+                    <SelectItem value="Medina">{t('event.create.datetime.city.medina')}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
                 <Label htmlFor="venueId">{t('event.create.datetime.venue')}</Label>
                 <Select onValueChange={(value) => setValue('venueId', value)} value={watch('venueId')}>
                   <SelectTrigger>
@@ -349,22 +365,6 @@ export default function EventEdit() {
                 <Label htmlFor="location">{t('event.create.datetime.location')} *</Label>
                 <Input id="location" {...register('location', { required: true })} placeholder={t('event.create.datetime.location.placeholder')} />
                 {errors.location && <span className="text-sm text-red-500">This field is required</span>}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="city">{t('event.create.datetime.city')} *</Label>
-                <Select onValueChange={(value) => setValue('city', value)} value={watch('city')}>
-                  <SelectTrigger>
-                    <SelectValue placeholder={t('event.create.datetime.city.placeholder')} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Riyadh">{t('event.create.datetime.city.riyadh')}</SelectItem>
-                    <SelectItem value="Jeddah">{t('event.create.datetime.city.jeddah')}</SelectItem>
-                    <SelectItem value="Dammam">{t('event.create.datetime.city.dammam')}</SelectItem>
-                    <SelectItem value="Mecca">{t('event.create.datetime.city.mecca')}</SelectItem>
-                    <SelectItem value="Medina">{t('event.create.datetime.city.medina')}</SelectItem>
-                  </SelectContent>
-                </Select>
               </div>
             </CardContent>
           </Card>
