@@ -147,10 +147,12 @@ export default function Dashboard() {
             <CalendarCheck className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{userEvents?.length || 0}</div>
-            <Link href="/organizer/my-events" className="text-xs text-muted-foreground hover:text-primary underline-offset-4 hover:underline transition-colors" data-testid="link-view-my-events">
-              {t('dashboard.totalEventsCreated')}
+            <Link href="/organizer/my-events" data-testid="link-view-my-events">
+              <div className="text-2xl font-bold underline decoration-2 underline-offset-4 hover:text-primary transition-colors cursor-pointer">
+                {userEvents?.length || 0}
+              </div>
             </Link>
+            <p className="text-xs text-muted-foreground">{t('dashboard.totalEventsCreated')}</p>
           </CardContent>
         </Card>
         
