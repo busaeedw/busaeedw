@@ -15,7 +15,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { LoadingSpinner } from '@/components/ui/loading';
 import { apiRequest } from '@/lib/queryClient';
-import { insertEventSchema } from '@shared/schema';
+import { insertEventSchema, type VenueAggregate } from '@shared/schema';
 import { z } from 'zod';
 import { useLocation } from 'wouter';
 import { isUnauthorizedError } from '@/lib/authUtils';
@@ -56,7 +56,7 @@ export default function EventCreate() {
   const queryClient = useQueryClient();
 
   // Load venues from API
-  const { data: venues = [], isLoading: venuesLoading } = useQuery<Venue[]>({
+  const { data: venues = [], isLoading: venuesLoading } = useQuery<VenueAggregate[]>({
     queryKey: ['/api/venues'],
     enabled: isAuthenticated, // Only load venues when authenticated
   });
@@ -463,7 +463,7 @@ export default function EventCreate() {
                                 </SelectItem>
                                 {cityVenues.map((venue) => (
                                   <SelectItem key={venue.id} value={venue.id}>
-                                    {venue.venue}
+                                    {language === 'ar' && venue.venue_ar ? venue.venue_ar : venue.venue}
                                   </SelectItem>
                                 ))}
                               </SelectContent>

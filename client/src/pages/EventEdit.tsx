@@ -355,7 +355,7 @@ export default function EventEdit() {
                   <SelectContent>
                     {venues?.map((venue: any) => (
                       <SelectItem key={venue.id} value={venue.id}>
-                        {venue.venue} - {venue.city}
+                        {language === 'ar' && venue.venue_ar ? venue.venue_ar : venue.venue} - {venue.city}
                       </SelectItem>
                     ))}
                   </SelectContent>
