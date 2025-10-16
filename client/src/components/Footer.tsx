@@ -34,7 +34,7 @@ export function Footer() {
             <div className="mb-4">
               <h3 className="text-2xl font-bold text-primary-400 leading-tight">EventHub</h3>
               <p className="text-sm font-semibold leading-tight" style={{ color: '#fc743c' }}>
-                المملكة العربية السعودية
+                {language === 'ar' ? 'المملكة العربية السعودية' : 'Saudi Arabia'}
               </p>
             </div>
             <p className="text-gray-300 mb-6">
