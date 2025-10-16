@@ -397,7 +397,7 @@ export default function Dashboard() {
   );
 
   const renderVenueDashboard = () => {
-    const totalEvents = userVenues?.reduce((sum, venue) => sum + venue.eventCount, 0) || 0;
+    const totalEvents = userVenues?.reduce((sum, venue) => sum + Number(venue.eventCount), 0) || 0;
 
     return (
       <>
