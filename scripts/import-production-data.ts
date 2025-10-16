@@ -21,7 +21,7 @@ interface ProductionData {
     messages: any[];
     reviews: any[];
     serviceBookings: any[];
-    passwordResetTokens: any[];
+    passwordResetTokens?: any[];
   };
   summary: {
     totalUsers: number;
@@ -163,8 +163,8 @@ async function importProductionData() {
       imported.serviceBookings = productionData.tables.serviceBookings.length;
     }
 
-    // 10. Password Reset Tokens (references users)  
-    if (productionData.tables.passwordResetTokens.length > 0) {
+    // 10. Password Reset Tokens (references users) - SECURITY: Not exported to prevent token exposure
+    if (productionData.tables.passwordResetTokens && productionData.tables.passwordResetTokens.length > 0) {
       const tokensWithDates = productionData.tables.passwordResetTokens.map(token => ({
         ...token,
         createdAt: token.createdAt ? new Date(token.createdAt) : undefined,

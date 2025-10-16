@@ -13,7 +13,7 @@ async function exportProductionData() {
 
   try {
     // Export all tables
-    const tablesData = {
+    const rawTablesData = {
       users: await db.select().from(users),
       organizers: await db.select().from(organizers), 
       events: await db.select().from(events),
@@ -23,7 +23,12 @@ async function exportProductionData() {
       messages: await db.select().from(messages),
       reviews: await db.select().from(reviews),
       serviceBookings: await db.select().from(serviceBookings),
-      passwordResetTokens: await db.select().from(passwordResetTokens)
+    };
+
+    // SECURITY: Strip sensitive credential fields to prevent exposure
+    const tablesData = {
+      ...rawTablesData,
+      users: rawTablesData.users.map(({ password, ...user }) => ({ ...user, password: null })),
     };
 
     // Log export summary
@@ -37,7 +42,7 @@ async function exportProductionData() {
     console.log(`  • Messages: ${tablesData.messages.length}`);
     console.log(`  • Reviews: ${tablesData.reviews.length}`);
     console.log(`  • Service Bookings: ${tablesData.serviceBookings.length}`);
-    console.log(`  • Password Reset Tokens: ${tablesData.passwordResetTokens.length}`);
+    console.log("⚠️  Password fields excluded for security");
 
     // Write to production data file
     const exportData = {
