@@ -16,6 +16,7 @@ import EventEdit from "@/pages/EventEdit";
 import ServiceProviderProfile from "@/pages/ServiceProviderProfile";
 import Messages from "@/pages/Messages";
 import AdminDashboard from "@/pages/AdminDashboard";
+import AdminDataMigration from "@/pages/AdminDataMigration";
 import VenueList from "@/pages/VenueList";
 import VenueDetails from "@/pages/VenueDetails";
 import VenueEdit from "@/pages/VenueEdit";
@@ -64,6 +65,7 @@ function Router() {
 
       {/* Protected routes - components handle their own auth logic */}
       <Route path="/admin" component={AdminDashboard} />
+      <Route path="/admin/data-migration" component={AdminDataMigration} />
       <Route path="/messages" component={Messages} />
       <Route path="/profile" component={Profile} />
       <Route path="/organizer/my-events" component={MyEvents} />

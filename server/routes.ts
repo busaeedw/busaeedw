@@ -1287,6 +1287,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Admin endpoint to import production data (RUNS IN PRODUCTION)
+  app.post('/api/admin/import-production-data', unifiedAuth, async (req: any, res) => {
+    try {
+      const userId = req.authUserId;
+      const user = await storage.getUser(userId);
+      
+      // Require admin role
+      if (!user || user.role !== 'admin') {
+        return res.status(403).json({ message: "Only admins can import production data" });
+      }
+
+      console.log("🔐 Admin user authorized:", user.email);
+      console.log("🌍 Environment:", process.env.NODE_ENV || 'development');
+      
+      const { importProductionDataFromFile } = await import('./production-import');
+      const result = await importProductionDataFromFile();
+      
+      res.json({ 
+        success: true, 
+        message: "Production data imported successfully",
+        imported: result 
+      });
+    } catch (error) {
+      console.error("Error importing production data:", error);
+      res.status(500).json({ 
+        message: "Failed to import production data", 
+        error: error instanceof Error ? error.message : String(error)
+      });
+    }
+  });
+
   // Sponsor routes
   
   // Get all sponsors (public)
