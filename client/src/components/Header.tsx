@@ -103,7 +103,7 @@ export function Header() {
                       EventHub
                     </h1>
                     <p className="text-xs font-semibold leading-tight" style={{ color: '#fc743c' }}>
-                      المملكة العربية السعودية
+                      {t('common.country.sa')}
                     </p>
                   </div>
                 </div>
