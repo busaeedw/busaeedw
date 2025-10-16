@@ -4,6 +4,27 @@ import { users, organizers, events, venues, serviceProviders, eventRegistrations
 import fs from "fs/promises";
 
 /**
+ * Helper function to convert timestamps from strings to Date objects
+ */
+function convertTimestamps(record: any): any {
+  if (!record || typeof record !== 'object') return record;
+  
+  const converted = { ...record };
+  const timestampFields = [
+    'createdAt', 'updatedAt', 'startDate', 'endDate', 
+    'expiresAt', 'registeredAt', 'created_at', 'updated_at', 
+    'start_date', 'end_date', 'expires_at', 'registered_at'
+  ];
+  
+  for (const field of timestampFields) {
+    if (converted[field] && typeof converted[field] === 'string') {
+      converted[field] = new Date(converted[field]);
+    }
+  }
+  return converted;
+}
+
+/**
  * Import production data from the deployed production-data.json file
  * This function runs INSIDE the production environment
  */
@@ -36,25 +57,6 @@ export async function importProductionDataFromFile() {
     await db.delete(venues);
     await db.delete(users);
     console.log("✅ Production data cleared");
-
-    // Helper function to convert timestamps
-    function convertTimestamps(record: any): any {
-      if (!record || typeof record !== 'object') return record;
-      
-      const converted = { ...record };
-      const timestampFields = [
-        'createdAt', 'updatedAt', 'startDate', 'endDate', 
-        'expiresAt', 'registeredAt', 'created_at', 'updated_at', 
-        'start_date', 'end_date', 'expires_at', 'registered_at'
-      ];
-      
-      for (const field of timestampFields) {
-        if (converted[field] && typeof converted[field] === 'string') {
-          converted[field] = new Date(converted[field]);
-        }
-      }
-      return converted;
-    }
 
     const imported = {
       users: 0,
