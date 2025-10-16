@@ -118,3 +118,47 @@ Added full bilingual support for service provider business names throughout the 
 - ✅ English names display correctly when language is English
 - ✅ All 40 service providers updated with Arabic business names
 - ✅ Fallback to English name works when Arabic name not available
+
+### Venue Arabic Names (October 16, 2025)
+
+**Feature Overview:**
+Enhanced venue display throughout the platform with full bilingual support. Venues now display their Arabic names automatically when users switch to Arabic language, complementing the existing `name_ar` database field.
+
+**Implementation Details:**
+- **Database Schema**: Utilized existing `name_ar` field in `venues` table (no schema changes needed)
+- **API Response**: `/api/venues` endpoint returns `VenueAggregate` type with `venue` (English) and `venue_ar` (Arabic) fields
+- **Data Population**: Updated all 40 existing venues (20 in Jeddah, 20 in Dammam) with Arabic names
+- **Display Logic**: Components automatically show Arabic names when `language === 'ar'` and fallback to English names when Arabic name unavailable
+
+**Components Updated:**
+1. **EventCreate.tsx**:
+   - Venue dropdown shows Arabic names in Arabic mode
+   - Updated type from `Venue[]` to `VenueAggregate[]` for proper typing
+   - Import added for `VenueAggregate` type
+   
+2. **EventEdit.tsx**:
+   - Venue dropdown shows Arabic names in Arabic mode
+   - Maintains consistency with EventCreate form
+
+**Example Translations:**
+- "King Abdullah International Convention Center" → "مركز الملك عبدالله الدولي للمؤتمرات"
+- "Eastern Province Events Center" → "مركز فعاليات المنطقة الشرقية"
+- "Red Sea Hall" → "قاعة البحر الأحمر"
+- "Al Khobar Conference Hall" → "قاعة مؤتمرات الخبر"
+
+**Files Modified:**
+- `shared/schema.ts`: Populated existing name_ar field for all 40 venues
+- `client/src/pages/EventCreate.tsx`: Display Arabic names in venue dropdown, updated type to VenueAggregate[]
+- `client/src/pages/EventEdit.tsx`: Display Arabic names in venue dropdown
+
+**Notes:**
+- VenueList.tsx and BrowseVenues.tsx already supported Arabic names (no changes needed)
+- VenueDetails.tsx uses direct `venue.nameAr` property (different from aggregate type)
+
+**Testing Results:**
+- ✅ Venue dropdown in event create form displays Arabic names in Arabic mode
+- ✅ Venue dropdown in event edit form displays Arabic names in Arabic mode
+- ✅ English names display correctly when language is English
+- ✅ All 40 venues updated with Arabic names in database
+- ✅ Fallback to English name works when Arabic name not available
+- ✅ Language toggle switches venue names correctly between English and Arabic
